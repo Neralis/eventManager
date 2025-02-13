@@ -9,8 +9,13 @@ from phonenumber_field.modelfields import PhoneNumberField
 class CustomUser(AbstractUser):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    otchestvo = models.CharField(max_length=100, blank=True, null=True)
-    date_birthday = models.DateField(blank=True, null=True),
+    otchestvo = models.CharField(max_length=100,
+                                 blank=True,
+                                 null=True
+                                 )
+    date_birthday = models.DateField(blank=True,
+                                     null=True
+                                     )
     phone = PhoneNumberField()
 
     groups = models.ManyToManyField(
@@ -26,7 +31,7 @@ class CustomUser(AbstractUser):
     )
 
     def __str__(self):
-        return f'{self.first_name} {self.last_name} - {self.email}'
+        return f'({self.username}) {self.first_name} {self.last_name} {self.email}'
 
 
 @receiver(pre_delete, sender=CustomUser)
@@ -45,7 +50,9 @@ def delete_users_events_(sender, instance, **kwargs):
 
     from eventApp.models import Event
 
-    events = Event.objects.filter(organizer=instance, date_start__gt=now())
+    events = Event.objects.filter(organizer=instance,
+                                  date_start__gt=now()
+                                  )
     events.delete()
 
 
@@ -58,7 +65,9 @@ class NotAuthUser(models.Model):
             models.Index(fields=['email']),
         ]
         constraints = [
-            models.UniqueConstraint(fields=['email', 'phone'], name='unique_email_phone')
+            models.UniqueConstraint(fields=['email', 'phone'],
+                                    name='unique_email_phone'
+                                    )
         ]
 
     def __str__(self):

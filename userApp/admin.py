@@ -1,3 +1,9 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from userApp.models import CustomUser
 
-# Register your models here.
+
+@admin.register(CustomUser)
+class UserAdmin(admin.ModelAdmin):
+    pass
+
