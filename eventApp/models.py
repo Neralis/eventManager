@@ -23,7 +23,8 @@ class ActivityEventManager(models.Manager):
 
 
 def get_default_organizer():
-    return CustomUser.objects.get(id=3).id
+    '''для удаленных пользователей'''
+    return CustomUser.objects.get(id=2).id
 
 
 class Event(models.Model):
@@ -41,7 +42,7 @@ class Event(models.Model):
         Category,
         related_name='events'
     )
-    description = models.TextField()
+    description = models.TextField(blank=True)
     date_start = models.DateTimeField()
     date_end = models.DateTimeField()
 
@@ -66,7 +67,8 @@ class Event(models.Model):
         upload_to='main_images/',
         processors=[ResizeToFit(800, 600)],
         format='JPEG',
-        options={'quality': 70}
+        options={'quality': 70},
+        blank=True
     )
 
     objects = models.Manager()

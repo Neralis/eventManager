@@ -1,11 +1,31 @@
 from .models import Event, Category
 from django.contrib import admin
 
-@admin.register(Event)
-class EventAdmin(admin.ModelAdmin):
-    pass
-
-
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['title']
+    search_fields = ['title']
+
+
+@admin.register(Event)
+class EventAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in Event._meta.fields]
+    list_filter = [
+        'category',
+        'date_start',
+        'date_end',
+        'organizer',
+        'format',
+        'registration_status',
+    ]
+    search_fields = [
+        'title',
+        'category',
+        'organizer',
+    ]
+    ordering = [
+        'date_start',
+        'date_end',
+        'age_limit',
+    ]
+    save_on_top = True

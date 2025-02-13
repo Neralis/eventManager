@@ -1,6 +1,6 @@
 import string
-from random import choice
+from random import choices
 
 
 def get_random_string():
-    return ''.join(choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for _ in range(6))
+    return ''.join(choices(string.ascii_uppercase + string.digits + string.ascii_lowercase, k=6))
