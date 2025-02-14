@@ -1,4 +1,3 @@
-from django.utils.timezone import now
 from unidecode import unidecode
 from django.db import models
 from django.db.models import Q, F, SET_DEFAULT, SET_NULL
@@ -6,8 +5,7 @@ from django.db.models.functions import Now
 from django.utils.text import slugify
 from imagekit.models import ProcessedImageField
 from pilkit.processors import ResizeToFit
-
-
+from eventApp.apps import get_default_organizer
 from eventApp.utils import get_random_string
 from userApp.models import CustomUser
 
@@ -25,14 +23,7 @@ class ActivityEventManager(models.Manager):
                 filter(Q(date_start__lte=Now()) & Q(date_end__gte=Now())))
 
 
-def get_default_organizer():
-    user, _ = CustomUser.objects.get_or_create(
-        username='default_remove_user',
-        email='remove_user@gmail.com',
-        date_birthday=now(),
-        phone='+12345678911'
-    )
-    return user
+
 
 class Event(models.Model):
     EVENT_FORMAT = [
@@ -55,12 +46,12 @@ class Event(models.Model):
 
     organizer = models.ForeignKey(
         CustomUser,
-        default=get_default_organizer(),
+        default=get_default_organizer,
         on_delete=SET_DEFAULT,
         related_name='events'
     )
 
-    format = models.CharField(
+    event_format = models.CharField(
         max_length=7,
         choices=EVENT_FORMAT
     )
@@ -68,7 +59,10 @@ class Event(models.Model):
 
     participants_limit = models.PositiveIntegerField(default=1)
     age_limit = models.PositiveIntegerField(default=0)
-    location = models.CharField(max_length=300)
+    location_offline = models.CharField(max_length=300, blank=True, null=True)
+    city = models.CharField(max_length=300, blank=True, null=True)
+    location_online = models.URLField(max_length=300, blank=True, null=True)
+
 
     main_photo = ProcessedImageField(
         upload_to='main_images/',
@@ -90,6 +84,13 @@ class Event(models.Model):
             models.CheckConstraint(
                 check=Q(date_end__gt=F('date_start')),
                 name='check_data'
+            ),
+            models.CheckConstraint(
+                check=(
+                        (Q(location_offline__isnull=True) & Q(location_online__isnull=False)) |
+                        (Q(location_offline__isnull=False) & Q(location_online__isnull=True))
+                ),
+                name='check_location'
             )
         ]
 

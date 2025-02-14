@@ -16,7 +16,7 @@ class EventAdmin(admin.ModelAdmin):
         'date_start',
         'date_end',
         'organizer',
-        'format',
+        'event_format',
         'registration_status',
     ]
     search_fields = [
