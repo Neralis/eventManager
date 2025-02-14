@@ -29,9 +29,13 @@ class Participants(models.Model):
 
     class Meta:
         constraints = [
-            models.CheckConstraint(check=((Q(user__isnull=True) & Q(not_auth_user__isnull=False)) | (
-                    Q(user__isnull=False) & Q(not_auth_user__isnull=True))),
-                                   name='check_user_and_not_auth_user')
+            models.CheckConstraint(
+                check=(
+                        (Q(user__isnull=True) & Q(not_auth_user__isnull=False)) |
+                        (Q(user__isnull=False) & Q(not_auth_user__isnull=True))
+                ),
+                name='check_user_and_not_auth_user'
+            )
         ]
 
     def __str__(self):

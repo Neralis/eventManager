@@ -1,3 +1,4 @@
+from django.utils.timezone import now
 from unidecode import unidecode
 from django.db import models
 from django.db.models import Q, F, SET_DEFAULT, SET_NULL
@@ -5,6 +6,7 @@ from django.db.models.functions import Now
 from django.utils.text import slugify
 from imagekit.models import ProcessedImageField
 from pilkit.processors import ResizeToFit
+
 
 from eventApp.utils import get_random_string
 from userApp.models import CustomUser
@@ -19,13 +21,18 @@ class Category(models.Model):
 
 class ActivityEventManager(models.Manager):
     def get_queryset(self, *args, **kwargs):
-        return super().get_queryset(*args, **kwargs).filter(Q(date_start__lte=Now()) & Q(date_end__gte=Now()))
+        return (super().get_queryset(*args, **kwargs).
+                filter(Q(date_start__lte=Now()) & Q(date_end__gte=Now())))
 
 
 def get_default_organizer():
-    '''для удаленных пользователей'''
-    return CustomUser.objects.get(id=2).id
-
+    user, _ = CustomUser.objects.get_or_create(
+        username='default_remove_user',
+        email='remove_user@gmail.com',
+        date_birthday=now(),
+        phone='+12345678911'
+    )
+    return user
 
 class Event(models.Model):
     EVENT_FORMAT = [
@@ -48,7 +55,7 @@ class Event(models.Model):
 
     organizer = models.ForeignKey(
         CustomUser,
-        default=get_default_organizer,
+        default=get_default_organizer(),
         on_delete=SET_DEFAULT,
         related_name='events'
     )
@@ -87,7 +94,7 @@ class Event(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.title} {self.registration_status}'
+        return f'{self.title}'
 
     @property
     def activity_status(self):

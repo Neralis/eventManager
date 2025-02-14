@@ -18,17 +18,17 @@ class CustomUser(AbstractUser):
         blank=True,
         null=True
     )
-    phone = PhoneNumberField()
+    phone = PhoneNumberField(unique=True)
 
     groups = models.ManyToManyField(
         "auth.Group",
-        related_name="custom_users",  # Было `user_set`, заменяем
+        related_name="custom_users",
         blank=True,
     )
 
     user_permissions = models.ManyToManyField(
         "auth.Permission",
-        related_name="custom_users_permissions",  # Было `user_set`, заменяем
+        related_name="custom_users_permissions",
         blank=True,
     )
 

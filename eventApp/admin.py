@@ -1,5 +1,6 @@
-from .models import Event, Category
+from .models import Event, Category, EventImages
 from django.contrib import admin
+
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -29,3 +30,11 @@ class EventAdmin(admin.ModelAdmin):
         'age_limit',
     ]
     save_on_top = True
+
+@admin.register(EventImages)
+class EventImagesAdmin(admin.ModelAdmin):
+    list_display = [
+        'event',
+        'image'
+    ]
+    search_fields = ['event']
