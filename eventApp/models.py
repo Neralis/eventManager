@@ -46,7 +46,7 @@ class Event(models.Model):
 
     organizer = models.ForeignKey(
         CustomUser,
-        default=get_default_organizer,
+        default=lambda: get_default_organizer(),  # Используем lambda
         on_delete=SET_DEFAULT,
         related_name='events'
     )

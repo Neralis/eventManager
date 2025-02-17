@@ -1,0 +1,19 @@
+{% block content %}
+<h1>TEst</h1>
+{% if event_list %}
+<ul>
+{%for event in event_list%}
+<li>
+    <a href="{{event.get_absolute_url}}">{{event.title}}</a>
+    <p>{{event.organizer}}
+    {{event.location}}
+        {{event.date_start}}</p>
+
+</li>
+
+    {% endfor %}
+</ul>
+{% endif %}
+{{event_count}} событий
+
+{% endblock %}
