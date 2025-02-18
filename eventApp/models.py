@@ -5,7 +5,6 @@ from django.db.models.functions import Now
 from django.utils.text import slugify
 from imagekit.models import ProcessedImageField
 from pilkit.processors import ResizeToFit
-from eventApp.apps import get_default_organizer
 from eventApp.utils import get_random_string
 from userApp.models import CustomUser
 
@@ -22,7 +21,8 @@ class ActivityEventManager(models.Manager):
         return (super().get_queryset(*args, **kwargs).
                 filter(Q(date_start__lte=Now()) & Q(date_end__gte=Now())))
 
-
+def get_default_organizer():
+    return CustomUser.objects.get(username='default_remove_user')
 
 
 class Event(models.Model):
@@ -46,7 +46,7 @@ class Event(models.Model):
 
     organizer = models.ForeignKey(
         CustomUser,
-        default=lambda: get_default_organizer(),  # Используем lambda
+        default=get_default_organizer,  # Используем lambda
         on_delete=SET_DEFAULT,
         related_name='events'
     )

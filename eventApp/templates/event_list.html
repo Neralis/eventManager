@@ -1,19 +1,76 @@
-{% block content %}
-<h1>TEst</h1>
-{% if event_list %}
-<ul>
-{%for event in event_list%}
-<li>
-    <a href="{{event.get_absolute_url}}">{{event.title}}</a>
-    <p>{{event.organizer}}
-    {{event.location}}
-        {{event.date_start}}</p>
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Все события</title>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+</head>
+<body>
+    <section class="all_event">
+        <div class="all_event_filter_items">
+            <div class="all_event_filter_item custom-select">
+                <select class="all_event_filter_item_category">
+                    <option selected disabled>Категории</option>
+                    <option>категория1</option>
+                    <option>категория2</option>
+                    <option>категория3</option>
+                    <option>категория4</option>
+                </select>
+            </div>
+            <div class="all_event_filter_item">
+                <input type="date" name="" id="" class="filter_name">
+            </div>
+            <div class="all_event_filter_item custom-select">
+                <select class="all_event_filter_item_format">
+                    <option selected disabled>Формат</option>
+                    <option>Онлайн</option>
+                    <option>Оффлайн</option>
+                    <option>Все</option>
+                </select>
+            </div>
+            <div class="all_event_filter_item custom-select">
+                <select class="all_event_filter_item_city">
+                    <option selected disabled>Город</option>
+                    <option>Москва</option>
+                    <option>Волгоград</option>
+                    <option>Казань</option>
+                </select>
+            </div>
+        </div>
 
-</li>
+        <h3 class="all_event_title">Все события в Городе</h3>
+        <p class="all_event_text">{{event_count}} события</p>
+        <ul>
+        {% for event in event_list %}
+            <li>
+        <div class="all_event_grid">
+            <div class="all_event_grid_item">
+                <img src="{{ event.main_photo.url }}" alt="event_img" class="all_event_grid_item_img">
+                <p class="all_event_grid_item_organizer">{{ event.organizer }}организатор</p>
+                <p class="all_event_grid_item_title">{{ event.title }}</p>
+                <p class="all_event_grid_item_city">{{ event.location_offline }}</p>
+                <p class="all_event_grid_item_date">{{ event.date_start|date:"j E Y, H:i" }}</p>
+                <div class="all_event_grid_item_btn_count">
+                    <button class="all_event_grid_item_btn">Записаться</button>
+                    <p class="all_event_grid_item_place">осталось {{ event.count_place }} из {{ event.participants_limit}} мест</p>
+                </div>
+            </div>
+        </div>
+            </li>
+        </ul>
+        {% endfor %}
 
-    {% endfor %}
-</ul>
-{% endif %}
-{{event_count}} событий
-
-{% endblock %}
+        <div class="all_event_pages">
+            <a href="#" class="all_event_pages_previous">предыдущая страница</a>
+            <div class="all_event_pages_circle"><a href="#">3</a></div>
+            <div class="all_event_pages_circle"><a href="#">4</a></div>
+            <div class="all_event_pages_circle active"><a href="#">5</a></div>
+            <div class="all_event_pages_circle"><a href="#">6</a></div>
+            <a href="#" class="all_event_pages_next">следующая страница</a>
+        </div>
+    </section>
+</body>
+</html>

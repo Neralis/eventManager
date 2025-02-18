@@ -1,24 +1,46 @@
+from django.db.models import Count
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView,DetailView,CreateView,UpdateView,DeleteView
 from .models import Event
+from django.db.models import Count ,F
 
-# Create your views here.
+
+
 class EventListView(ListView):
     model = Event
     template_name = 'event_list.html'
     paginate_by = 20
 
+
+    def get_queryset(self):
+        querysert = super().get_queryset()
+
+        event_format = self.request.GET.get('event_format')
+        if event_format:
+            querysert = querysert.filter(event_format=event_format)
+
+        querysert = querysert.annotate(count_place=F('participants_limit') - Count('participants'))
+        return querysert
+
+
     def get_context_data(self, **kwargs):
         context = super(EventListView, self).get_context_data(**kwargs)
-        context['event_count'] = Event.objects.count()
 
+        event_format = self.request.GET.get('event_format')
+        if event_format:
+            event_count = Event.objects.filter(event_format=event_format).count()
+        else:
+            event_count = Event.objects.count()
+
+        context['event_count'] = event_count
 
         return context
 
+
 class EventDetailView(DetailView):
     model = Event
-    template_name = 'event_detail.html'
+    template_name = 'event_about.html'
 
     def get_context_data(self, **kwargs):
         context = super(EventDetailView, self).get_context_data(**kwargs)
