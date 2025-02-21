@@ -1,6 +1,296 @@
-{% block content %}
-{{object.title}}
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
 
-    {{ count_place }} осталось
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eventManager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sofia+Sans:ital,wght@0,1..1000;1,1..1000&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width">
 
-{% endblock %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="../css/index.css">
+
+    <script src="https://api-maps.yandex.ru/v3/?apikey=97a85acd-ba8a-4b10-b1a1-8a55ae3b2fc7" type="text/javascript">
+    </script>
+    <script defer src="../js/registration.js"></script>
+
+</head>
+<body>
+    <header class="header">
+        <div class="header_logo">
+            <img src="{% static 'img/logo_img.png' %}" alt="logo" class="logo">
+        </div>
+        <div class="header_func">
+            <form action="" method="get" class="header_func_search">
+                <input type="text" class="search" placeholder="searh">
+                <input type="button" class="header_btn_search">
+            </form>
+            <a href="#" class="header_func_add_event"></a>
+            <div class="header_func_user">
+                <a class="header_func_user_sign_in">войти</a>
+                <a class="header_func_user_signout highlight_text">регистрация</a>
+            </div>
+
+            <div class="header_func_menu">
+                <div class="header_func_burger">
+                    <img src="{% static 'img/burger.png' %}" alt="burger" class="burger">
+                </div>
+                <ul class="header_func_menu_items">
+                    <li class="header_func_menu_item"><a href="#">Профиль</a></li>
+                    <li class="header_func_menu_item"><a href="#">Главная</a></li>
+                    <li class="header_func_menu_item"><a href="#">Мои мероприятия</a></li>
+                    <li class="header_func_menu_item"><a href="#">Запланированные мероприятия</a></li>
+                    <li class="header_func_menu_item"><a href="#">Выйти</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    <main>
+
+<section class="event">
+    <div class="event_main">
+        <h3 class="event_title">{{ object.title }}</h3>
+        <p class="event_date">{{ object.date_start|date:"d.m.Y" }} в {{ object.date_start|date:"H:i" }}</p>
+        <p class="event_seats">осталось {{ count_place }} мест</p>
+        <img src="{{ object.main_photo.url}}" alt="img_event" class="event_img_event">
+        <p class="event_organizer">{{ object.organizer }}</p>
+    </div>
+
+    <div class="event_description">
+    <h4 class="event_description_title event_title_2">Описание</h4>
+    <p class="event_description_text">{{ object.description }}</p> <!-- Закрыл тег здесь -->
+
+    <div id="carouselExampleControlsNoTouching" class="carousel slide" data-bs-touch="false" data-bs-interval="false">
+        <div class="carousel-inner">
+            {% for image in event_images %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <img src="{{ image.image.url }}" class="d-block w-100" alt="img">
+            </div>
+            {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControlsNoTouching" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Предыдущий</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControlsNoTouching" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Следующий</span>
+        </button>
+    </div>
+</div>
+
+
+    <div class="event_place">
+        <h4 class="event_place_title event_title_2">Место проведения</h4>
+
+        <div class="event_place_for_btn">
+            <div class="event_place_btn"><a href="#">Записаться</a></div>
+        </div>
+
+        <p class="event_place_text adress">Москва, Строителей, д. 3</p>
+
+        <div class="accordion accordion-flush event_place_map">
+            <div class="accordion-item">
+                <p class="event_place_show_map" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false">
+                    показать на карте
+                    <svg class="event_place_show_map_img" width="30px" height="64px" viewBox="0 0 24.00 24.00" xmlns="http://www.w3.org/2000/svg" fill="#595959" stroke="#595959" stroke-width="0.00024000000000000003"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path fill="none" d="M0 0h24v24H0z"></path> <path d="M12 15l-4.243-4.243 1.415-1.414L12 12.172l2.828-2.829 1.415 1.414z"></path> </g> </g></svg>
+                </p>
+                <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                    <div id="map">
+                        <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A32941469e4d95cc5ab3094388b26dcde3b1db4bdc30bf4437cc22fd395ca7b0f&amp;source=constructor" width="100%" height="400" frameborder="0"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p class="event_place_text">Справка по телефону <span class="event_place_phone">+7(566)-565-56-56</span></p>
+
+    <div class="event_reviews">
+        <h4 class="event_reviews_title event_title_2">Отзывы</h4>
+        <div class="event_reviews_block">
+            <div class="event_reviews_block_people">
+                <p class="event_reviews_name">Нина Ф.</p>
+                <div class="event_reviews_stars">
+                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
+                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
+                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
+                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
+                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
+                </div>
+            </div>
+            <p class="event_reviews_text">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus vel labore rem commodi culpa numquam dignissimos dicta? Amet illum quod quae error fugiat? Totam eius corrupti facilis, similique dolorem nostrum odio atque, reprehenderit sequi explicabo reiciendis consequatur voluptatum sunt temporibus. Beatae minus rem, facere officiis voluptas qui velit.</p>
+        </div>
+        <div class="event_reviews_block">
+            <div class="event_reviews_block_people">
+                <p class="event_reviews_name">Нина Ф.</p>
+                <div class="event_reviews_stars">
+                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
+                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
+                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
+                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
+                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
+                </div>
+            </div>
+            <p class="event_reviews_text">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus vel labore rem commodi culpa numquam dignissimos dicta? Amet illum quod quae error fugiat? Totam eius corrupti facilis, similique dolorem nostrum odio atque, reprehenderit sequi explicabo reiciendis consequatur voluptatum sunt temporibus. Beatae minus rem, facere officiis voluptas qui velit.</p>
+        </div>
+        <div class="event_reviews_block">
+            <div class="event_reviews_block_people">
+                <p class="event_reviews_name">Нина Ф.</p>
+                <div class="event_reviews_stars">
+                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
+                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
+                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
+                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
+                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
+                </div>
+            </div>
+            <p class="event_reviews_text">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus vel labore rem commodi culpa numquam dignissimos dicta? Amet illum quod quae error fugiat? Totam eius corrupti facilis, similique dolorem nostrum odio atque, reprehenderit sequi explicabo reiciendis consequatur voluptatum sunt temporibus. Beatae minus rem, facere officiis voluptas qui velit.</p>
+        </div>
+    </div>
+
+    </div>
+
+    <div class="event_to_organizer">
+        <h4 class="event_description_title event_title_2">Также от организатора:</h4>
+        <!-- Здесь карточка события -->
+        <div class="all_event_grid">
+            <div class="all_event_grid_item">
+                <img src="../img/event.jpg" alt="event_img" class="all_event_grid_item_img">
+                <p class="all_event_grid_item_organizer">организатор</p>
+                <p class="all_event_grid_item_title">Название</p>
+                <p class="all_event_grid_item_city">город</p>
+                <p class="all_event_grid_item_date">01.01.2025</p>
+                <div class="all_event_grid_item_btn_count">
+                    <button class="all_event_grid_item_btn">Записаться</button>
+                    <p class="all_event_grid_item_place">осталось 8 из 30 мест</p>
+                </div>
+            </div>
+            <div class="all_event_grid_item">
+                <img src="../img/event.jpg" alt="event_img" class="all_event_grid_item_img">
+                <p class="all_event_grid_item_organizer">организатор</p>
+                <p class="all_event_grid_item_title">Название</p>
+                <p class="all_event_grid_item_city">город</p>
+                <p class="all_event_grid_item_date">01.01.2025</p>
+                <div class="all_event_grid_item_btn_count">
+                    <button class="all_event_grid_item_btn">Записаться</button>
+                    <p class="all_event_grid_item_place">осталось 8 из 30 мест</p>
+                </div>
+            </div>
+            <div class="all_event_grid_item">
+                <img src="../img/event.jpg" alt="event_img" class="all_event_grid_item_img">
+                <p class="all_event_grid_item_organizer">организатор</p>
+                <p class="all_event_grid_item_title">Название</p>
+                <p class="all_event_grid_item_city">город</p>
+                <p class="all_event_grid_item_date">01.01.2025</p>
+                <div class="all_event_grid_item_btn_count">
+                    <button class="all_event_grid_item_btn">Записаться</button>
+                    <p class="all_event_grid_item_place">осталось 8 из 30 мест</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="event_other">
+        <h4 class="event_description_title event_title_2">Похожие:</h4>
+        <!-- Здесь карточка события -->
+        <div class="all_event_grid">
+            <div class="all_event_grid_item">
+                <img src="../img/event.jpg" alt="event_img" class="all_event_grid_item_img">
+                <p class="all_event_grid_item_organizer">организатор</p>
+                <p class="all_event_grid_item_title">Название</p>
+                <p class="all_event_grid_item_city">город</p>
+                <p class="all_event_grid_item_date">01.01.2025</p>
+                <div class="all_event_grid_item_btn_count">
+                    <button class="all_event_grid_item_btn">Записаться</button>
+                    <p class="all_event_grid_item_place">осталось 8 из 30 мест</p>
+                </div>
+            </div>
+            <div class="all_event_grid_item">
+                <img src="../img/event.jpg" alt="event_img" class="all_event_grid_item_img">
+                <p class="all_event_grid_item_organizer">организатор</p>
+                <p class="all_event_grid_item_title">Название</p>
+                <p class="all_event_grid_item_city">город</p>
+                <p class="all_event_grid_item_date">01.01.2025</p>
+                <div class="all_event_grid_item_btn_count">
+                    <button class="all_event_grid_item_btn">Записаться</button>
+                    <p class="all_event_grid_item_place">осталось 8 из 30 мест</p>
+                </div>
+            </div>
+            <div class="all_event_grid_item">
+                <img src="../img/event.jpg" alt="event_img" class="all_event_grid_item_img">
+                <p class="all_event_grid_item_organizer">организатор</p>
+                <p class="all_event_grid_item_title">Название</p>
+                <p class="all_event_grid_item_city">город</p>
+                <p class="all_event_grid_item_date">01.01.2025</p>
+                <div class="all_event_grid_item_btn_count">
+                    <button class="all_event_grid_item_btn">Записаться</button>
+                    <p class="all_event_grid_item_place">осталось 8 из 30 мест</p>
+                </div>
+            </div>
+            <div class="all_event_grid_item">
+                <img src="../img/event.jpg" alt="event_img" class="all_event_grid_item_img">
+                <p class="all_event_grid_item_organizer">организатор</p>
+                <p class="all_event_grid_item_title">Название</p>
+                <p class="all_event_grid_item_city">город</p>
+                <p class="all_event_grid_item_date">01.01.2025</p>
+                <div class="all_event_grid_item_btn_count">
+                    <button class="all_event_grid_item_btn">Записаться</button>
+                    <p class="all_event_grid_item_place">осталось 8 из 30 мест</p>
+                </div>
+            </div>
+            <div class="all_event_grid_item">
+                <img src="../img/event.jpg" alt="event_img" class="all_event_grid_item_img">
+                <p class="all_event_grid_item_organizer">организатор</p>
+                <p class="all_event_grid_item_title">Название</p>
+                <p class="all_event_grid_item_city">город</p>
+                <p class="all_event_grid_item_date">01.01.2025</p>
+                <div class="all_event_grid_item_btn_count">
+                    <button class="all_event_grid_item_btn">Записаться</button>
+                    <p class="all_event_grid_item_place">осталось 8 из 30 мест</p>
+                </div>
+            </div>
+            <div class="all_event_grid_item">
+                <img src="../img/event.jpg" alt="event_img" class="all_event_grid_item_img">
+                <p class="all_event_grid_item_organizer">организатор</p>
+                <p class="all_event_grid_item_title">Название</p>
+                <p class="all_event_grid_item_city">город</p>
+                <p class="all_event_grid_item_date">01.01.2025</p>
+                <div class="all_event_grid_item_btn_count">
+                    <button class="all_event_grid_item_btn">Записаться</button>
+                    <p class="all_event_grid_item_place">осталось 8 из 30 мест</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- </div> -->
+
+</section>
+        </main>
+
+    <footer class="footer">
+        <div class="footer_content">
+             <ul class="footer_link">
+                <li class="footer_link_item"><a href="#">Главная</a></li>
+                <li class="footer_link_item"><a href="#">О нас</a></li>
+                <li class="footer_link_item"><a href="#">Реклама</a></li>
+                <li class="footer_link_item"><a href="#">Помощь</a></li>
+                <li class="footer_link_item"><a href="#">Задать вопрос</a></li>
+            </ul>
+            <ul class="footer_social">
+                <li class="footer_social_item telegram"><a href="#"></a></li>
+                <li class="footer_social_item vk"><a href="#"></a></li>
+                <li class="footer_social_item gmail"><a href="#"></a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>

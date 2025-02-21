@@ -29,3 +29,5 @@ urlpatterns = [
 ]
 if settings.DEBUG:
     urlpatterns += static('/main_images/', document_root=settings.BASE_DIR / 'main_images')
+
+urlpatterns += static('/images/', document_root=settings.BASE_DIR / 'images')

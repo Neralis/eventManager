@@ -2,7 +2,9 @@ from django.db.models import Count
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView,DetailView,CreateView,UpdateView,DeleteView
-from .models import Event
+
+from .forms import EventForm
+from .models import Event,Category
 from django.db.models import Count ,F
 
 
@@ -40,20 +42,23 @@ class EventListView(ListView):
 
 class EventDetailView(DetailView):
     model = Event
-    template_name = 'event_about.html'
+    template_name = 'event_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super(EventDetailView, self).get_context_data(**kwargs)
 
         context['count_place'] = self.object.participants_limit - self.object.participants.count()
+        context['event_images'] = self.object.event_images.all()  # Это QuerySet изображений
+
         return context
 
 class EventCreateView(CreateView):
     model = Event
-    fields = ['title', 'category', 'event_format', 'participants_limit', 'registration_status', 'age_limit',
-              'date_start', 'date_end', 'location_offline', 'location_online', 'description', 'main_photo']
-    template_name = 'event_form.html'
+
+    template_name = 'event_create.html'
     success_url = reverse_lazy('event_list')
+
+
 
 class EventUpdateView(UpdateView):
     model = Event
