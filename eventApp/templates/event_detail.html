@@ -14,11 +14,11 @@
     <meta name="viewport" content="width=device-width">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="../css/index.css">
+    
 
     <script src="https://api-maps.yandex.ru/v3/?apikey=97a85acd-ba8a-4b10-b1a1-8a55ae3b2fc7" type="text/javascript">
     </script>
-    <script defer src="../js/registration.js"></script>
+    
 
 </head>
 <body>
@@ -58,7 +58,7 @@
         <h3 class="event_title">{{ object.title }}</h3>
         <p class="event_date">{{ object.date_start|date:"d.m.Y" }} в {{ object.date_start|date:"H:i" }}</p>
         <p class="event_seats">осталось {{ count_place }} мест</p>
-        <img src="{{ object.main_photo.url}}" alt="img_event" class="event_img_event">
+        <img src="{% if object.main_photo %} {{ object.main_photo.url}}{% else %}{% static 'img/star.svg' %} {% endif %}" alt="img_event" class="event_img_event">
         <p class="event_organizer">{{ object.organizer }}</p>
     </div>
 
@@ -93,7 +93,7 @@
             <div class="event_place_btn"><a href="#">Записаться</a></div>
         </div>
 
-        <p class="event_place_text adress">Москва, Строителей, д. 3</p>
+        <p class="event_place_text adress">{{object.location_offline}}</p>
 
         <div class="accordion accordion-flush event_place_map">
             <div class="accordion-item">
@@ -103,13 +103,13 @@
                 </p>
                 <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
                     <div id="map">
-                        <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A32941469e4d95cc5ab3094388b26dcde3b1db4bdc30bf4437cc22fd395ca7b0f&amp;source=constructor" width="100%" height="400" frameborder="0"></iframe>
+                        <iframe id="mapFrame" width="100%" height="400" frameborder="0"></iframe>
                     </div>
                 </div>
             </div>
         </div>
 
-        <p class="event_place_text">Справка по телефону <span class="event_place_phone">+7(566)-565-56-56</span></p>
+        <p class="event_place_text">Справка по телефону <span class="event_place_phone">{{organizer_phone}}</span></p>
 
     <div class="event_reviews">
         <h4 class="event_reviews_title event_title_2">Отзывы</h4>
@@ -117,11 +117,11 @@
             <div class="event_reviews_block_people">
                 <p class="event_reviews_name">Нина Ф.</p>
                 <div class="event_reviews_stars">
-                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
-                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
-                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
-                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
-                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
+                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
+                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
+                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
+                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
+                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
                 </div>
             </div>
             <p class="event_reviews_text">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus vel labore rem commodi culpa numquam dignissimos dicta? Amet illum quod quae error fugiat? Totam eius corrupti facilis, similique dolorem nostrum odio atque, reprehenderit sequi explicabo reiciendis consequatur voluptatum sunt temporibus. Beatae minus rem, facere officiis voluptas qui velit.</p>
@@ -130,11 +130,11 @@
             <div class="event_reviews_block_people">
                 <p class="event_reviews_name">Нина Ф.</p>
                 <div class="event_reviews_stars">
-                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
-                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
-                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
-                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
-                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
+                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
+                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
+                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
+                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
+                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
                 </div>
             </div>
             <p class="event_reviews_text">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus vel labore rem commodi culpa numquam dignissimos dicta? Amet illum quod quae error fugiat? Totam eius corrupti facilis, similique dolorem nostrum odio atque, reprehenderit sequi explicabo reiciendis consequatur voluptatum sunt temporibus. Beatae minus rem, facere officiis voluptas qui velit.</p>
@@ -143,11 +143,11 @@
             <div class="event_reviews_block_people">
                 <p class="event_reviews_name">Нина Ф.</p>
                 <div class="event_reviews_stars">
-                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
-                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
-                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
-                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
-                    <img src="../img/star.svg" alt="star" class="event_reviews_star">
+                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
+                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
+                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
+                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
+                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
                 </div>
             </div>
             <p class="event_reviews_text">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus vel labore rem commodi culpa numquam dignissimos dicta? Amet illum quod quae error fugiat? Totam eius corrupti facilis, similique dolorem nostrum odio atque, reprehenderit sequi explicabo reiciendis consequatur voluptatum sunt temporibus. Beatae minus rem, facere officiis voluptas qui velit.</p>
@@ -158,44 +158,28 @@
 
     <div class="event_to_organizer">
         <h4 class="event_description_title event_title_2">Также от организатора:</h4>
-        <!-- Здесь карточка события -->
-        <div class="all_event_grid">
-            <div class="all_event_grid_item">
-                <img src="../img/event.jpg" alt="event_img" class="all_event_grid_item_img">
-                <p class="all_event_grid_item_organizer">организатор</p>
-                <p class="all_event_grid_item_title">Название</p>
-                <p class="all_event_grid_item_city">город</p>
-                <p class="all_event_grid_item_date">01.01.2025</p>
-                <div class="all_event_grid_item_btn_count">
-                    <button class="all_event_grid_item_btn">Записаться</button>
-                    <p class="all_event_grid_item_place">осталось 8 из 30 мест</p>
-                </div>
-            </div>
-            <div class="all_event_grid_item">
-                <img src="../img/event.jpg" alt="event_img" class="all_event_grid_item_img">
-                <p class="all_event_grid_item_organizer">организатор</p>
-                <p class="all_event_grid_item_title">Название</p>
-                <p class="all_event_grid_item_city">город</p>
-                <p class="all_event_grid_item_date">01.01.2025</p>
-                <div class="all_event_grid_item_btn_count">
-                    <button class="all_event_grid_item_btn">Записаться</button>
-                    <p class="all_event_grid_item_place">осталось 8 из 30 мест</p>
-                </div>
-            </div>
-            <div class="all_event_grid_item">
-                <img src="../img/event.jpg" alt="event_img" class="all_event_grid_item_img">
-                <p class="all_event_grid_item_organizer">организатор</p>
-                <p class="all_event_grid_item_title">Название</p>
-                <p class="all_event_grid_item_city">город</p>
-                <p class="all_event_grid_item_date">01.01.2025</p>
-                <div class="all_event_grid_item_btn_count">
-                    <button class="all_event_grid_item_btn">Записаться</button>
-                    <p class="all_event_grid_item_place">осталось 8 из 30 мест</p>
-                </div>
+
+        
+       {% if organizer_events %}
+    <div class="all_event_grid">
+        {% for organizer_event in organizer_events %}
+        <div class="all_event_grid_item">
+            <img src="{% if organizer_event.main_photo %}{{ organizer_event.main_photo.url }}{% else %}{% static 'img/default_event.jpg' %}{% endif %}" alt="event_img" class="all_event_grid_item_img">
+            <p class="all_event_grid_item_organizer">{{ organizer_event.organizer }}</p>
+            <p class="all_event_grid_item_title">{{ organizer_event.title }}</p>
+            <p class="all_event_grid_item_city">{{ organizer_event.city }}</p>
+            <p class="all_event_grid_item_date">{{ organizer_event.date_start|date:"d.m.Y" }}</p>
+            <div class="all_event_grid_item_btn_count">
+                <button class="all_event_grid_item_btn">Записаться</button>
+                <p class="all_event_grid_item_place">осталось {{ organizer_event.participants_limit }} мест</p>
             </div>
         </div>
-
+        {% endfor %}
     </div>
+    {% else %}
+    <p>У этого организатора пока нет других событий.</p>
+    {% endif %}
+</div>
 
     <div class="event_other">
         <h4 class="event_description_title event_title_2">Похожие:</h4>
@@ -293,4 +277,35 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    var locationText = "{{ object.location_offline|escapejs }}"; // Получаем адрес из Django
+    var mapFrame = document.getElementById("mapFrame");
+
+    if (locationText && mapFrame) {
+        var yandexApiUrl = `https://geocode-maps.yandex.ru/1.x/?format=json&apikey=72ad0fbf-7eeb-44ea-8f5d-2bc7174230be&geocode=${encodeURIComponent(locationText)}&results=1`;
+
+        fetch(yandexApiUrl)
+            .then(response => response.json())
+            .then(data => {
+                var geoObjects = data.response.GeoObjectCollection.featureMember;
+
+                if (geoObjects.length > 0) {
+                    var geoObject = geoObjects[0].GeoObject;
+                    var coordinates = geoObject.Point.pos.split(" ");
+                    var lon = coordinates[0], lat = coordinates[1];
+
+                    // Увеличенный масштаб (например, 18)
+                    var mapSrc = `https://yandex.ru/map-widget/v1/?ll=${lon},${lat}&z=15&pt=${lon},${lat},pm2rdm`;
+                    mapFrame.src = mapSrc;
+                } else {
+                    console.error("Адрес не найден");
+                }
+            })
+            .catch(error => console.error("Ошибка загрузки карты:", error));
+    }
+});
+
+    </script>
+    
 </html>

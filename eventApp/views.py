@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView,DetailView,CreateView,UpdateView,DeleteView
 
-from .forms import EventForm
+
 from .models import Event,Category
 from django.db.models import Count ,F
 
@@ -49,6 +49,8 @@ class EventDetailView(DetailView):
 
         context['count_place'] = self.object.participants_limit - self.object.participants.count()
         context['event_images'] = self.object.event_images.all()  # Это QuerySet изображений
+        context['organizer_phone'] = self.object.organizer.phone
+        context['organizer_events'] = Event.objects.filter(organizer= self.object.organizer).exclude(id = self.object.id)
 
         return context
 
