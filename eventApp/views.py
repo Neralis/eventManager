@@ -2,11 +2,15 @@ from django.db.models import Count
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView,DetailView,CreateView,UpdateView,DeleteView
+from .forms import EventForm, EventImagesForm
 
-
-from .models import Event,Category
+from .models import Event,Category, EventImages
 from django.db.models import Count ,F
 
+
+def primer(request):
+   
+    return render(request, 'primer.html')
 
 
 class EventListView(ListView):
@@ -56,10 +60,25 @@ class EventDetailView(DetailView):
 
 class EventCreateView(CreateView):
     model = Event
-
+    form_class = EventForm
     template_name = 'event_create.html'
     success_url = reverse_lazy('event_list')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        context['event_format'] = self.request.POST.get('event_format', 'Offline')
+        return context
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        
+        # Получаем загруженные изображения из запроса
+        images = self.request.FILES.getlist('event_images')
+        for image in images:
+            EventImages.objects.create(event=self.object, image=image)
+        
+        return response
 
 
 class EventUpdateView(UpdateView):

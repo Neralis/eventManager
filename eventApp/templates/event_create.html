@@ -1,0 +1,175 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eventManager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sofia+Sans:ital,wght@0,1..1000;1,1..1000&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    
+
+    <script src="https://api-maps.yandex.ru/v3/?apikey=97a85acd-ba8a-4b10-b1a1-8a55ae3b2fc7" type="text/javascript">
+    </script>
+    
+
+</head>
+<body>
+    <header class="header">
+        <div class="header_logo">
+            <img src="{% static 'img/logo_img.png' %}" alt="logo" class="logo">
+        </div>
+        <div class="header_func">
+            <form action="" method="get" class="header_func_search">
+                <input type="text" class="search" placeholder="searh">
+                <input type="button" class="header_btn_search">
+            </form>
+            <a href="#" class="header_func_add_event"></a>
+            <div class="header_func_user">
+                <a class="header_func_user_sign_in">войти</a>
+                <a class="header_func_user_signout highlight_text">регистрация</a>
+            </div>
+
+            <div class="header_func_menu">
+                <div class="header_func_burger">
+                    <img src="{% static 'img/burger.png' %}" alt="burger" class="burger">
+                </div>
+                <ul class="header_func_menu_items">
+                    <li class="header_func_menu_item"><a href="#">Профиль</a></li>
+                    <li class="header_func_menu_item"><a href="#">Главная</a></li>
+                    <li class="header_func_menu_item"><a href="#">Мои мероприятия</a></li>
+                    <li class="header_func_menu_item"><a href="#">Запланированные мероприятия</a></li>
+                    <li class="header_func_menu_item"><a href="#">Выйти</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    <main>
+<section class="create_event">
+    <div class="create_event_block">
+        <div class="create_event_btn_title">
+            <a href="" class="create_event_btn">←</a>
+            <h2>Создание мероприятия</h2>
+        </div>
+        <form method="post" action="{% url 'event_create' %}" class="create_event_form" enctype="multipart/form-data">
+            {% csrf_token %}
+           
+            <input class="create_event_form_item" type="text" name="{{ form.title.name }}" placeholder="название мероприятия" required>
+            <select class="create_event_form_category" id="category" name="category" required>
+                <option value="" disabled selected>выберите категорию</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.title }}</option>             
+                {% endfor %}
+            </select>
+
+            <div class="create_event_form_format_count">
+                
+                <select class="create_event_form_format" id="format" name="event_format" required onchange="toggleAddressField()">
+                    <option value="" disabled selected>выберите формат</option>
+                    <option value="Online" {% if event_format == "Online" %}selected{% endif %}>Онлайн</option>
+                    <option value="Offline" {% if event_format == "Offline" %}selected{% endif %}>Оффлайн</option>
+                </select>
+
+            <input class="create_event_form_item number_of_participants" type="number" name="{{form.participants_limit.name}}" min="1" placeholder="количество участников" required>
+            </div>
+
+                <div class="create_event_form_registration_type">
+                    <fieldset class="create_event_form_registration_type_checked">
+                        <legend>Регистрация на мероприятие</legend>
+                        <div class="create_event_form_registration_type_block">
+                            <div>
+                                <input type="radio" id="yes" name="registration_status" value="true" checked/>
+                                <label for="yes">Обязательна</label>  
+                            </div>
+                            <div>
+                                <input type="radio" id="no" name="registration_status" value="false"/>
+                                <label for="no">Не обязательна</label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+
+                <input class="create_event_form_item create_event_form_item_age" type="number" name="{{form.age_limit.name}}" min="0" max="120" placeholder="возрастное ограничение" required>
+
+                <div class="create_event_form_dateStart_dateEnd">
+                    <input class="create_event_form_item create_event_form_dateStart" type="datetime-local" name={{form.date_start.name}} placeholder="дата и время начала" required>
+                    <input class="create_event_form_item create_event_form_dateEnd" type="datetime-local" name={{form.date_end.name}} placeholder="дата и время окончания">
+                </div>
+
+                <div id="offline-address" {% if event_format == "Online" %}style="display: none;"{% endif %}>
+                    <input class="create_event_form_item create_event_form_item_adress" type="text" name="{{ form.location_offline.name }}" placeholder="Адрес мероприятия" style="width: 100%;">
+                </div>
+                
+                <!-- Поле для онлайн-ссылки -->
+                <div id="online-address" {% if event_format == "Offline" %}style="display: none;"{% endif %}>
+                    <input class="create_event_form_item create_event_form_item_url" type="text" name="{{ form.location_online.name }}" placeholder="Ссылка на мероприятие" style="width: 100%;">
+                </div>
+
+                <textarea class="create_event_form_item create_event_form_description" name={{form.description.name}} id="description" rows="10" placeholder="описание"></textarea>
+
+
+            
+
+                <fieldset class="create_event_form_file">
+                    <legend>Для главной</legend>
+                    <div class="create_event_form_title_img">
+                        <div class="mb-3">
+                            <input class="form-control" name={{form.main_photo.name}} type="file" id="formFile" required>
+                        </div>
+                    </div>
+                </fieldset>
+                
+                <fieldset class="create_event_form_file create_event_form_file2">
+                    <legend>Дополнительные</legend>
+                    <div class="create_event_form_title_img">
+                        <div class="mb-3">
+                            <input class="form-control" name="event_images" type="file" multiple>
+                        </div>
+                    </div>
+                </fieldset>
+
+            <button type="submit" class="btn btn-primary">Создать</button>
+        </form>
+
+        
+           
+</main>
+
+<footer class="footer">
+    <div class="footer_content">
+         <ul class="footer_link">
+            <li class="footer_link_item"><a href="#">Главная</a></li>
+            <li class="footer_link_item"><a href="#">О нас</a></li>
+            <li class="footer_link_item"><a href="#">Реклама</a></li>
+            <li class="footer_link_item"><a href="#">Помощь</a></li>
+            <li class="footer_link_item"><a href="#">Задать вопрос</a></li>
+        </ul>
+        <ul class="footer_social">
+            <li class="footer_social_item telegram"><a href="#"></a></li>
+            <li class="footer_social_item vk"><a href="#"></a></li>
+            <li class="footer_social_item gmail"><a href="#"></a></li>
+        </ul>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script>
+    function toggleAddressField() {
+        let format = document.getElementById("format").value;
+        document.getElementById("offline-address").style.display = (format === "Offline") ? "block" : "none";
+        document.getElementById("online-address").style.display = (format === "Online") ? "block" : "none";
+    }
+    
+    // Вызываем функцию при загрузке страницы, чтобы сразу показать нужное поле
+    window.onload = toggleAddressField;
+    </script>
+</body>
+</html>
