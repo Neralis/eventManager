@@ -5,6 +5,7 @@ from  .models import  Participants
 @admin.register(Participants)
 class ParticipantsAdmin(admin.ModelAdmin):
     list_display = [
+        'id',
         'event',
         'user',
         'not_auth_user',

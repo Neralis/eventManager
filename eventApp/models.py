@@ -1,6 +1,8 @@
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 from unidecode import unidecode
 from django.db import models
-from django.db.models import Q, F, SET_DEFAULT, SET_NULL
+from django.db.models import Q, F, SET_DEFAULT
 from django.db.models.functions import Now
 from django.utils.text import slugify
 from imagekit.models import ProcessedImageField
@@ -59,6 +61,8 @@ class Event(models.Model):
     registration_status = models.BooleanField(default=False)
 
     participants_limit = models.PositiveIntegerField(default=1)
+    available_places = models.PositiveIntegerField(default=0) # - поле для кол-ва зарегистрировавшихся участников
+
     age_limit = models.PositiveIntegerField(default=0)
     location_offline = models.CharField(max_length=300, blank=True, null=True)
     city = models.CharField(max_length=300, blank=True, null=True)

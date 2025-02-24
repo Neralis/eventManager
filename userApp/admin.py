@@ -25,6 +25,7 @@ class CustomUser(admin.ModelAdmin):
     ]
     save_on_top = True
 
+
 @admin.register(NotAuthUser)
 class NotAuthUserAdmin(admin.ModelAdmin):
     list_display = ['email', 'phone']
