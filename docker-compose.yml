@@ -1,0 +1,29 @@
+services:
+  web:
+    build: .
+    container_name: django_app
+    command: gunicorn eventManager.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      - celery
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+
+  redis:
+    image: redis:latest
+    container_name: redis
+
+  celery:
+    build: .
+    container_name: celery_worker
+    command: celery -A eventManager worker --loglevel=info
+    depends_on:
+      - redis
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0

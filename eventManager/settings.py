@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'eventApp',
     'participantApp',
     'reviewApp',
+    'mailApp'
 ]
 
 MIDDLEWARE = [
@@ -131,3 +132,20 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+#------------- SMTP -------------------------------------------
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = False
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'ner4corp@gmail.com'
+EMAIL_HOST_PASSWORD = 'oimy thbj nfxn lfhx'
+
+
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'

@@ -1,5 +1,9 @@
+from django.core.mail import send_mail
 from django.db import models
 from django.db.models import Q
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 from eventApp.models import *
 from eventApp.models import Event
 from userApp.models import NotAuthUser
@@ -42,3 +46,19 @@ class Participants(models.Model):
         if self.user:
             return f'{self.user.first_name} {self.user.last_name}'
         return self.not_auth_user.email
+
+    def get_email(self):
+        if self.user:
+            return self.user.email
+        return self.not_auth_user.email
+
+
+@receiver(post_save, sender=Participants)
+def registration_on_event(sender, instance, **kwargs):
+    send_mail(
+        f'Вы зарегестрировались на мероприятие {instance.title}',
+        'Спасибо за вашу активность!',
+        'example@gmail.com',
+        [instance.get_email()],
+        fail_silently=False,
+    )

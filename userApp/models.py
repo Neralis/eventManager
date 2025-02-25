@@ -36,6 +36,18 @@ class CustomUser(AbstractUser):
         return f'({self.username}) {self.first_name} {self.last_name} {self.email}'
 
 
+class Notification(models.Model):
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='notifications'
+    )
+    text = models.TextField()
+    url_event = models.URLField()
+    created = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+
 @receiver(pre_delete, sender=CustomUser)
 def block_delete_user(sender, instance, **kwargs):
     from eventApp.models import Event

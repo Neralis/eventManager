@@ -64,6 +64,7 @@ class Event(models.Model):
     city = models.CharField(max_length=300, blank=True, null=True)
     location_online = models.URLField(max_length=300, blank=True, null=True)
 
+    is_active = models.BooleanField(default=True)
 
     main_photo = ProcessedImageField(
         upload_to='main_images/',
@@ -98,11 +99,6 @@ class Event(models.Model):
     def __str__(self):
         return f'{self.title}'
 
-    @property
-    def activity_status(self):
-        if self.date_end and self.date_end < Now():
-            return 'завершенно'
-        return 'актуально'
 
     def save(self, *args, **kwargs):
         baseslug = slugify(unidecode(self.title))
