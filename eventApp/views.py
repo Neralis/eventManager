@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView,DetailView,CreateView,UpdateView,DeleteView
 from .forms import EventForm, EventImagesForm
+from django.utils.dateparse import parse_date
 
 from .models import Event,Category, EventImages
 from django.db.models import Count ,F
@@ -20,19 +21,34 @@ class EventListView(ListView):
 
 
     def get_queryset(self):
-        querysert = super().get_queryset()
+        queryset = super().get_queryset()
 
         event_format = self.request.GET.get('event_format')
-        if event_format:
-            querysert = querysert.filter(event_format=event_format)
+        if event_format in ["Online", "Offline"]:
+            queryset = queryset.filter(event_format=event_format)
 
-        querysert = querysert.annotate(count_place=F('participants_limit') - Count('participants'))
-        return querysert
+        date_start = self.request.GET.get('date_start')
+        if date_start:
+            parsed_date = parse_date(date_start)  # Преобразуем строку в дату
+            if parsed_date:
+                queryset = queryset.filter(date_start__date=parsed_date)
 
+        category_id = self.request.GET.get("category")
+        if category_id:
+            try:
+                category_id = int(category_id)  # Преобразуем строку в число
+                queryset = queryset.filter(category=category_id)  # category вместо category_id
+            except (TypeError, ValueError):
+                pass
+
+        
+
+        queryset = queryset.annotate(count_place=F('participants_limit') - Count('participants'))
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super(EventListView, self).get_context_data(**kwargs)
-
+        context['categories'] = Category.objects.all()
         event_format = self.request.GET.get('event_format')
         if event_format:
             event_count = Event.objects.filter(event_format=event_format).count()
@@ -54,7 +70,8 @@ class EventDetailView(DetailView):
         context['count_place'] = self.object.participants_limit - self.object.participants.count()
         context['event_images'] = self.object.event_images.all()  # Это QuerySet изображений
         context['organizer_phone'] = self.object.organizer.phone
-        context['organizer_events'] = Event.objects.filter(organizer= self.object.organizer).exclude(id = self.object.id)
+        context['organizer_events'] = Event.objects.filter(organizer= self.object.organizer).exclude(id = self.object.id)[:6]
+        
 
         return context
 
@@ -62,7 +79,9 @@ class EventCreateView(CreateView):
     model = Event
     form_class = EventForm
     template_name = 'event_create.html'
-    success_url = reverse_lazy('event_list')
+
+    def get_success_url(self):
+        return reverse_lazy('event_detail', kwargs={'pk': self.object.pk})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -83,11 +102,32 @@ class EventCreateView(CreateView):
 
 class EventUpdateView(UpdateView):
     model = Event
-    fields = ['title', 'category', 'event_format', 'participants_limit', 'registration_status', 'age_limit', 'date_start', 'date_end', 'location_offline', 'location_online', 'description', 'main_photo']
-    template_name = 'event_form.html'
+    form_class = EventForm
+    template_name = 'event_update.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        context['event_format'] = self.request.POST.get('event_format', 'Offline')
+        
+        context['images'] = EventImages.objects.filter(event=self.object)
+        return context
+
+    def form_valid(self, form):
+        print("✅ Форма валидна, объект сохраняется!")
+        response = super().form_valid(form)
+
+        images = self.request.FILES.getlist('event_images')
+        for image in images:
+            EventImages.objects.create(event=self.object, image=image)
+
+        return response
     def get_success_url(self):
-        return reverse_lazy('event_detail', kwargs={'pk':self.object.pk})
+        return reverse_lazy('event_detail', kwargs={'pk': self.object.pk})
+    
+    def form_invalid(self, form):
+        print("❌ Форма НЕ валидна! Ошибки:", form.errors)
+        return self.render_to_response(self.get_context_data(form=form))
 
 
 
