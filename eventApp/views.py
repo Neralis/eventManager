@@ -22,6 +22,7 @@ class EventListView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        
 
         event_format = self.request.GET.get('event_format')
         if event_format in ["Online", "Offline"]:
@@ -41,7 +42,10 @@ class EventListView(ListView):
             except (TypeError, ValueError):
                 pass
 
-        
+        city = self.request.GET.get("city")
+        if city and city != "all":  # Если city не "all", применяем фильтр
+            queryset = queryset.filter(city=city)
+
 
         queryset = queryset.annotate(count_place=F('participants_limit') - Count('participants'))
         return queryset
@@ -49,11 +53,20 @@ class EventListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(EventListView, self).get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
+        context['cities'] = Event.objects.exclude(city__isnull=True).exclude(city="").values_list("city", flat=True).distinct()
+
+
         event_format = self.request.GET.get('event_format')
         if event_format:
             event_count = Event.objects.filter(event_format=event_format).count()
         else:
             event_count = Event.objects.count()
+        
+      
+
+        
+
+        
 
         context['event_count'] = event_count
 
@@ -109,7 +122,7 @@ class EventUpdateView(UpdateView):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
         context['event_format'] = self.request.POST.get('event_format', 'Offline')
-        
+     
         context['images'] = EventImages.objects.filter(event=self.object)
         return context
 

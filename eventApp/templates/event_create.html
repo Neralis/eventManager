@@ -103,10 +103,14 @@
                     <input class="create_event_form_item create_event_form_dateStart" type="datetime-local" name={{form.date_start.name}} placeholder="дата и время начала" required>
                     <input class="create_event_form_item create_event_form_dateEnd" type="datetime-local" name={{form.date_end.name}} placeholder="дата и время окончания">
                 </div>
-
+                
+                <input id="city" class="create_event_form_item create_event_form_item_city" type="text" name="{{form.city.name}}" placeholder="город" required>
+              
                 <div id="offline-address" {% if event_format == "Online" %}style="display: none;"{% endif %}>
                     <input class="create_event_form_item create_event_form_item_adress" type="text" name="{{ form.location_offline.name }}" placeholder="Адрес мероприятия" style="width: 100%;">
                 </div>
+                
+                
                 
                 <!-- Поле для онлайн-ссылки -->
                 <div id="online-address" {% if event_format == "Offline" %}style="display: none;"{% endif %}>
@@ -165,6 +169,7 @@
     function toggleAddressField() {
         let format = document.getElementById("format").value;
         document.getElementById("offline-address").style.display = (format === "Offline") ? "block" : "none";
+        document.getElementById("city").style.display = (format === "Offline") ? "block" : "none"
         document.getElementById("online-address").style.display = (format === "Online") ? "block" : "none";
     }
     

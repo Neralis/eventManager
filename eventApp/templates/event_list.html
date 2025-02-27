@@ -65,6 +65,15 @@
                 </select>
                 
             </div>
+            <div class="all_event_filter_item custom-select">
+                <select class="all_event_filter_item_city" id="event-city-filter">
+                    <option value="all" {% if not request.GET.city or request.GET.city == "all" %}selected{% endif %}>Все города</option>
+                    {% for city in cities %}
+                        <option value="{{ city }}" {% if request.GET.city == city %}selected{% endif %}>{{ city }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
             
             <div class="all_event_filter_item">
                 <input type="date" id="event-date-filter" class="filter_name" 
@@ -78,23 +87,14 @@
                     <option value="Offline" {% if request.GET.event_format == "Offline" %}selected{% endif %}>Оффлайн</option>
                 </select>
             </div>
-            <div class="all_event_filter_item custom-select">
-                <select class="all_event_filter_item_city">
-                    <option selected disabled>Город</option>
-                    <option>Москва</option>
-                    <option>Волгоград</option>
-                    <option>Казань</option>
-                </select>
-            </div>
+            
         </div>
 
         <h3 class="all_event_title">Все события в Городе</h3>
         <p class="all_event_text">{{event_count}} события</p>
-        <ul>
-    {% for event in event_list %}
-        <li>
-            <div class="all_event_grid">
-                <div class="all_event_grid_item">
+        <ul class="all_event_grid">
+            {% for event in event_list %}
+                <li class="all_event_grid_item">
                     <img src="{% if event.main_photo %}{{ event.main_photo.url }}{% else %}{% static 'main_images/test.png' %}{% endif %}" alt="event_img" class="all_event_grid_item_img">
                     <p class="all_event_grid_item_organizer">{{ event.organizer }} организатор</p>
                     <p class="all_event_grid_item_title">{{ event.title }}</p>
@@ -104,11 +104,9 @@
                         <button class="all_event_grid_item_btn">Записаться</button>
                         <p class="all_event_grid_item_place">осталось {{ event.count_place }} из {{ event.participants_limit }} мест</p>
                     </div>
-                </div>
-            </div>
-        </li>
-    {% endfor %}
-</ul>
+                </li>
+            {% endfor %}
+        </ul>
 
 
         </main>
@@ -179,6 +177,27 @@
 });
 
  
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    const citySelect = document.getElementById("event-city-filter");
+
+    if (citySelect) {
+        citySelect.addEventListener("change", function () {
+            let params = new URLSearchParams(window.location.search);
+
+            let city = citySelect.value;
+            if (city === "all") {
+                params.delete("city");  // Удаляем параметр city, если выбрано "Все"
+            } else {
+                params.set("city", city);  // Устанавливаем параметр city
+            }
+
+            window.location.search = params.toString();  // Перезагрузка страницы с новым фильтром
+        });
+    }
+});
+
     </script>
     
 </body>

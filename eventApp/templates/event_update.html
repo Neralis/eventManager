@@ -1,0 +1,151 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактирование мероприятия</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<header class="header">
+    <div class="header_logo">
+        <img src="{% static 'img/logo_img.png' %}" alt="logo" class="logo">
+    </div>
+</header>
+
+<main>
+    <section class="create_event">
+        <div class="create_event_block">
+            <div class="create_event_btn_title">
+                <a href="{% url 'event_detail' event.id %}" class="create_event_btn">←</a>
+                <h2>Редактирование мероприятия</h2>
+            </div>
+            <form method="post" class="create_event_form" enctype="multipart/form-data">
+
+
+                {% csrf_token %}
+
+                <input class="create_event_form_item" type="text" name="title" placeholder="Название мероприятия" value="{{ event.title }}"  >
+
+                <select class="create_event_form_category" name="category"  >
+                    <option value="" disabled>Выберите категорию</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}" {% if event.category.id == category.id %}selected{% endif %}>{{ category.title }}</option>
+                    {% endfor %}
+                </select>
+
+                <div class="create_event_form_format_count">
+                    <select class="create_event_form_format" name="event_format"   onchange="toggleAddressField()">
+                        <option value="Online" {% if event.event_format == "Online" %}selected{% endif %}>Онлайн</option>
+                        <option value="Offline" {% if event.event_format == "Offline" %}selected{% endif %}>Оффлайн</option>
+                    </select>
+
+                    <input class="create_event_form_item number_of_participants" type="number" name="participants_limit" min="1" value="{{ event.participants_limit }}"  >
+                </div>
+
+                <div class="create_event_form_registration_type">
+                    <fieldset>
+                        <legend>Регистрация</legend>
+                        <label><input type="radio" name="registration_status" value="true" {% if event.registration_status %}checked{% endif %}> Обязательна</label>
+                        <label><input type="radio" name="registration_status" value="false" {% if not event.registration_status %}checked{% endif %}> Не обязательна</label>
+                    </fieldset>
+                </div>
+
+                <input class="create_event_form_item" type="number" name="age_limit" min="0" max="120" value="{{ event.age_limit }}"  >
+
+                <div class="create_event_form_dateStart_dateEnd">
+                    <input class="create_event_form_item" type="datetime-local" name="date_start"  value="{{ event.date_start|date:'Y-m-d\TH:i' }}"  >
+                    <input class="create_event_form_item" type="datetime-local" name="date_end" value="{{ event.date_end|date:'Y-m-d\TH:i' }}">
+                </div>
+
+                <input id="city" value="{{ event.city }}" class="create_event_form_item create_event_form_item_city" type="text" name="city" placeholder="город" required>
+
+                <div id="offline-address" {% if event_format == "Online" %}style="display: none;"{% endif %}>
+                    
+                    <input value="{{ form.location_offline.value|default_if_none:'' }}" class="create_event_form_item create_event_form_item_adress" type="text" name="{{ form.location_offline.name }}" placeholder="Адрес мероприятия" style="width: 100%;">
+                </div>
+                
+                <!-- Поле для онлайн-ссылки -->
+                <div id="online-address" {% if event_format == "Offline" %}style="display: none;"{% endif %}>
+                    <input value="{{ form.location_online.value|default_if_none:'' }}" class="create_event_form_item create_event_form_item_url" type="text" name="{{ form.location_online.name }}" placeholder="Ссылка на мероприятие" style="width: 100%;">
+                </div>
+
+
+                <textarea class="create_event_form_item create_event_form_description" name="description" rows="10" placeholder="описание">{{ event.description }}  </textarea>
+                
+                <fieldset class="create_event_form_file">
+                    <legend>Главное изображение</legend>
+                    <input class="form-control" type="file" name="main_photo">
+                    {% if event.main_photo %}
+                        <img src="{{ event.main_photo.url }}" alt="Главное изображение" width="200">
+                    {% endif %}
+                </fieldset>
+
+                <fieldset class="create_event_form_file create_event_form_file2">
+                    <legend>Дополнительные изображения</legend>
+                    <input class="form-control" type="file" name="event_images" multiple>
+                    {% if images %}
+    <p>Текущие изображения:</p>
+    <div>
+        {% for image in images %}
+            <img src="{{ image.image.url }}" alt="Доп. изображение" width="100">
+        {% endfor %}
+    </div>
+{% endif %}
+
+
+                <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+            </form>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="footer_content">
+        <ul class="footer_link">
+            <li><a href="#">Главная</a></li>
+            <li><a href="#">О нас</a></li>
+            <li><a href="#">Реклама</a></li>
+            <li><a href="#">Помощь</a></li>
+            <li><a href="#">Задать вопрос</a></li>
+        </ul>
+    </div>
+</footer>
+
+<script>
+    function toggleAddressField() {
+    let format = document.querySelector("select[name='event_format']").value;
+
+    let offlineInput = document.querySelector("input[name='location_offline']");
+    let onlineInput = document.querySelector("input[name='location_online']");
+    let cityInput = document.querySelector("input[name='city']");  // Исправлено: имя поля 'city'
+
+    if (format === "Offline") {
+        document.getElementById("offline-address").style.display = "block";
+        document.getElementById("city").style.display = "block";
+        document.getElementById("online-address").style.display = "none";
+        onlineInput.value = "";  // Очищаем скрытое поле
+    } else {
+        document.getElementById("offline-address").style.display = "none";
+        document.getElementById("city").style.display = "none";
+        document.getElementById("online-address").style.display = "block";
+        offlineInput.value = "";  // Очищаем скрытое поле
+        cityInput.value = "";  // Очищаем поле города
+    }
+}
+
+window.onload = function() {
+    toggleAddressField();
+    document.querySelector("select[name='event_format']").addEventListener("change", toggleAddressField);
+};
+</script>
+
+
+
+</body>
+</html>
