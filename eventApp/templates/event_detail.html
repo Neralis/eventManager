@@ -112,48 +112,28 @@
 
         <p class="event_place_text">Справка по телефону <span class="event_place_phone">{{organizer_phone}}</span></p>
 
-    <div class="event_reviews">
-        <h4 class="event_reviews_title event_title_2">Отзывы</h4>
-        <div class="event_reviews_block">
-            <div class="event_reviews_block_people">
-                <p class="event_reviews_name">Нина Ф.</p>
-                <div class="event_reviews_stars">
-                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
-                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
-                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
-                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
-                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
+        <div class="event_reviews">
+            <h4 class="event_reviews_title event_title_2">Отзывы</h4>
+        
+            {% if reviews %}
+                {% for review in reviews %}
+                <div class="event_reviews_block">
+                    <div class="event_reviews_block_people">
+                        <p class="event_reviews_name">{{ review.participant }}</p>
+                        <div class="event_reviews_stars">
+                            {% for _ in ""|ljust:review.rating %}
+                                <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <p class="event_reviews_text">{{ review.text }}</p>
                 </div>
-            </div>
-            <p class="event_reviews_text">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus vel labore rem commodi culpa numquam dignissimos dicta? Amet illum quod quae error fugiat? Totam eius corrupti facilis, similique dolorem nostrum odio atque, reprehenderit sequi explicabo reiciendis consequatur voluptatum sunt temporibus. Beatae minus rem, facere officiis voluptas qui velit.</p>
+                {% endfor %}
+            {% else %}
+                <p class="event_reviews_text">Пока нет отзывов. Будьте первым!</p>
+            {% endif %}
         </div>
-        <div class="event_reviews_block">
-            <div class="event_reviews_block_people">
-                <p class="event_reviews_name">Нина Ф.</p>
-                <div class="event_reviews_stars">
-                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
-                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
-                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
-                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
-                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
-                </div>
-            </div>
-            <p class="event_reviews_text">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus vel labore rem commodi culpa numquam dignissimos dicta? Amet illum quod quae error fugiat? Totam eius corrupti facilis, similique dolorem nostrum odio atque, reprehenderit sequi explicabo reiciendis consequatur voluptatum sunt temporibus. Beatae minus rem, facere officiis voluptas qui velit.</p>
-        </div>
-        <div class="event_reviews_block">
-            <div class="event_reviews_block_people">
-                <p class="event_reviews_name">Нина Ф.</p>
-                <div class="event_reviews_stars">
-                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
-                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
-                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
-                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
-                    <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
-                </div>
-            </div>
-            <p class="event_reviews_text">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus vel labore rem commodi culpa numquam dignissimos dicta? Amet illum quod quae error fugiat? Totam eius corrupti facilis, similique dolorem nostrum odio atque, reprehenderit sequi explicabo reiciendis consequatur voluptatum sunt temporibus. Beatae minus rem, facere officiis voluptas qui velit.</p>
-        </div>
-    </div>
+        
 
     </div>
 

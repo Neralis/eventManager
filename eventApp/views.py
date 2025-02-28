@@ -62,12 +62,6 @@ class EventListView(ListView):
         else:
             event_count = Event.objects.count()
         
-      
-
-        
-
-        
-
         context['event_count'] = event_count
 
         return context
@@ -78,13 +72,15 @@ class EventDetailView(DetailView):
     template_name = 'event_detail.html'
 
     def get_context_data(self, **kwargs):
-        context = super(EventDetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
-        context['count_place'] = self.object.participants_limit - self.object.participants.count()
-        context['event_images'] = self.object.event_images.all()  # Это QuerySet изображений
-        context['organizer_phone'] = self.object.organizer.phone
-        context['organizer_events'] = Event.objects.filter(organizer= self.object.organizer).exclude(id = self.object.id)[:6]
-        
+        object = self.get_object()  # Явно получаем объект
+
+        context['count_place'] = object.participants_limit - object.participants.count()
+        context['event_images'] = object.event_images.all()  # Это QuerySet изображений
+        context['organizer_phone'] = object.organizer.phone
+        context['organizer_events'] = Event.objects.filter(organizer=object.organizer).exclude(id=object.id)[:6]
+        context['reviews'] = object.reviews.all()
 
         return context
 
