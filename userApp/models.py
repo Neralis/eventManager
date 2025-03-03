@@ -60,6 +60,18 @@ def delete_users_events_(sender, instance, **kwargs):
     events.delete()
 
 
+class Notification(models.Model):
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='notifications'
+    )
+    text = models.TextField()
+    url_event = models.URLField()
+    created = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+
 class NotAuthUser(models.Model):
     email = models.EmailField()
     phone = PhoneNumberField()
