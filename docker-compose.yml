@@ -1,0 +1,77 @@
+services:
+  web:
+    build: .
+    container_name: django_app
+    command: python -m gunicorn eventManager.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      - celery
+    networks:
+      - event_manager_network
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+
+  db:
+    image: postgres:15
+    container_name: postgres_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=event_manager
+      - POSTGRES_USER=event
+      - POSTGRES_PASSWORD=event
+    ports:
+      - "5433:5432"
+    networks:
+      - event_manager_network
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    environment:
+      - TZ=Europe/Moscow
+    networks:
+      - event_manager_network
+
+  celery:
+    build: .
+    container_name: celery_worker
+    command: celery -A eventManager worker --pool=solo --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+    networks:
+      - event_manager_network
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+
+  celery-beat:
+    build: .
+    container_name: celery_beat
+    command: celery -A eventManager beat --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - celery
+    networks:
+      - event_manager_network
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+
+networks:
+  event_manager_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
