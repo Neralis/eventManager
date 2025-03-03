@@ -43,12 +43,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_celery_beat',
+    'phonenumber_field',
+    'imagekit',
     'userApp',
     'eventApp',
     'participantApp',
     'reviewApp',
-    'phonenumber_field',
-    'imagekit',
+    'tasksApp'
 ]
 
 MIDDLEWARE = [
@@ -87,8 +89,12 @@ WSGI_APPLICATION = 'eventManager.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'event_manager',
+        'USER': 'event',
+        'PASSWORD': 'event',
+        'HOST': 'localhost',
+        'PORT': 5433,
     }
 }
 
@@ -117,7 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -135,3 +141,18 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 IMAGEKIT_CACHEFILE_NAMER = 'imagekit.cachefiles.namer.DefaultCacheFileNamer'
+
+# ------------- SMTP -------------------------------------------
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = False
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'ner4corp@gmail.com'
+EMAIL_HOST_PASSWORD = 'oimy thbj nfxn lfhx'
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
