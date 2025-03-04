@@ -1,3 +1,7 @@
+import os
+import shutil
+
+from django.conf import settings
 from unidecode import unidecode
 from django.db import models
 from django.db.models import Q, F, SET_DEFAULT, SET_NULL
@@ -16,6 +20,22 @@ class Category(models.Model):
         return self.title
 
 
+def event_main_photo_path(instance, filename):
+    """Динамический путь для основного фото мероприятия"""
+    # Убедимся, что у instance есть ID
+    if not instance.id:
+        # Если ID нет, сохраним объект, чтобы получить ID
+        instance.save()
+    return f'events/{instance.id}/main_photo/{filename}'
+
+def event_additional_image_path(instance, filename):
+    """Динамический путь для дополнительных изображений"""
+    # Убедимся, что у event есть ID
+    if not instance.event_id:
+        # Если у связанного события нет ID, сохраним его
+        instance.event.save()
+    return f'events/{instance.event.id}/additional_images/{filename}'
+
 class ActivityEventManager(models.Manager):
     def get_queryset(self, *args, **kwargs):
         return (super().get_queryset(*args, **kwargs).
@@ -23,7 +43,7 @@ class ActivityEventManager(models.Manager):
 
 
 def get_default_organizer():
-    return CustomUser.objects.get(username='default_remove_user')
+    return CustomUser.objects.get(username='default_remove_user').id
 
 
 class Event(models.Model):
@@ -66,7 +86,7 @@ class Event(models.Model):
 
 
     main_photo = ProcessedImageField(
-        upload_to='main_images/',
+        upload_to = event_main_photo_path,
         processors=[ResizeToFit(800, 600)],
         format='JPEG',
         options={'quality': 70},
@@ -111,8 +131,33 @@ class Event(models.Model):
             while Event.objects.filter(slug=slug).exists():
                 slug = f'{baseslug}-{get_random_string()}'
             self.slug = slug
-        super().save(*args, **kwargs)
 
+        # Сохранение объекта для получения ID (без main_photo)
+        if self.main_photo:
+            temp_photo = self.main_photo
+            self.main_photo = None
+            super().save(*args, **kwargs)
+            self.main_photo = temp_photo
+        else:
+            super().save(*args, **kwargs)
+
+        # Создание каталога после сохранения объекта
+        event_dir = os.path.join(settings.MEDIA_ROOT, f'events/{self.id}')
+        main_photo_dir = os.path.join(event_dir, 'main_photo')
+        additional_images_dir = os.path.join(event_dir, 'additional_images')
+
+        os.makedirs(main_photo_dir, exist_ok=True)
+        os.makedirs(additional_images_dir, exist_ok=True)
+
+        if self.main_photo:
+            super().save(*args, **kwargs)
+
+    # Удаление каталога мероприятия перед удалением объекта
+    def delete(self, *args, **kwargs):
+        event_dir = os.path.join(settings.MEDIA_ROOT, f'events/{self.id}')
+        if os.path.exists(event_dir):
+            shutil.rmtree(event_dir)
+        super().delete(*args, **kwargs)
 
 class EventImages(models.Model):
     event = models.ForeignKey(
@@ -121,8 +166,18 @@ class EventImages(models.Model):
         related_name='event_images'
     )
     image = ProcessedImageField(
-        upload_to='images/',
+        upload_to=event_additional_image_path,
         processors=[ResizeToFit(800, 600)],
         format='JPEG',
         options={'quality': 70}
     )
+
+    def save(self, *args, **kwargs):
+        # Проверка, что связанное событие сохранено и имеет ID
+        if not self.event_id:
+            self.event.save()
+        # Создадим каталоги, если они ещё не существуют
+        event_dir = os.path.join(settings.MEDIA_ROOT, f'events/{self.event.id}')
+        additional_images_dir = os.path.join(event_dir, 'additional_images')
+        os.makedirs(additional_images_dir, exist_ok=True)
+        super().save(*args, **kwargs)
