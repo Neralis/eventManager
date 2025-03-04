@@ -26,7 +26,7 @@ services:
       - POSTGRES_USER=event
       - POSTGRES_PASSWORD=event
     ports:
-      - "5433:5432"
+      - "5432:5432"
     networks:
       - event_manager_network
 
@@ -63,6 +63,7 @@ services:
     depends_on:
       - redis
       - celery
+      - db
     networks:
       - event_manager_network
     environment:

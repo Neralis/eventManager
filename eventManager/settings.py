@@ -93,8 +93,8 @@ DATABASES = {
         'NAME': 'event_manager',
         'USER': 'event',
         'PASSWORD': 'event',
-        'HOST': 'localhost',
-        'PORT': 5433,
+        'HOST': 'db',
+        'PORT': 5432,
     }
 }
 
