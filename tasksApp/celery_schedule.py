@@ -4,7 +4,7 @@ from django_celery_beat.models import PeriodicTask, IntervalSchedule
 
 def setup_periodic_tasks():
     schedule, created = IntervalSchedule.objects.get_or_create(
-        every=1,
+        every=3,
         period=IntervalSchedule.MINUTES
     )
     PeriodicTask.objects.update_or_create(

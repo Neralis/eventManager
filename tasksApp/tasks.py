@@ -11,8 +11,8 @@ from tasksApp.utils import generate_token
 
 @shared_task
 def send_email_for_users_before_event():
-    event_time_lower = now() + timedelta(hours=2, minutes=55)
-    event_time_upper = now() + timedelta(hours=3, minutes=10)
+    event_time_lower = now() + timedelta(hours=2, minutes=56)
+    event_time_upper = now() + timedelta(hours=3, minutes=1)
     participants = Participants.objects.filter(
         event__in=Event.objects.filter(
             is_active=True,
