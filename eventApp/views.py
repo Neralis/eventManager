@@ -55,17 +55,11 @@ class EventListView(ListView):
         context['categories'] = Category.objects.all()
         context['cities'] = Event.objects.exclude(city__isnull=True).exclude(city="").values_list("city", flat=True).distinct()
 
-
-        event_format = self.request.GET.get('event_format')
-        if event_format:
-            event_count = Event.objects.filter(event_format=event_format).count()
-        else:
-            event_count = Event.objects.count()
+        queryset = self.get_queryset()
         
-        context['event_count'] = event_count
+        context['event_count'] = queryset.count()
 
         return context
-
 
 class EventDetailView(DetailView):
     model = Event

@@ -56,14 +56,15 @@
         <div class="all_event_filter_items">
             <div class="all_event_filter_item custom-select">
                 <select class="all_event_filter_item_category" id="event-category-filter">
-                    <option value="" disabled selected>Категории</option>
+                    <option value="all" {% if not request.GET.category or request.GET.category == "all" %}selected{% endif %}>
+                        Все категории
+                    </option>
                     {% for category in categories %}
                         <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>
                             {{ category.title }}
                         </option>
                     {% endfor %}
                 </select>
-                
             </div>
             <div class="all_event_filter_item custom-select">
                 <select class="all_event_filter_item_city" id="event-city-filter">
