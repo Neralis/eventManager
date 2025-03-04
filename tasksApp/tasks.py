@@ -1,5 +1,4 @@
 from django.db import transaction
-from django.db.models.functions.datetime import Now
 from django.utils.timezone import now, timedelta
 from eventApp.models import Event
 from participantApp.models import Participants
@@ -89,3 +88,12 @@ def send_mail_to_participant(participant_id, event_id):
         [email],
         fail_silently=False,
     )
+
+
+@shared_task
+def remove_notifications():
+	time_life = now() - timedelta(days=30)
+	try:
+		Notifications.objects.filter(created_at__lt=time_life).delete()
+	except:
+		print('че-то не вышло')
