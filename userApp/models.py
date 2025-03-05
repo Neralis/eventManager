@@ -42,6 +42,10 @@ class CustomUser(AbstractUser):
         verbose_name='Права пользователя'
     )
 
+    class Meta:
+        verbose_name = 'Авторизованный пользователь'
+        verbose_name_plural = 'Авторизованные пользователи'
+
     def __str__(self):
         return f'({self.username}) {self.first_name} {self.last_name} {self.email}'
 

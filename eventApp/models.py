@@ -17,6 +17,10 @@ class Category(models.Model):
         verbose_name='Название категории',
     )
 
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
+
     def __str__(self):
         return self.title
 
@@ -75,7 +79,7 @@ class Event(models.Model):
     )
     age_limit = models.PositiveIntegerField(
         default=0,
-        verbose_name='Возрастное мероприятие'
+        verbose_name='Возрастное ограничение'
     )
 
     organizer = models.ForeignKey(
@@ -101,7 +105,7 @@ class Event(models.Model):
         verbose_name='Лимит участников'
     )
     available_places = models.PositiveIntegerField(
-        default=0,
+        default=1,
         verbose_name='Количество свободных мест'
     )
 
@@ -173,6 +177,7 @@ class Event(models.Model):
             while Event.objects.filter(slug=slug).exists():
                 slug = f'{baseslug}-{get_random_string()}'
             self.slug = slug
+
         super().save(*args, **kwargs)
 
 

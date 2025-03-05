@@ -5,19 +5,34 @@ from django.core.mail import send_mail
 from participantApp.models import Participants
 
 
+@receiver(pre_save, sender=Participants)
+def check_participants_limit(sender, instance, **kwargs):
+    available_places = instance.event.available_places
+    if available_places <= 0:
+        raise ValueError('error: Нет свободных мест для регистрации на мероприятие')
+
+
+@receiver(pre_save, sender=Participants)
+def check_activity_status_and_date(sender, instance, **kwargs):
+    event = instance.event
+    if not event.is_active or event.date_start < now():
+        raise ValueError('error: Нельзя зарегистрироваться на прошедшее или уже начавшееся событие')
+
+
+@receiver(pre_save, sender=Participants)
+def check_status_registration_on_event(sender, instance, **kwargs):
+    event = instance.event
+    if event.registration_status and instance.not_auth_user is not None:
+        raise ValueError('error: Неавторизованный пользователь не может '
+                         'записаться на мероприятие с обязательной регистрацией')
+
+
 @receiver(post_save, sender=Participants)
 def update_available_places_on_save(sender, instance, created, **kwargs):
     if created:
         event = instance.event
-        event.available_places = event.participants_limit - event.participants.count()
+        event.available_places -= 1
         event.save(update_fields=['available_places'])
-
-
-@receiver(post_delete, sender=Participants)
-def update_available_places_on_delete(sender, instance, **kwargs):
-    event = instance.event
-    event.available_places = event.participants_limit - event.participants.count()
-    event.save(update_fields=['available_places'])
 
 
 @receiver(post_save, sender=Participants)
@@ -32,15 +47,11 @@ def registration_on_event(sender, instance, **kwargs):
     )
 
 
-@receiver(pre_save, sender=Participants)
-def check_participants_limit(sender, instance, **kwargs):
-    available_places = instance.event.available_places
-    if available_places <= 0:
-        raise ValueError('error: Нет свободных мест для регистрации на мероприятие')
-
-
-@receiver(pre_save, sender=Participants)
-def check_activity_status_and_date(sender, instance, **kwargs):
+@receiver(post_delete, sender=Participants)
+def update_available_places_on_delete(sender, instance, **kwargs):
     event = instance.event
-    if not event.is_active or event.date_start > now():
-        raise ValueError('error: Нельзя зарегистрироваться на прошедшее или уже начавшееся событие')
+    event.available_places += 1
+    event.save(update_fields=['available_places'])
+
+
+

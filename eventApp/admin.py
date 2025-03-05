@@ -48,6 +48,7 @@ class CategoryAdmin(admin.ModelAdmin):
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Event._meta.fields]
+    readonly_fields = ['available_places']
     list_filter = [
         'category',
         'date_start',

@@ -24,5 +24,12 @@ class Review(models.Model):
         verbose_name='Оценка мероприятия'
     )
 
+    class Meta:
+        verbose_name = 'Отзыв'
+        verbose_name_plural = 'Отзывы'
+        indexes = [
+            models.Index(fields=['event']),
+        ]
+
     def __str__(self):
         return f'{self.participant} оставил комментарий на {self.event.title}'
