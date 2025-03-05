@@ -2,8 +2,8 @@ import json
 from django_celery_beat.models import PeriodicTask, IntervalSchedule
 
 
-def setup_periodic_tasks():
-    schedule, created = IntervalSchedule.objects.get_or_create(
+def setup_short_periodic_tasks():
+    schedule, _ = IntervalSchedule.objects.get_or_create(
         every=3,
         period=IntervalSchedule.MINUTES
     )
@@ -23,3 +23,23 @@ def setup_periodic_tasks():
             'args': json.dumps([])
         }
     )
+
+
+def setup_daily_tasks():
+    schedule_day, _ = IntervalSchedule.objects.get_or_create(
+        every=1,
+        period=IntervalSchedule.DAYS
+    )
+    PeriodicTask.objects.update_or_create(
+        name='remove_notifications',
+        defaults={
+            'interval': schedule_day,
+            'task': 'tasksApp.tasks.remove_notifications',
+            'args': json.dumps([])
+        }
+    )
+
+
+def setup_periodic_tasks():
+    setup_short_periodic_tasks()
+    setup_daily_tasks()

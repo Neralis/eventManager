@@ -2,9 +2,10 @@ services:
   web:
     build: .
     container_name: django_app
-    command: python -m gunicorn eventManager.wsgi:application --bind 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app
+      - ./staticfiles:/eventManager/staticfiles
     ports:
       - "8000:8000"
     depends_on:

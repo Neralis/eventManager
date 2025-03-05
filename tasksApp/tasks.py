@@ -61,6 +61,7 @@ def check_actual_date_event():
             notifications.append(
                 Notification(
                     user=participant.user,
+                    title='Оставьте, пожалуйста, отзыв',
                     text=f'Мероприятие, в котром вы участвовали {participant.event.title} завершилось',
                     url_event=participant.event.get_absolute_url()
                 )
@@ -92,8 +93,8 @@ def send_mail_to_participant(participant_id, event_id):
 
 @shared_task
 def remove_notifications():
-	time_life = now() - timedelta(days=30)
-	try:
-		Notifications.objects.filter(created_at__lt=time_life).delete()
-	except:
-		print('че-то не вышло')
+    time_life = now() - timedelta(days=30)
+    try:
+        Notification.objects.filter(created_at__lt=time_life).delete()
+    except Exception as e:
+        print(f'error {e}')
