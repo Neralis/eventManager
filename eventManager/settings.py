@@ -153,7 +153,7 @@ EMAIL_USE_SSL = True
 EMAIL_HOST_USER = 'ner4corp@gmail.com'
 EMAIL_HOST_PASSWORD = 'oimy thbj nfxn lfhx'
 
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
