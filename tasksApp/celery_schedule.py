@@ -3,12 +3,12 @@ from django_celery_beat.models import PeriodicTask, IntervalSchedule
 
 
 def setup_short_periodic_tasks() -> None:
-    '''
+    """
     Регистрация временного интервала в 3 минуты для celery-функций.
     Добавляем временной интервал для функций:
         - send_email_for_participants_before_event,
         - check_actual_date_event
-    '''
+    """
 
     schedule, _ = IntervalSchedule.objects.get_or_create(
         every=3,
@@ -33,11 +33,11 @@ def setup_short_periodic_tasks() -> None:
 
 
 def setup_daily_tasks() -> None:
-    '''
+    """
     Регистрация временного интервала в 1 день для celery-функций.
     Добавляем временной интервал для функций:
         - remove_notifications
-    '''
+    """
 
     schedule_day, _ = IntervalSchedule.objects.get_or_create(
         every=1,

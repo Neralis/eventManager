@@ -1,7 +1,8 @@
-from django.db import models
-from django.db.models import Q
+from django.db import models, transaction
+from django.db.models import Q, Count, QuerySet
 from eventApp.models import Event
 from userApp.models import NotAuthUser, CustomUser
+from participantApp.constants import FAVOURITE_PARTICIPANT_THRESHOLD
 
 
 class Participants(models.Model):
@@ -62,4 +63,49 @@ class Participants(models.Model):
         if self.user:
             return self.user.email
         return self.not_auth_user.email
+
+    @classmethod
+    def is_registered(cls, event: 'Event', user=None, email=None, phone=None) -> bool:
+        """Проверяет, зарегистрирован ли пользователь(авторизованный или нет) как участник этого мероприятия."""
+        if user:
+            return cls.objects.filter(event=event, user=user).exists()
+        if email and phone:
+            return cls.objects.filter(event=event, not_auth_user__email=email, not_auth_user__phone=phone).exists()
+        return False
+
+    @classmethod
+    def create_participant(cls, event: 'Event', user=None, email=None, phone=None) -> 'Participants':
+        """Создает участника для мероприятия. Возвращает созданного участника"""
+        if event.available_places <= 0:
+            raise ValueError('Свободные места для данного мероприятия закончились.')
+
+        if cls.is_registered(event, user, email, phone):
+            raise ValueError('Данный пользователь уже зарегестрирован на данное мероприятие.')
+
+        with transaction.atomic():
+            if user:
+                participant = cls(event=event, user=user)
+            else:
+                not_auth_user, _ = NotAuthUser.objects.get_or_create(email=email, phone=phone)
+                participant = cls(event=event, not_auth_user=not_auth_user)
+            participant.save()
+            return participant
+
+    @classmethod
+    def get_statistics_favourite_participant(cls, organizer_id: int) -> QuerySet:
+        """
+        Находит избранных участников для организатора мероприятий.
+        Для этого пользователю надо поучаствовать в мероприятиях организатора больше раз,
+        чем FAVOURITE_PARTICIPANT_THRESHOLD.
+        """
+
+        participants = cls.objects.filter(event__organizer__id=organizer_id)
+        favourite_participants = (
+            participants
+            .values('not_auth_user__email', 'user__email')
+            .annotate(registration_count=Count('id'))
+            .filter(registration_count__gt=FAVOURITE_PARTICIPANT_THRESHOLD)
+        )
+        return favourite_participants
+
 

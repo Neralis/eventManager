@@ -4,6 +4,7 @@ from participantApp.models import Participants
 
 
 class RegistrationParticipantsForm(forms.ModelForm):
+    """Форма для регистрации пользователей на мероприятие."""
     email = forms.EmailField()
     phone = PhoneNumberField()
 
@@ -12,6 +13,7 @@ class RegistrationParticipantsForm(forms.ModelForm):
         fields = ['email', 'phone']
 
     def __init__(self, *args, **kwargs):
+        """Получает из URL данные о авторизованном пользователе и мероприятии."""
         self.user = kwargs.pop('user', None)
         self.event = kwargs.pop('event', None)
         super().__init__(*args, **kwargs)
@@ -21,29 +23,18 @@ class RegistrationParticipantsForm(forms.ModelForm):
             self.fields['phone'].initial = self.user.phone
 
     def clean(self):
+        """Валидирует данные."""
         cleaned_data = super().clean()
 
         if not self.event:
             raise forms.ValidationError('Событие не найдено.')
 
-        if self.event.registration_status and not self.user.is_authenticated:
-            raise forms.ValidationError('Для участия в данном мероприятии необходимо авторизоваться')
-        if self.user:
-            if Participants.objects.filter(
-                    event=self.event,
-                    user=self.user
-            ).exists():
-                raise forms.ValidationError('Вы уже записаны на данное мероприятие')
-        else:
-            email = cleaned_data.get('email', None)
-            phone = cleaned_data.get('phone', None)
+        if self.event.registration_status and not self.user:
+            raise forms.ValidationError('Для участия в данном мероприятии необходимо авторизоваться.')
 
-            if not email or not phone:
-                raise forms.ValidationError('Не все поля были заполнены для регистрации')
-            if Participants.objects.filter(
-                    event=self.event,
-                    not_auth_user__email=email,
-                    not_auth_user__phone=phone
-            ).exists():
-                raise forms.ValidationError('Вы уже записаны на данное мероприятие')
+        email = cleaned_data.get('email', None)
+        phone = cleaned_data.get('phone', None)
+
+        if not self.user and (not email or not phone):
+            raise forms.ValidationError('Не все поля были заполнены для регистрации.')
         return cleaned_data

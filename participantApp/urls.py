@@ -8,5 +8,4 @@ urlpatterns = [
     path('delete_participant/<int:event_id>/<int:participant_id>/', views.DeleteParticipants.as_view(),
          name='delete_participant'),
     path('favourite_participants/', views.FavouriteParticipants.as_view(), name='favourite_participants'),
-    path('index', views.index, name='index'),
 ]

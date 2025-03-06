@@ -22,10 +22,7 @@ from tasksApp.constants import (
 
 @shared_task
 def send_email_for_participants_before_event() -> None:
-    '''
-    Функция celery для отправки писем на почту пользователям за 3 часа до начала мероприятия
-    '''
-
+    """Функция celery для отправки писем на почту пользователям за 3 часа до начала мероприятия."""
     event_time_lower = now() + timedelta(hours=2, minutes=57)
     event_time_upper = now() + timedelta(hours=3, minutes=1)
     participants = Participants.objects.filter(
@@ -47,10 +44,10 @@ def send_email_for_participants_before_event() -> None:
 
 @shared_task
 def check_actual_date_event() -> None:
-    '''
+    """
     Функция celery для проверки наличия актуальных событий.
-    Если такие существуют, то отправялется ссылка для написания отзыва участникам мероприятия.
-    '''
+    Если такие существуют, то отправялется ссылка для создания отзыва участникам мероприятия.
+    """
 
     completed_event_id = update_completed_events()
     if not completed_event_id:
@@ -84,10 +81,7 @@ def check_actual_date_event() -> None:
 
 @shared_task
 def remove_notifications() -> None:
-    '''
-    Функция celery для удаления уведомлений, дата создания которых больше месяца назад
-    '''
-
+    """Функция celery для удаления уведомлений, дата создания которых больше месяца назад."""
     time_life = now() - timedelta(days=30)
     try:
         Notification.objects.filter(created_at__lt=time_life).delete()

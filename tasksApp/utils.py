@@ -15,10 +15,7 @@ from tasksApp.constants import (
 
 
 def generate_token(email: str, event_id: int) -> str:
-    '''
-    Генерация токена для создания отзыва на мероприятие
-    '''
-
+    """Генерация токена для создания отзыва на мероприятие."""
     payload = {
         'email': email,
         'event_id': event_id,
@@ -29,10 +26,7 @@ def generate_token(email: str, event_id: int) -> str:
 
 
 def validate_token(token: str) -> Tuple[Optional[str], Optional[int]]:
-    '''
-    Валидация токена
-    '''
-
+    """Валидация токена."""
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
         return payload['email'], payload['event_id']
@@ -41,10 +35,10 @@ def validate_token(token: str) -> Tuple[Optional[str], Optional[int]]:
 
 
 def update_completed_events() -> List[int]:
-    '''
+    """
     Обновление статуса активности завершившихся мероприятий, если такие есть.
-    Возвращает список id завершившихся мероприятий
-    '''
+    Возвращает список id завершившихся мероприятий.
+    """
 
     completed_events = Event.objects.filter(
         is_active=True,
@@ -61,19 +55,13 @@ def update_completed_events() -> List[int]:
 
 
 def generate_unique_url_for_participants(token: str) -> str:
-    '''
-    Генерация уникальной ссылки при помощи токена для создания отзыва
-    '''
-
+    """Генерация уникальной ссылки при помощи токена для создания отзыва."""
     path = reverse('review_create', kwargs={'token': token})
     return f'http://127.0.0.1:8000/{path}/'
 
 
 def send_mail_to_not_auth_user_participant(email: str, event_title: str, unique_url: str) -> None:
-    '''
-    Функция для отправки писем на почту неавторизованным пользователям
-    '''
-
+    """Функция для отправки писем на почту неавторизованным пользователям."""
     send_mail(
         MESSAGE_TITLE,
         f'{MESSAGE_TEXT_EVENT_INFO}{event_title}\n{MESSAGE_TEXT_EVENT_URL}{unique_url}',

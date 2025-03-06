@@ -5,7 +5,8 @@ from eventApp.models import Event
 
 
 @receiver(post_migrate, sender=Event)
-def create_default_organizer(sender, instance, **kwargs):
+def create_default_organizer(sender, instance, **kwargs) -> None:
+    """Сигнал для создания дефолтного пользователя после миграций."""
     try:
         CustomUser = sender.get_model('userApp', 'CustomUser')
         CustomUser.objects.get_or_create(
@@ -19,7 +20,8 @@ def create_default_organizer(sender, instance, **kwargs):
 
 
 @receiver(pre_save, sender=Event)
-def update_available_places_from_participants_limit(sender, instance, **kwargs):
+def update_available_places_from_participants_limit(sender, instance, **kwargs) -> None:
+    """Сигнал для обновления свободных мест на мероприятии."""
     from participantApp.models import Participants
     if instance.pk is None:
         instance.available_places = instance.participants_limit
@@ -27,5 +29,5 @@ def update_available_places_from_participants_limit(sender, instance, **kwargs):
         participants_count = Participants.objects.filter(event=instance).count()
         if instance.participants_limit < participants_count:
             raise ValueError('error: Лимит участников не может быть меньше,'
-                             'чем количество зарегистрированных участников')
+                             'чем количество зарегистрированных участников.')
         instance.available_places = instance.participants_limit - participants_count

@@ -7,20 +7,18 @@ from userApp.models import Notification
 
 @receiver(post_save, sender=Review)
 def create_notifications_about_review(sender, instance, created, **kwargs):
+	"""Сигнал для создания уведомления для организатора мероприятия, если на его мероприятие оставили отзыв."""
 	if created:
 		if not instance.event:
-			print('Отзыв не привязан к событию')
-			return
+			raise ValueError('Отзыв не привязан к событию.')
 		if not instance.event.organizer:
-			print('У события нет организатора')
-			return
+			raise ValueError('У события нет организатора.')
 		url = reverse('review_delete_success')
 		try:
 			Notification.objects.create(
 				user=instance.event.organizer,
-				text=f'На ваше мероприятия был оставлен отзыв',
+				text=f'На ваше мероприятия был оставлен отзыв.',
 				url_event=url
 			)
-			print('Успешно создано уведомление')
 		except Exception as e:
 			print(f'error: {e}')
