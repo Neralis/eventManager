@@ -6,6 +6,7 @@ from userApp.models import CustomUser, NotAuthUser
 @admin.register(CustomUser)
 class CustomUser(admin.ModelAdmin):
     list_display = [
+        'username',
         'first_name',
         'last_name',
         'email',
@@ -15,6 +16,7 @@ class CustomUser(admin.ModelAdmin):
         'date_birthday',
     ]
     search_fields = [
+        'username',
         'email',
         'phone',
     ]
