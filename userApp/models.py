@@ -66,7 +66,8 @@ class Notification(models.Model):
         verbose_name='Текст уведомления'
     )
     url_event = models.URLField(
-        verbose_name='Ссылка'
+        max_length=500,
+        verbose_name='Ссылка',
     )
     created = models.DateTimeField(
         auto_now_add=True,
