@@ -75,6 +75,7 @@ class EventDetailView(DetailView):
         context['organizer_phone'] = object.organizer.phone
         context['organizer_events'] = Event.objects.filter(organizer=object.organizer).exclude(id=object.id)[:6]
         context['reviews'] = object.reviews.all()
+        context['similiar_events'] = Event.objects.filter(category__in=object.category.all()).exclude(id=object.id)[:6]
 
         return context
 
@@ -125,6 +126,9 @@ class EventUpdateView(UpdateView):
             EventImages.objects.create(event=self.object, image=image)
 
         return response
+    
+    
+
     def get_success_url(self):
         return reverse_lazy('event_detail', kwargs={'pk': self.object.pk})
     

@@ -22,7 +22,7 @@ class ActivityEventManager(models.Manager):
                 filter(Q(date_start__lte=Now()) & Q(date_end__gte=Now())))
 
 def get_default_organizer():
-    return CustomUser.objects.get(username='default_remove_user')
+    return CustomUser.objects.filter(username='default_remove_user').first()
 
 
 class Event(models.Model):
