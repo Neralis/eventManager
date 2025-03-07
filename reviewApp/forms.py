@@ -4,6 +4,7 @@ from reviewApp.models import Review
 
 
 class ReviewCreateForm(forms.ModelForm):
+    """Форма для создания отзыва"""
     text = forms.CharField(widget=forms.Textarea)
     rating = forms.IntegerField(min_value=1, max_value=5)
 
