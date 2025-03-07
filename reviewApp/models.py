@@ -33,3 +33,22 @@ class Review(models.Model):
 
     def __str__(self):
         return f'{self.participant} оставил комментарий на {self.event.title}'
+
+    @classmethod
+    def get_participant(cls, event: 'Event', email: str) -> 'Participants':
+        """Проверяет, есть ли действительно такой участник."""
+        participant = (Participants.objects.filter(event=event, user__email=email) or
+                       Participants.objects.filter(event=event, not_auth_user__email=email))
+        if not participant:
+            raise ValueError('Вы не зарегистрированы как участник этого мероприятия')
+        return participant
+
+    @classmethod
+    def create_review(cls, event: 'Event', participant: 'Participants', text: str, rating: int) -> 'Review':
+        """Создает отзыв и проверяет наличие отзыва для данного мероприятия от этого участника"""
+        if cls.objects.filter(event=event, participant=participant).exists():
+            raise ValueError('Вы уже оставили отзыв на это мероприятие')
+        else:
+            review = cls(event=event, participant=participant, text=text, rating=rating)
+            review.save()
+            return review
