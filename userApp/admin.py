@@ -1,10 +1,11 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from unfold.admin import StackedInline, TabularInline, ModelAdmin
 from userApp.models import CustomUser, NotAuthUser
 
 
 @admin.register(CustomUser)
-class CustomUser(admin.ModelAdmin):
+class CustomUser(ModelAdmin):
     list_display = [
         'username',
         'first_name',
@@ -28,7 +29,7 @@ class CustomUser(admin.ModelAdmin):
     save_on_top = True
 
 @admin.register(NotAuthUser)
-class NotAuthUserAdmin(admin.ModelAdmin):
+class NotAuthUserAdmin(ModelAdmin):
     list_display = ['email', 'phone']
     search_fields = ['email', 'phone']
     ordering = ['email']

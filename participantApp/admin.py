@@ -1,10 +1,12 @@
 from django.contrib import admin
+from unfold.admin import StackedInline, TabularInline, ModelAdmin
 from  .models import  Participants
 
 
 @admin.register(Participants)
-class ParticipantsAdmin(admin.ModelAdmin):
+class ParticipantsAdmin(ModelAdmin):
     list_display = [
+        'id',
         'event',
         'user',
         'not_auth_user',

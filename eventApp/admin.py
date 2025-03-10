@@ -1,14 +1,15 @@
 from reviewApp.models import Review
+from unfold.admin import StackedInline, TabularInline, ModelAdmin
 from .models import Event, Category, EventImages
 from django.contrib import admin
 
 
-class EventsOfCategoryInLine(admin.StackedInline):
+class EventsOfCategoryInLine(StackedInline):
     model = Event.category.through
     extra = 0
 
 @admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
+class CategoryAdmin(ModelAdmin):
     list_display = [
         'title'
     ]
@@ -20,19 +21,21 @@ class CategoryAdmin(admin.ModelAdmin):
     ]
 
 
-class ReviewOnEventInLine(admin.TabularInline):
+class ReviewOnEventInLine(TabularInline):
     model = Review
     extra = 0
+    tab = True
     ordering = [
         '-rating'
     ]
 
-class AdditionalImagesInline(admin.StackedInline):
+class AdditionalImagesInline(StackedInline):
     model = EventImages
     extra = 0
+    tab = True
 
 @admin.register(Event)
-class EventAdmin(admin.ModelAdmin):
+class EventAdmin(ModelAdmin):
     list_display = [
         field.name for field in Event._meta.fields
     ]
@@ -63,7 +66,7 @@ class EventAdmin(admin.ModelAdmin):
 
 
 @admin.register(EventImages)
-class EventImagesAdmin(admin.ModelAdmin):
+class EventImagesAdmin(ModelAdmin):
     list_display = [
         'event',
         'image'
