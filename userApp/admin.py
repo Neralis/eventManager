@@ -1,10 +1,12 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from unfold.admin import StackedInline, TabularInline, ModelAdmin
+from userApp.models import CustomUser, NotAuthUser
 from userApp.models import CustomUser, NotAuthUser, Notification
 
 
 @admin.register(Notification)
-class NotificationAdmin(admin.ModelAdmin):
+class NotificationAdmin(ModelAdmin):
     list_display = [
         'user',
         'text',
@@ -19,7 +21,7 @@ class NotificationAdmin(admin.ModelAdmin):
     ordering = ['-created']
 
 
-class NotificationInline(admin.TabularInline):
+class NotificationInline(TabularInline):
     model = Notification
     extra = 0
     readonly_fields = [
@@ -31,10 +33,11 @@ class NotificationInline(admin.TabularInline):
     verbose_name = 'Уведомление'
     verbose_name_plural = 'Уведомления'
 
-
+    
 @admin.register(CustomUser)
-class CustomUser(admin.ModelAdmin):
+class CustomUser(ModelAdmin):
     list_display = [
+        'username',
         'first_name',
         'last_name',
         'email',
@@ -44,6 +47,7 @@ class CustomUser(admin.ModelAdmin):
         'date_birthday',
     ]
     search_fields = [
+        'username',
         'email',
         'phone',
     ]
@@ -57,7 +61,7 @@ class CustomUser(admin.ModelAdmin):
 
 
 @admin.register(NotAuthUser)
-class NotAuthUserAdmin(admin.ModelAdmin):
+class NotAuthUserAdmin(ModelAdmin):
     list_display = [
         'email',
         'phone'
@@ -66,5 +70,7 @@ class NotAuthUserAdmin(admin.ModelAdmin):
         'email',
         'phone'
     ]
-    ordering = ['email']
+    ordering = [
+      'email'
+    ]
 

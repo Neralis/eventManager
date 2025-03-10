@@ -1,3 +1,5 @@
+from reviewApp.models import Review
+from unfold.admin import StackedInline, TabularInline, ModelAdmin
 from .models import Event, Category, EventImages
 from django.contrib import admin
 from participantApp.models import Participants
@@ -39,16 +41,45 @@ class EventImagesInline(admin.TabularInline):
     verbose_name_plural = 'Изображения'
 
 
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['title']
-    search_fields = ['title']
+class EventsOfCategoryInLine(StackedInline):
+    model = Event.category.through
+    extra = 0
 
+@admin.register(Category)
+class CategoryAdmin(ModelAdmin):
+    list_display = [
+        'title'
+    ]
+    search_fields = [
+        'title'
+    ]
+    inlines = [
+        EventsOfCategoryInLine
+    ]
+
+
+class ReviewOnEventInLine(TabularInline):
+    model = Review
+    extra = 0
+    tab = True
+    ordering = [
+        '-rating'
+    ]
+
+class AdditionalImagesInline(StackedInline):
+    model = EventImages
+    extra = 0
+    tab = True
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in Event._meta.fields]
-    readonly_fields = ['available_places']
+    list_display = [
+      field.name for field in Event._meta.fields
+    ]
+    readonly_fields = [
+      'available_places'
+    ]
+
     list_filter = [
         'category',
         'date_start',
@@ -69,16 +100,19 @@ class EventAdmin(admin.ModelAdmin):
     ]
     save_on_top = True
     inlines = [
-        ParticipantsInLine,
-        ReviewsInLine,
-        EventImagesInline,
+        AdditionalImagesInline,
+        ReviewOnEventInLine,
     ]
 
 
 @admin.register(EventImages)
-class EventImagesAdmin(admin.ModelAdmin):
+class EventImagesAdmin(ModelAdmin):
     list_display = [
         'event',
         'image'
     ]
-    search_fields = ['event']
+    search_fields = [
+        'event'
+    ]
+
+

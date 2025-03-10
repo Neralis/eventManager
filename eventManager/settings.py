@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 from django.conf.global_settings import AUTH_USER_MODEL
@@ -37,6 +37,7 @@ ALLOWED_HOSTS = []
 AUTH_USER_MODEL = 'userApp.CustomUser'
 
 INSTALLED_APPS = [
+    'unfold',
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -141,6 +142,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
 IMAGEKIT_CACHEFILE_NAMER = 'imagekit.cachefiles.namer.DefaultCacheFileNamer'
 
 # ------------- SMTP -------------------------------------------
@@ -157,3 +159,7 @@ CELERY_BROKER_URL = 'redis://redis:6379/0'
 CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
