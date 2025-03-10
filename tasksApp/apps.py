@@ -1,9 +1,9 @@
 from django.apps import AppConfig
 
 
-class ReviewappConfig(AppConfig):
+class TasksappConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'reviewApp'
+    name = 'tasksApp'
 
     def ready(self):
-        import reviewApp.signals
+        import tasksApp.signals

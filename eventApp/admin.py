@@ -2,6 +2,43 @@ from reviewApp.models import Review
 from unfold.admin import StackedInline, TabularInline, ModelAdmin
 from .models import Event, Category, EventImages
 from django.contrib import admin
+from participantApp.models import Participants
+from reviewApp.models import Review
+
+
+class ParticipantsInLine(admin.TabularInline):
+    model = Participants
+    extra = 0
+    readonly_fields = [
+        'user',
+        'not_auth_user',
+        'created'
+    ]
+    can_delete = False
+    verbose_name = 'Участник'
+    verbose_name_plural = 'Участники'
+
+
+class ReviewsInLine(admin.TabularInline):
+    model = Review
+    extra = 0
+    readonly_fields = [
+        'participant',
+        'text',
+        'rating'
+    ]
+    can_delete = False
+    verbose_name = 'Отзыв'
+    verbose_name_plural = 'Отзывы'
+
+
+class EventImagesInline(admin.TabularInline):
+    model = EventImages
+    extra = 0
+    readonly_fields = ['image']
+    can_delete = False
+    verbose_name = 'Изображение'
+    verbose_name_plural = 'Изображения'
 
 
 class EventsOfCategoryInLine(StackedInline):
@@ -35,10 +72,14 @@ class AdditionalImagesInline(StackedInline):
     tab = True
 
 @admin.register(Event)
-class EventAdmin(ModelAdmin):
+class EventAdmin(admin.ModelAdmin):
     list_display = [
-        field.name for field in Event._meta.fields
+      field.name for field in Event._meta.fields
     ]
+    readonly_fields = [
+      'available_places'
+    ]
+
     list_filter = [
         'category',
         'date_start',
@@ -62,7 +103,6 @@ class EventAdmin(ModelAdmin):
         AdditionalImagesInline,
         ReviewOnEventInLine,
     ]
-
 
 
 @admin.register(EventImages)

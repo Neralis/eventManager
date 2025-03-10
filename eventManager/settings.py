@@ -38,16 +38,20 @@ AUTH_USER_MODEL = 'userApp.CustomUser'
 
 INSTALLED_APPS = [
     'unfold',
+    'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'userApp',
-    'eventApp',
-    'participantApp',
-    'reviewApp',
+    'django_celery_beat',
+    'phonenumber_field',
+    'imagekit',
+    'userApp.apps.UserappConfig',
+    'eventApp.apps.EventappConfig',
+    'participantApp.apps.ParticipantappConfig',
+    'reviewApp.apps.ReviewappConfig',
+    'tasksApp.apps.TasksappConfig',
 ]
 
 MIDDLEWARE = [
@@ -86,8 +90,12 @@ WSGI_APPLICATION = 'eventManager.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'event_manager',
+        'USER': 'event',
+        'PASSWORD': 'event',
+        'HOST': 'db',
+        'PORT': 5432,
     }
 }
 
@@ -116,7 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -126,12 +134,32 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+IMAGEKIT_CACHEFILE_NAMER = 'imagekit.cachefiles.namer.DefaultCacheFileNamer'
+
+# ------------- SMTP -------------------------------------------
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = False
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'ner4corp@gmail.com'
+EMAIL_HOST_PASSWORD = 'oimy thbj nfxn lfhx'
+
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+

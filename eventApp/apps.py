@@ -8,18 +8,6 @@ class EventappConfig(AppConfig):
     name = 'eventApp'
 
     def ready(self):
-        # Подключение сигнала для создания пользователя после миграции
-        post_migrate.connect(create_default_organizer, sender=self)
+        import eventApp.signals
 
-
-def create_default_organizer(sender, **kwargs):
-
-    from userApp.models import CustomUser
-
-    CustomUser.objects.get_or_create(
-        username='default_remove_user',
-        email='remove_user@gmail.com',
-        date_birthday=now(),
-        phone='+12345678911'
-    )
 

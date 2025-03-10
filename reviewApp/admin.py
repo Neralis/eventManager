@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models import Review
 from unfold.admin import StackedInline, TabularInline, ModelAdmin
 
+
 @admin.register(Review)
 class ReviewAdmin(ModelAdmin):
     list_display = [

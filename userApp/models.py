@@ -1,70 +1,102 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models.signals import pre_delete
-from django.dispatch import receiver
-from django.utils.timezone import now
 from phonenumber_field.modelfields import PhoneNumberField
 
 
 class CustomUser(AbstractUser):
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
+    first_name = models.CharField(
+        max_length=100,
+        verbose_name='Имя',
+    )
+    last_name = models.CharField(
+        max_length=100,
+        verbose_name='Фамилия',
+    )
     otchestvo = models.CharField(
         max_length=100,
         blank=True,
-        null=True
+        null=True,
+        verbose_name='Отчество'
     )
     date_birthday = models.DateField(
         blank=True,
-        null=True
+        null=True,
+        verbose_name='Дата рождения'
     )
-    phone = PhoneNumberField(unique=True)
+    phone = PhoneNumberField(
+        unique=True,
+        verbose_name='Номер телефона'
+    )
 
     groups = models.ManyToManyField(
         "auth.Group",
         related_name="custom_users",
         blank=True,
+        verbose_name='Группы'
     )
 
     user_permissions = models.ManyToManyField(
         "auth.Permission",
         related_name="custom_users_permissions",
         blank=True,
+        verbose_name='Права пользователя'
     )
+
+    class Meta:
+        verbose_name = 'Авторизованный пользователь'
+        verbose_name_plural = 'Авторизованные пользователи'
 
     def __str__(self):
         return f'({self.username}) {self.first_name} {self.last_name} {self.email}'
 
 
-@receiver(pre_delete, sender=CustomUser)
-def block_delete_user(sender, instance, **kwargs):
-    from eventApp.models import Event
-
-    events = Event.objects.filter(
-        organizer=instance,
-        date_start__lte=now(),
-        date_end__gte=now()
+class Notification(models.Model):
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='notifications',
+        verbose_name='Пользователь'
     )
-    if events.exists():
-        raise Exception('Пользователь с активными мероприятиями не может быть удален')
-
-
-@receiver(pre_delete, sender=CustomUser)
-def delete_users_events_(sender, instance, **kwargs):
-    from eventApp.models import Event
-
-    events = Event.objects.filter(
-        organizer=instance,
-        date_start__gt=now()
+    title = models.CharField(
+        max_length=100,
+        verbose_name='Заголовок уведомления',
+        default='Уведомление'
     )
-    events.delete()
+    text = models.TextField(
+        verbose_name='Текст уведомления'
+    )
+    url_event = models.URLField(
+        max_length=500,
+        verbose_name='Ссылка',
+    )
+    created = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Дата и время создания'
+    )
+    is_read = models.BooleanField(
+        default=False,
+        verbose_name='Статус (Прочитан/Не прочитан)'
+    )
+
+    class Meta:
+        verbose_name = 'Уведомление'
+        verbose_name_plural = 'Уведомления'
+
+    def __str__(self):
+        return f'Уведомление {self.title} для {self.user}'
 
 
 class NotAuthUser(models.Model):
-    email = models.EmailField()
-    phone = PhoneNumberField()
+    email = models.EmailField(
+        verbose_name='Почта'
+    )
+    phone = PhoneNumberField(
+        verbose_name='Телефон'
+    )
 
     class Meta:
+        verbose_name = 'Неавторизованный пользователь'
+        verbose_name_plural = 'Неавторизованные пользователи'
         indexes = [
             models.Index(fields=['email']),
         ]
