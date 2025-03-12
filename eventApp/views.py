@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView,DetailView,CreateView,UpdateView,DeleteView
 from .forms import EventForm, EventImagesForm
 from django.utils.dateparse import parse_date
-
+from django.http import JsonResponse
 from .models import Event,Category, EventImages
 from django.db.models import Count ,F
 
@@ -135,7 +135,9 @@ class EventUpdateView(UpdateView):
     def form_invalid(self, form):
         print("❌ Форма НЕ валидна! Ошибки:", form.errors)
         return self.render_to_response(self.get_context_data(form=form))
-
+    
+class EventDeleteView(DeleteView):
+    model = Event
 
 
 
