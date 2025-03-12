@@ -110,7 +110,7 @@
         <p id = "location_onffine" class="event_place_text adress">{{object.city}} {{object.location_offline}}</p>
         <p class="event_place_text adress" id="location_online">{{object.location_online}} </p>
 
-        <div class="accordion accordion-flush event_place_map">
+        <div class="accordion accordion-flush event_place_map" id="map_place">
             <div class="accordion-item">
                 <p class="event_place_show_map" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false">
                     показать на карте
@@ -231,10 +231,12 @@
         
         if (isOnline) {
             document.getElementById("location_onffine").style.display = "none";
+            document.getElementById("map_place").style.display = "none"
             document.getElementById("location_online").style.display = "block"
         }
         else{
             document.getElementById("location_onffine").style.display = "block";
+            document.getElementById("map_place").style.display = "block"
             document.getElementById("location_online").style.display = "none"
        
         }
