@@ -37,7 +37,7 @@
 </head>
 <body>
     <header class="header">
-        <div class="header_logo">
+        <div class="event_main_img">
             <img src="{% static 'img/logo_img.png' %}" alt="logo" class="logo">
         </div>
         <div class="header_func">
@@ -102,15 +102,19 @@
                     <option value="Offline" {% if request.GET.event_format == "Offline" %}selected{% endif %}>Оффлайн</option>
                 </select>
             </div>
+            <button class="all_event_reset_btn" class="btn btn-secondary" onclick="resetFilters()" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Сбросить все фильтры">Сбросить</button>
             
         </div>
 
         <h3 class="all_event_title">Все события в Городе</h3>
         <p class="all_event_text">{{event_count}} события</p>
+
         <ul class="all_event_grid">
             {% for event in event_list %}
                 <li class="all_event_grid_item">
+                    <div class="all_event_grid_item_img_cont">
                     <img src="{% if event.main_photo %}{{ event.main_photo.url }}{% else %}{% static 'img/star.svg' %}{% endif %}" alt="event_img" class="all_event_grid_item_img">
+                    </div>
                     <p class="all_event_grid_item_organizer">{{ event.organizer }} организатор</p>
                     <p class="all_event_grid_item_title">{{ event.title }}</p>
                     <p class="all_event_grid_item_city">{{ event.location_offline }}</p>
@@ -193,6 +197,8 @@
 
  
     </script>
+    <script src="{% static 'js/all_event.js'%}"></script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
     const citySelect = document.getElementById("event-city-filter");
@@ -212,6 +218,19 @@
         });
     }
 });
+
+    function resetFilters(){
+        const url = new URL(window.location.href)
+        const params = new URLSearchParams(url.search)
+
+        params.delete('category')
+        params.delete('city')
+        params.delete('date_start')
+        params.delete('event_format')
+
+        url.search = params.toString()
+        window.location.href = url.toString()
+    }
 
     </script>
     

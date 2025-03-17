@@ -168,6 +168,11 @@ class EventUpdateView(UpdateView):
     
 class EventDeleteView(DeleteView):
     model = Event
+    template_name = 'primer.html'
+    form_class = EventForm
+    
+    def get_success_url(self):
+        return reverse_lazy('event_list')
 
 
 

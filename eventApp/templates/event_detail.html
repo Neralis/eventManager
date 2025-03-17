@@ -37,9 +37,11 @@
 </head>
 <body>
     <header class="header">
-        <div class="header_logo">
+        
+            <div class="event_main_img">
             <img src="{% static 'img/logo_img.png' %}" alt="logo" class="logo">
-        </div>
+            </div>
+       
         <div class="header_func">
             <form action="" method="get" class="header_func_search">
                 <input type="text" class="search" placeholder="searh">
@@ -160,7 +162,9 @@
     <div class="all_event_grid">
         {% for organizer_event in organizer_events %}
         <div class="all_event_grid_item">
+            <div class="all_event_grid_item_img_cont">
             <img src="{% if organizer_event.main_photo %}{{ organizer_event.main_photo.url }}{% else %}{% static 'img/default_event.jpg' %}{% endif %}" alt="event_img" class="all_event_grid_item_img">
+            </div>
             <p class="all_event_grid_item_organizer">{{ organizer_event.organizer }}</p>
             <p class="all_event_grid_item_title">{{ organizer_event.title }}</p>
             <p class="all_event_grid_item_city">{{ organizer_event.city }}</p>
@@ -184,7 +188,9 @@
 <div class="all_event_grid">
     {% for similiar_event in similiar_events %}
     <div class="all_event_grid_item">
+        <div class="all_event_grid_item_img_cont">
         <img src="{% if similiar_event.main_photo %}{{ similiar_event.main_photo.url }}{% else %}{% static 'img/default_event.jpg' %}{% endif %}" alt="event_img" class="all_event_grid_item_img">
+        </div>
         <p class="all_event_grid_item_organizer">{{ similiar_event.organizer }}</p>
         <p class="all_event_grid_item_title">{{ similiar_event.title }}</p>
         <p class="all_event_grid_item_city">{{ similiar_event.city }}</p>
