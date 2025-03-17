@@ -110,7 +110,7 @@
         <ul class="all_event_grid">
             {% for event in event_list %}
                 <li class="all_event_grid_item">
-                    <img src="{% if event.main_photo %}{{ event.main_photo.url }}{% else %}{% static 'main_images/test.png' %}{% endif %}" alt="event_img" class="all_event_grid_item_img">
+                    <img src="{% if event.main_photo %}{{ event.main_photo.url }}{% else %}{% static 'img/star.svg' %}{% endif %}" alt="event_img" class="all_event_grid_item_img">
                     <p class="all_event_grid_item_organizer">{{ event.organizer }} организатор</p>
                     <p class="all_event_grid_item_title">{{ event.title }}</p>
                     <p class="all_event_grid_item_city">{{ event.location_offline }}</p>

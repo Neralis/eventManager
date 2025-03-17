@@ -127,9 +127,10 @@
         <p class="event_place_text">Справка по телефону <span class="event_place_phone">{{organizer_phone}}</span></p>
 
         <div class="event_reviews">
-            <h4 class="event_reviews_title event_title_2">Отзывы</h4>
+            
         
             {% if reviews %}
+            <h4 class="event_reviews_title event_title_2">Отзывы</h4>
                 {% for review in reviews %}
                 <div class="event_reviews_block">
                     <div class="event_reviews_block_people">
@@ -143,19 +144,19 @@
                     <p class="event_reviews_text">{{ review.text }}</p>
                 </div>
                 {% endfor %}
-            {% else %}
-                <p class="event_reviews_text">Пока нет отзывов. Будьте первым!</p>
-            {% endif %}
+            {% endif%}
+           
         </div>
         
 
     </div>
 
     <div class="event_to_organizer">
-        <h4 class="event_description_title event_title_2">Также от организатора:</h4>
+        
 
         
        {% if organizer_events %}
+       <h4 class="event_description_title event_title_2">Также от организатора:</h4>
     <div class="all_event_grid">
         {% for organizer_event in organizer_events %}
         <div class="all_event_grid_item">
@@ -171,15 +172,15 @@
         </div>
         {% endfor %}
     </div>
-    {% else %}
-    <p>У этого организатора пока нет других событий.</p>
+   
     {% endif %}
 </div>
 
     <div class="event_other">
-        <h4 class="event_description_title event_title_2">Похожие:</h4>
+        
         <!-- Здесь карточка события -->
         {% if similiar_events %}
+        <h4 class="event_description_title event_title_2">Похожие:</h4>
 <div class="all_event_grid">
     {% for similiar_event in similiar_events %}
     <div class="all_event_grid_item">
@@ -195,8 +196,7 @@
     </div>
     {% endfor %}
 </div>
-{% else %}
-<p>Похожих событий пока нет.</p>
+
 {% endif %}
 
             
