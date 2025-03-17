@@ -104,6 +104,7 @@ class EventCreateView(CreateView):
         return response
 
 
+
 class EventUpdateView(UpdateView):
     model = Event
     form_class = EventForm
@@ -113,28 +114,57 @@ class EventUpdateView(UpdateView):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
         context['event_format'] = self.request.POST.get('event_format', 'Offline')
-     
         context['images'] = EventImages.objects.filter(event=self.object)
         return context
 
     def form_valid(self, form):
         print("✅ Форма валидна, объект сохраняется!")
-        response = super().form_valid(form)
-
+        
+        # Сохраняем форму, но не коммитим изменения в базу данных
+        self.object = form.save(commit=False)
+        
+        # Проверяем, нужно ли удалить главное изображение
+        if self.request.POST.get('remove_main_photo') == 'true':
+            # Удаляем файл с диска, если нужно
+            if self.object.main_photo:
+                import os
+                if os.path.isfile(self.object.main_photo.path):
+                    os.remove(self.object.main_photo.path)
+                self.object.main_photo = None
+        
+        # Сохраняем изменения в мероприятии
+        self.object.save()
+        
+        # Обрабатываем удаление дополнительных изображений
+        images_to_remove = self.request.POST.get('images_to_remove', '')
+        if images_to_remove:
+            image_ids = [int(id) for id in images_to_remove.split(',') if id.isdigit()]
+            if image_ids:
+                # Получаем изображения, которые нужно удалить
+                images_to_delete = EventImages.objects.filter(id__in=image_ids, event=self.object)
+                
+                # Удаляем файлы с диска
+                import os
+                for img in images_to_delete:
+                    if os.path.isfile(img.image.path):
+                        os.remove(img.image.path)
+                
+                # Удаляем записи из базы данных
+                images_to_delete.delete()
+        
+        # Обрабатываем новые дополнительные изображения
         images = self.request.FILES.getlist('event_images')
         for image in images:
             EventImages.objects.create(event=self.object, image=image)
 
-        return response
+        return super().form_valid(form)
     
-    
-
     def get_success_url(self):
         return reverse_lazy('event_detail', kwargs={'pk': self.object.pk})
     
     def form_invalid(self, form):
-        print("❌ Форма НЕ валидна! Ошибки:", form.errors)
         return self.render_to_response(self.get_context_data(form=form))
+
     
 class EventDeleteView(DeleteView):
     model = Event
