@@ -1,71 +1,7 @@
+{% extends 'index.html' %}
 {%load static%}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+{%block content%}
 
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>eventManager</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sofia+Sans:ital,wght@0,1..1000;1,1..1000&display=swap" rel="stylesheet">
-    <meta name="viewport" content="width=device-width">
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-
-
-    <script src="https://api-maps.yandex.ru/v3/?apikey=97a85acd-ba8a-4b10-b1a1-8a55ae3b2fc7" type="text/javascript">
-    </script>
-     <meta charset="UTF-8">
-     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>eventManager</title>
-     <link rel="preconnect" href="https://fonts.googleapis.com">
-     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-     <link href="https://fonts.googleapis.com/css2?family=Sofia+Sans:ital,wght@0,1..1000;1,1..1000&display=swap" rel="stylesheet">
-     <meta name="viewport" content="width=device-width">
-     
-     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-     <link rel="stylesheet" href="{% static 'css/index.css' %}">
- 
-     <script src="https://api-maps.yandex.ru/v3/?apikey=97a85acd-ba8a-4b10-b1a1-8a55ae3b2fc7" type="text/javascript">
-     </script>
-
-
-</head>
-<body>
-    <header class="header">
-        <div class="event_main_img">
-            <img src="{% static 'img/logo_img.png' %}" alt="logo" class="logo">
-        </div>
-        <div class="header_func">
-            <form action="" method="get" class="header_func_search">
-                <input type="text" class="search" placeholder="searh">
-                <input type="button" class="header_btn_search">
-            </form>
-            <a href="#" class="header_func_add_event"></a>
-            <div class="header_func_user">
-                <a class="header_func_user_sign_in">войти</a>
-                <a class="header_func_user_signout highlight_text">регистрация</a>
-            </div>
-
-            <div class="header_func_menu">
-                <div class="header_func_burger">
-                    <img src="{% static 'img/burger.png' %}" alt="burger" class="burger">
-                </div>
-                <ul class="header_func_menu_items">
-                    <li class="header_func_menu_item"><a href="#">Профиль</a></li>
-                    <li class="header_func_menu_item"><a href="#">Главная</a></li>
-                    <li class="header_func_menu_item"><a href="#">Мои мероприятия</a></li>
-                    <li class="header_func_menu_item"><a href="#">Запланированные мероприятия</a></li>
-                    <li class="header_func_menu_item"><a href="#">Выйти</a></li>
-                </ul>
-            </div>
-        </div>
-    </header>
-     <main>
     <section class="all_event">
         <div class="all_event_filter_items">
             <div class="all_event_filter_item custom-select">
@@ -111,42 +47,33 @@
 
         <ul class="all_event_grid">
             {% for event in event_list %}
-                <li class="all_event_grid_item">
-                    <div class="all_event_grid_item_img_cont">
+            <li class="all_event_grid_item" id="event-{{ event.id }}">
+                <div class="all_event_grid_item_img_cont position-relative">
                     <img src="{% if event.main_photo %}{{ event.main_photo.url }}{% else %}{% static 'img/star.svg' %}{% endif %}" alt="event_img" class="all_event_grid_item_img">
-                    </div>
-                    <p class="all_event_grid_item_organizer">{{ event.organizer }} организатор</p>
-                    <p class="all_event_grid_item_title">{{ event.title }}</p>
-                    <p class="all_event_grid_item_city">{{ event.location_offline }}</p>
-                    <p class="all_event_grid_item_date">{{ event.date_start|date:"j E Y, H:i" }}</p>
-                    <div class="all_event_grid_item_btn_count">
-                        <button class="all_event_grid_item_btn">Записаться</button>
-                        <p class="all_event_grid_item_place">осталось {{ event.count_place }} из {{ event.participants_limit }} мест</p>
-                    </div>
-                </li>
+                    
+                    <!-- Кнопка удаления -->
+                    <button class="delete-event-btn position-absolute" data-event-id="{{ event.id }}"
+                        style="top: 5px; right: 5px; font-size: 18px; background: none; border: none; color: red;">
+                        ×
+                    </button>
+                </div>
+                
+                <p class="all_event_grid_item_organizer">{{ event.organizer }} организатор</p>
+                <p class="all_event_grid_item_title">{{ event.title }}</p>
+                <p class="all_event_grid_item_city">{{ event.location_offline }}</p>
+                <p class="all_event_grid_item_date">{{ event.date_start|date:"j E Y, H:i" }}</p>
+                
+                <div class="all_event_grid_item_btn_count">
+                    <button class="all_event_grid_item_btn">Записаться</button>
+                    <p class="all_event_grid_item_place">осталось {{ event.count_place }} из {{ event.participants_limit }} мест</p>
+                </div>
+            </li>
             {% endfor %}
         </ul>
+        
 
-
-        </main>
-    <footer class="footer">
-        <div class="footer_content">
-             <ul class="footer_link">
-                <li class="footer_link_item"><a href="#">Главная</a></li>
-                <li class="footer_link_item"><a href="#">О нас</a></li>
-                <li class="footer_link_item"><a href="#">Реклама</a></li>
-                <li class="footer_link_item"><a href="#">Помощь</a></li>
-                <li class="footer_link_item"><a href="#">Задать вопрос</a></li>
-            </ul>
-            <ul class="footer_social">
-                <li class="footer_social_item telegram"><a href="#"></a></li>
-                <li class="footer_social_item vk"><a href="#"></a></li>
-                <li class="footer_social_item gmail"><a href="#"></a></li>
-            </ul>
-        </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        </section>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script>
         document.getElementById("event-format-filter").addEventListener("change", function () {
             let format = this.value;
@@ -231,8 +158,43 @@
         url.search = params.toString()
         window.location.href = url.toString()
     }
-
-    </script>
     
-</body>
-</html>
+    </script>
+    <script>
+       document.addEventListener("DOMContentLoaded", function () {
+    let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+
+    document.querySelectorAll(".delete-event-btn").forEach(button => {
+        button.addEventListener("click", function () {
+            let eventId = this.getAttribute("data-event-id");
+
+            if (!confirm("Вы уверены, что хотите удалить событие?")) {
+                return;
+            }
+
+            fetch(`/events/delete/${eventId}/`, {
+                method: "DELETE",
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                    "Content-Type": "application/json"
+                }
+            }).then(response => response.json()).then(data => {
+                if (data.message) {
+                    document.getElementById(`event-${eventId}`).remove();
+                } else {
+                    alert("Ошибка при удалении: " + data.error);
+                }
+            }).catch(error => {
+                alert("Ошибка при удалении! " + error);
+            });
+        });
+    });
+});
+console.log("privet")
+        </script>
+        
+        {%endblock%}
+    
+
+    
+ 

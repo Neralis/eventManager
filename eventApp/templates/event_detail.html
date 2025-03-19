@@ -74,7 +74,9 @@
         <h3 class="event_title">{{ object.title }}</h3>
         <p class="event_date">{{ object.date_start|date:"d.m.Y" }} в {{ object.date_start|date:"H:i" }}</p>
         <p class="event_seats">осталось {{ count_place }} мест</p>
+        <div class="event_main_img">
         <img src="{% if object.main_photo %} {{ object.main_photo.url}}{% else %}{% static 'img/star.svg' %} {% endif %}" alt="img_event" class="event_img_event">
+        </div>
         <p class="event_organizer">{{ object.organizer }}</p>
     </div>
 

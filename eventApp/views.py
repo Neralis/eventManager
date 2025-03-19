@@ -1,9 +1,11 @@
 from django.db.models import Count
 from django.shortcuts import render
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import ListView,DetailView,CreateView,UpdateView,DeleteView
 from .forms import EventForm, EventImagesForm
 from django.utils.dateparse import parse_date
+from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from .models import Event,Category, EventImages
 from django.db.models import Count ,F
@@ -165,14 +167,14 @@ class EventUpdateView(UpdateView):
     def form_invalid(self, form):
         return self.render_to_response(self.get_context_data(form=form))
 
-    
-class EventDeleteView(DeleteView):
-    model = Event
-    template_name = 'primer.html'
-    form_class = EventForm
-    
-    def get_success_url(self):
-        return reverse_lazy('event_list')
+class EventDeleteAjaxView(View):
+    def delete(self, request, pk, *args, **kwargs):
+        try:
+            event = get_object_or_404(Event, pk=pk)
+            event.delete()
+            return JsonResponse({"message": "Событие удалено"}, status=200)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
 
 
 
