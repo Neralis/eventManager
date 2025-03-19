@@ -13,9 +13,9 @@ class ReviewCreateForm(forms.ModelForm):
         fields = ['text', 'rating']
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
         self.email = kwargs.pop('email')
         self.event = kwargs.pop('event')
+        super().__init__(*args, **kwargs)
 
     def clean(self):
         cleaned_data = self.cleaned_data

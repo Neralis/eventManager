@@ -1,9 +1,13 @@
+from django.contrib import messages
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, DeleteView
-from .forms import RegistrationParticipantsForm
-from .models import Event, Participants
-from .permissions import OrganizerPermissionMixin
+from django.core.exceptions import ValidationError
+from eventApp.models import Event
+from participantApp.forms import RegistrationParticipantsForm
+from participantApp.models import Participants
+from participantApp.permissions import OrganizerPermissionMixin
 
 
 class ListParticipantsOnEvent(OrganizerPermissionMixin, ListView):
@@ -15,6 +19,10 @@ class ListParticipantsOnEvent(OrganizerPermissionMixin, ListView):
     model = Participants
     template_name = 'participantApp/participants_list.html'
     context_object_name = 'participants'
+
+    def get_instance(self):
+        event_id = self.kwargs.get('event_id')
+        return event_id
 
     def get_queryset(self):
         """Возвращает QuerySet участников для мероприятия, указанного в URL."""
@@ -58,6 +66,10 @@ class RegistrationParticipantsView(CreateView):
     form_class = RegistrationParticipantsForm
     template_name = 'participantApp/register_participants.html'
 
+    def get_instance(self):
+        event_id = self.kwargs.get('event_id')
+        return event_id
+
     def get_form_kwargs(self):
         """Передает текущего пользователя и мероприятие в форму."""
         kwargs = super().get_form_kwargs()
@@ -79,10 +91,19 @@ class RegistrationParticipantsView(CreateView):
                 phone=form.cleaned_data['phone'],
             )
             form.instance = participant
-            super().form_valid(form)
+            return HttpResponseRedirect(self.get_success_url())
+        except ValidationError as e:
+            form.add_error(None, str(e))
+            return self.form_invalid(form)
         except ValueError as e:
             form.add_error(None, str(e))
             return self.form_invalid(form)
+
+    def form_invalid(self, form):
+        for field, errors in form.errors.items():
+            for error in errors:
+                messages.error(self.request, f'Обнаружена ошибка {error}')
+        return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
         """Передает в контекст данные о мероприятии."""
@@ -90,10 +111,9 @@ class RegistrationParticipantsView(CreateView):
         context['event'] = get_object_or_404(Event, id=self.kwargs['event_id'])
         return context
 
-    # def get_success_url(self):
-    #     """тест"""
-    #     event_id = self.kwargs['event_id']
-    #     return reverse_lazy('register_participant', kwargs={'event_id': event_id})
+    def get_success_url(self):
+        """Перенаправляет на страничку ..."""
+        return reverse_lazy('register_participant', kwargs={'event_id': self.get_instance()})
 
 
 class FavouriteParticipants(OrganizerPermissionMixin, ListView):

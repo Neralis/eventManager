@@ -1,17 +1,11 @@
-from django.db.models.signals import post_save, post_delete
-from django.dispatch import receiver
-import os
-import shutil
-
-from django.conf import settings
-from unidecode import unidecode
 from django.db import models
 from django.db.models import Q, F, SET_DEFAULT
-from django.db.models.functions import Now
-from django.utils.text import slugify
 from imagekit.models import ProcessedImageField
 from pilkit.processors import ResizeToFit
-from eventApp.utils import get_random_string
+from eventApp.utils import get_default_organizer, event_main_photo_path, generate_unique_slug, \
+    update_available_places_from_participants_limit, delete_old_main_image, move_event_directory, \
+    delete_event_directory, event_additional_image_path, delete_old_additional_image, move_event_image_directory, \
+    delete_event_image_file
 from userApp.models import CustomUser
 
 
@@ -27,33 +21,6 @@ class Category(models.Model):
 
     def __str__(self):
         return self.title
-
-
-def event_main_photo_path(instance, filename):
-    """Динамический путь для основного фото мероприятия"""
-    # Убедимся, что у instance есть ID
-    if not instance.id:
-        # Если ID нет, сохраним объект, чтобы получить ID
-        instance.save()
-    return f'events/{instance.id}/main_photo/{filename}'
-
-def event_additional_image_path(instance, filename):
-    """Динамический путь для дополнительных изображений"""
-    # Убедимся, что у event есть ID
-    if not instance.event_id:
-        # Если у связанного события нет ID, сохраним его
-        instance.event.save()
-    return f'events/{instance.event.id}/additional_images/{filename}'
-
-class ActivityEventManager(models.Manager):
-    def get_queryset(self, *args, **kwargs):
-        return (super().get_queryset(*args, **kwargs).
-                filter(Q(date_start__lte=Now()) & Q(date_end__gte=Now())))
-
-
-def get_default_organizer():
-    return CustomUser.objects.get(username='default_remove_user').id
-
 
 
 class Event(models.Model):
@@ -121,13 +88,13 @@ class Event(models.Model):
     location_offline = models.CharField(
         max_length=300,
         blank=True,
-        null=True,
+        default='',
         verbose_name='Место проведения мероприятия оффлайн'
     )
     city = models.CharField(
         max_length=300,
         blank=True,
-        null=True,
+        default='',
         verbose_name='Город, в котором проводится оффлайн мероприятия'
     )
     location_online = models.URLField(
@@ -143,7 +110,7 @@ class Event(models.Model):
     )
 
     main_photo = ProcessedImageField(
-        upload_to = event_main_photo_path,
+        upload_to=event_main_photo_path,
         processors=[ResizeToFit(800, 600)],
         format='JPEG',
         options={'quality': 70},
@@ -152,7 +119,6 @@ class Event(models.Model):
     )
 
     objects = models.Manager()
-    active = ActivityEventManager()
 
     class Meta:
         verbose_name = 'Мероприятие'
@@ -169,8 +135,8 @@ class Event(models.Model):
             ),
             models.CheckConstraint(
                 check=(
-                        (Q(location_offline__isnull=True) & Q(location_online__isnull=False)) |
-                        (Q(location_offline__isnull=False) & Q(location_online__isnull=True))
+                        (Q(location_offline='') & Q(location_online__isnull=False)) |
+                        (~Q(location_offline='') & Q(location_online__isnull=True))
                 ),
                 name='check_location'
             )
@@ -180,39 +146,16 @@ class Event(models.Model):
         return f'{self.title}'
 
     def save(self, *args, **kwargs):
-        baseslug = slugify(unidecode(self.title))
-        if not self.slug or not self.slug.startswith(baseslug):
-            slug = f'{baseslug}-{get_random_string()}'
-            while Event.objects.filter(slug=slug).exists():
-                slug = f'{baseslug}-{get_random_string()}'
-            self.slug = slug
+        generate_unique_slug(self)
+        update_available_places_from_participants_limit(self)
+        delete_old_main_image(self)
+        super().save(*args, **kwargs)
+        move_event_directory(self)
 
-        # Сохранение объекта для получения ID (без main_photo)
-        if self.main_photo:
-            temp_photo = self.main_photo
-            self.main_photo = None
-            super().save(*args, **kwargs)
-            self.main_photo = temp_photo
-        else:
-            super().save(*args, **kwargs)
-
-        # Создание каталога после сохранения объекта
-        event_dir = os.path.join(settings.MEDIA_ROOT, f'events/{self.id}')
-        main_photo_dir = os.path.join(event_dir, 'main_photo')
-        additional_images_dir = os.path.join(event_dir, 'additional_images')
-
-        os.makedirs(main_photo_dir, exist_ok=True)
-        os.makedirs(additional_images_dir, exist_ok=True)
-
-        if self.main_photo:
-            super().save(*args, **kwargs)
-
-    # Удаление каталога мероприятия перед удалением объекта
     def delete(self, *args, **kwargs):
-        event_dir = os.path.join(settings.MEDIA_ROOT, f'events/{self.id}')
-        if os.path.exists(event_dir):
-            shutil.rmtree(event_dir)
+        delete_event_directory(self)
         super().delete(*args, **kwargs)
+
 
 class EventImages(models.Model):
     event = models.ForeignKey(
@@ -229,18 +172,15 @@ class EventImages(models.Model):
         verbose_name='Картинки для мероприятия'
     )
 
-
     class Meta:
         verbose_name = 'Картинка для мероприятий'
         verbose_name_plural = 'Картинки для мероприятий'
 
-
     def save(self, *args, **kwargs):
-        # Проверка, что связанное событие сохранено и имеет ID
-        if not self.event_id:
-            self.event.save()
-        # Создадим каталоги, если они ещё не существуют
-        event_dir = os.path.join(settings.MEDIA_ROOT, f'events/{self.event.id}')
-        additional_images_dir = os.path.join(event_dir, 'additional_images')
-        os.makedirs(additional_images_dir, exist_ok=True)
+        delete_old_additional_image(self)
         super().save(*args, **kwargs)
+        move_event_image_directory(self)
+
+    def delete(self, *args, **kwargs):
+        delete_event_image_file(self)
+        super().delete(*args, **kwargs)

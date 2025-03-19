@@ -17,7 +17,8 @@ class RegistrationParticipantsForm(forms.ModelForm):
         self.user = kwargs.pop('user', None)
         self.event = kwargs.pop('event', None)
         super().__init__(*args, **kwargs)
-
+        if self.event:
+            self.instance.event = self.event
         if self.user and self.user.is_authenticated:
             self.fields['email'].initial = self.user.email
             self.fields['phone'].initial = self.user.phone

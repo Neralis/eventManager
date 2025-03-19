@@ -1,6 +1,6 @@
 from django.contrib import admin
-from unfold.admin import StackedInline, TabularInline, ModelAdmin
-from  .models import  Participants
+from unfold.admin import ModelAdmin
+from participantApp.models import Participants
 
 
 @admin.register(Participants)

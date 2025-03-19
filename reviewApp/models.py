@@ -37,10 +37,13 @@ class Review(models.Model):
     @classmethod
     def get_participant(cls, event: 'Event', email: str) -> 'Participants':
         """Проверяет, есть ли действительно такой участник."""
-        participant = (Participants.objects.filter(event=event, user__email=email) or
-                       Participants.objects.filter(event=event, not_auth_user__email=email))
-        if not participant:
-            raise ValueError('Вы не зарегистрированы как участник этого мероприятия')
+        try:
+            participant = Participants.objects.get(event=event, user__email=email)
+        except Participants.DoesNotExist:
+            try:
+                participant = Participants.objects.get(event=event, not_auth_user__email=email)
+            except Participants.DoesNotExist:
+                raise ValueError('Вы не зарегистрированы как участник этого мероприятия')
         return participant
 
     @classmethod

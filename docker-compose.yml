@@ -28,9 +28,16 @@ services:
       - POSTGRES_USER=event
       - POSTGRES_PASSWORD=event
     ports:
-      - "5432:5432"
+      - "5433:5432"
+    extra_hosts:
+      - "host.docker.internal:127.0.0.1"
     networks:
       - event_manager_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U event -d event_manager"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:latest
@@ -78,3 +85,4 @@ networks:
 
 volumes:
   postgres_data:
+  media:

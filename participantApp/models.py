@@ -1,5 +1,7 @@
+from django.utils.timezone import now
 from django.db import models, transaction
 from django.db.models import Q, Count, QuerySet
+from django.core.exceptions import ValidationError
 from eventApp.models import Event
 from userApp.models import NotAuthUser, CustomUser
 from participantApp.constants import FAVOURITE_PARTICIPANT_THRESHOLD
@@ -64,18 +66,48 @@ class Participants(models.Model):
             return self.user.email
         return self.not_auth_user.email
 
+    def clean(self):
+        """Валидация данных перед сохранением"""
+        if self.user and self.user == self.event.organizer:
+            raise ValidationError('Организатор не может зарегистрироваться на свое же мероприятие.')
+
+        if self.event.registration_status and self.user:
+            participant_date_birthday = self.user.date_birthday
+            today = now().date()
+            age = today.year - participant_date_birthday.year
+            if (today.month, today.day) < (participant_date_birthday.month, participant_date_birthday.day):
+                age -= 1
+            if age < self.event.age_limit:
+                raise ValidationError('Возрастное ограничение: вы не достигли необходимого возраста.')
+
+        if not self.event.is_active or self.event.date_start < now():
+            raise ValidationError('Нельзя зарегистрироваться на прошедшее или уже начавшееся событие.')
+
+        if self.event.available_places <= 0:
+            raise ValidationError('Нет свободных мест для регистрации на мероприятие.')
+
+        if self.event.registration_status and self.not_auth_user:
+            raise ValidationError(
+                'Неавторизованный пользователь не может записаться на мероприятие с обязательной регистрацией.')
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+
     @classmethod
     def is_registered(cls, event: 'Event', user=None, email=None, phone=None) -> bool:
         """Проверяет, зарегистрирован ли пользователь(авторизованный или нет) как участник этого мероприятия."""
         if user:
             return cls.objects.filter(event=event, user=user).exists()
         if email and phone:
+            if cls.objects.filter(event=event, user__email=email).exists():
+                return True
             return cls.objects.filter(event=event, not_auth_user__email=email, not_auth_user__phone=phone).exists()
         return False
 
     @classmethod
     def create_participant(cls, event: 'Event', user=None, email=None, phone=None) -> 'Participants':
-        """Создает участника для мероприятия. Возвращает созданного участника"""
+        """Создает участника для мероприятия. Возвращает созданного участника."""
         if event.available_places <= 0:
             raise ValueError('Свободные места для данного мероприятия закончились.')
 
@@ -107,5 +139,3 @@ class Participants(models.Model):
             .filter(registration_count__gt=FAVOURITE_PARTICIPANT_THRESHOLD)
         )
         return favourite_participants
-
-

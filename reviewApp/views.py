@@ -1,4 +1,5 @@
-from django.http import HttpResponse
+from django.core.exceptions import ValidationError
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, DeleteView
@@ -15,12 +16,12 @@ class ReviewListView(ListView):
     template_name = 'reviewApp/review_list.html'
 
     def get_queryset(self):
-        user_id = self.request.GET.get('user_id')  # Получаем ID пользователя из URL (например, /reviews/?user_id=3)
+        user_id = self.kwargs.get('user_id')
         user = get_object_or_404(CustomUser, id=user_id)  # Находим пользователя или выдаём 404, если его нет
         events = Event.objects.filter(organizer=user)  # Получаем все события, организованные этим пользователем
 
-        return Review.objects.filter(event__in=events).select_related('participant__user',
-                                                                      'participant__not_auth_user')  # Фильтруем отзывы по этим событиям
+        return (Review.objects.filter(event__in=events)
+                .select_related('participant__user', 'participant__not_auth_user'))  # Фильтруем отзывы по этим событиям
 
 
 class ReviewListViewOnEvent(ListView):
@@ -29,14 +30,14 @@ class ReviewListViewOnEvent(ListView):
     template_name = 'reviewApp/review_list_on_event.html'
 
     def get_queryset(self):
-        event_id = self.request.GET.get('event_id')
+        event_id = self.kwargs.get('event_id')
         event = get_object_or_404(Event, id=event_id)
 
         return Review.objects.filter(event=event).select_related('participant__user', 'participant__not_auth_user')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        event_id = self.request.GET.get('event_id')
+        event_id = self.kwargs.get('event_id')
         event = get_object_or_404(Event, id=event_id)
         context['event'] = event  # Добавляем объект event в контекст
         return context
@@ -45,13 +46,13 @@ class ReviewListViewOnEvent(ListView):
 class ReviewCreateView(CreateView):
     model = Review
     form_class = ReviewCreateForm
-    template_name = 'reviewApp/review_form.html'
+    template_name = 'reviewApp/review_create.html'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         email, event_id = validate_token(self.kwargs['token'])
-        event = get_object_or_404(Event, id=event_id)
-        kwargs['event'] = event
+        self.event = get_object_or_404(Event, id=event_id)
+        kwargs['event'] = self.event
         kwargs['email'] = email
         return kwargs
 
@@ -68,7 +69,10 @@ class ReviewCreateView(CreateView):
                     rating=form.cleaned_data['rating'],
                 )
                 form.instance = review
-                return super().form_valid(form)
+                return HttpResponseRedirect(self.get_success_url())
+            except ValidationError as e:
+                form.add_error(None, e)
+                return self.form_invalid(form)
             except ValueError as e:
                 form.add_error(None, str(e))
                 return self.form_invalid(form)
@@ -78,17 +82,16 @@ class ReviewCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        event_id = self.kwargs.get('event_id')
-        context['event'] = get_object_or_404(Event, id=event_id)
+        context['event'] = self.event
         return context
 
     def get_success_url(self):
-        return reverse('review_list/<int:user_id>')  # Перенаправление после успешного создания отзыва
+        return reverse_lazy('success')
 
 
 class ReviewDeleteView(DeleteView):
     model = Review
-    success_url = reverse_lazy('review_delete_success')
+    success_url = reverse_lazy('success')
 
 
 def index(request):

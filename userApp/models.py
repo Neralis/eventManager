@@ -15,7 +15,7 @@ class CustomUser(AbstractUser):
     otchestvo = models.CharField(
         max_length=100,
         blank=True,
-        null=True,
+        default='',
         verbose_name='Отчество'
     )
     date_birthday = models.DateField(

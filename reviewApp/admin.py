@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import Review
-from unfold.admin import StackedInline, TabularInline, ModelAdmin
+from reviewApp.models import Review
+from unfold.admin import ModelAdmin
 
 
 @admin.register(Review)

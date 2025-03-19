@@ -1,4 +1,4 @@
-from django.db.models.signals import post_migrate, pre_save
+from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 from django.utils.timezone import now
 from eventApp.models import Event
@@ -17,17 +17,3 @@ def create_default_organizer(sender, instance, **kwargs) -> None:
         )
     except LookupError:
         pass
-
-
-@receiver(pre_save, sender=Event)
-def update_available_places_from_participants_limit(sender, instance, **kwargs) -> None:
-    """Сигнал для обновления свободных мест на мероприятии."""
-    from participantApp.models import Participants
-    if instance.pk is None:
-        instance.available_places = instance.participants_limit
-    else:
-        participants_count = Participants.objects.filter(event=instance).count()
-        if instance.participants_limit < participants_count:
-            raise ValueError('error: Лимит участников не может быть меньше,'
-                             'чем количество зарегистрированных участников.')
-        instance.available_places = instance.participants_limit - participants_count

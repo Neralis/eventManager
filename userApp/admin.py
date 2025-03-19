@@ -1,7 +1,5 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-from unfold.admin import StackedInline, TabularInline, ModelAdmin
-from userApp.models import CustomUser, NotAuthUser
+from unfold.admin import TabularInline, ModelAdmin
 from userApp.models import CustomUser, NotAuthUser, Notification
 
 

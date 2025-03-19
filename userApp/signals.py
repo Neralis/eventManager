@@ -5,7 +5,12 @@ from userApp.models import CustomUser
 
 
 @receiver(pre_delete, sender=CustomUser)
-def block_delete_user(sender, instance, **kwargs):
+def block_delete_user(sender, instance, **kwargs) -> None:
+    """
+    Сигнал для запрета удаления аккаунта пользователя,
+    если у него на данный момент есть мероприятия, в которых он выполняет роль организатора.
+    """
+
     from eventApp.models import Event
 
     events = Event.objects.filter(
@@ -18,7 +23,12 @@ def block_delete_user(sender, instance, **kwargs):
 
 
 @receiver(pre_delete, sender=CustomUser)
-def delete_users_events_(sender, instance, **kwargs):
+def delete_users_events(sender, instance, **kwargs) -> None:
+    """
+    Сигнал для удаления всех будущих мероприятий у пользователя,
+    если он является организатором этих мероприятий.
+    """
+
     from eventApp.models import Event
 
     events = Event.objects.filter(

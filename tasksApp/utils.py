@@ -1,6 +1,7 @@
 import datetime
 import jwt
 from django.conf import settings
+from django.contrib.sites.models import Site
 from typing import List, Optional, Tuple
 from django.core.mail import send_mail
 from django.utils.timezone import now
@@ -10,7 +11,9 @@ from eventApp.models import Event
 from tasksApp.constants import (
     MESSAGE_TITLE,
     MESSAGE_TEXT_EVENT_INFO,
-    MESSAGE_TEXT_EVENT_URL
+    MESSAGE_TEXT_EVENT_URL,
+    SEND_MAIL_REGISTER_ON_EVENT_TEXT,
+    SEND_MAIL_REGISTER_ON_EVENT_TITLE
 )
 
 
@@ -57,7 +60,8 @@ def update_completed_events() -> List[int]:
 def generate_unique_url_for_participants(token: str) -> str:
     """Генерация уникальной ссылки при помощи токена для создания отзыва."""
     path = reverse('review_create', kwargs={'token': token})
-    return f'http://127.0.0.1:8000/{path}/'
+    site_domain = Site.objects.get_current().domain
+    return f'{site_domain}{path}'
 
 
 def send_mail_to_not_auth_user_participant(email: str, event_title: str, unique_url: str) -> None:
@@ -67,5 +71,16 @@ def send_mail_to_not_auth_user_participant(email: str, event_title: str, unique_
         f'{MESSAGE_TEXT_EVENT_INFO}{event_title}\n{MESSAGE_TEXT_EVENT_URL}{unique_url}',
         settings.EMAIL_HOST_USER,
         [email],
+        fail_silently=False,
+    )
+
+
+def registration_on_event(instance) -> None:
+    """Функция для отправки письма на почту пользователю после создания нового участника."""
+    send_mail(
+        f'{SEND_MAIL_REGISTER_ON_EVENT_TITLE}{instance.event.title}',
+        SEND_MAIL_REGISTER_ON_EVENT_TEXT,
+        settings.EMAIL_HOST_USER,
+        [instance.get_email()],
         fail_silently=False,
     )

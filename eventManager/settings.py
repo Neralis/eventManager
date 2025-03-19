@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sites',
     'django_celery_beat',
     'phonenumber_field',
     'imagekit',
@@ -143,7 +144,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-IMAGEKIT_CACHEFILE_NAMER = 'imagekit.cachefiles.namer.DefaultCacheFileNamer'
+IMAGEKIT_DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 # ------------- SMTP -------------------------------------------
 
@@ -162,4 +163,9 @@ CELERY_TASK_SERIALIZER = 'json'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+
+# ------------- SITE DOMAIN-------------------------------------
+
+SITE_ID = 1
 

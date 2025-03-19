@@ -9,7 +9,7 @@ from tasksApp.utils import (
     update_completed_events,
     generate_token,
     generate_unique_url_for_participants,
-    send_mail_to_not_auth_user_participant
+    send_mail_to_not_auth_user_participant,
 )
 from tasksApp.constants import (
     SEND_MAIL_BEFORE_EVENT_TITLE,
