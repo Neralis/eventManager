@@ -6,7 +6,7 @@ from participantApp.models import Participants
 from reviewApp.models import Review
 
 
-class ParticipantsInLine(admin.TabularInline):
+class ParticipantsInLine(TabularInline):
     model = Participants
     extra = 0
     readonly_fields = [
@@ -19,7 +19,7 @@ class ParticipantsInLine(admin.TabularInline):
     verbose_name_plural = 'Участники'
 
 
-class ReviewsInLine(admin.TabularInline):
+class ReviewsInLine(TabularInline):
     model = Review
     extra = 0
     readonly_fields = [
@@ -32,7 +32,7 @@ class ReviewsInLine(admin.TabularInline):
     verbose_name_plural = 'Отзывы'
 
 
-class EventImagesInline(admin.TabularInline):
+class EventImagesInline(TabularInline):
     model = EventImages
     extra = 0
     readonly_fields = ['image']
