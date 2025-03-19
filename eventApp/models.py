@@ -235,12 +235,12 @@ class EventImages(models.Model):
         verbose_name_plural = 'Картинки для мероприятий'
 
 
-    def save(self, *args, **kwargs):
-        # Проверка, что связанное событие сохранено и имеет ID
-        if not self.event_id:
-            self.event.save()
-        # Создадим каталоги, если они ещё не существуют
-        event_dir = os.path.join(settings.MEDIA_ROOT, f'events/{self.event.id}')
-        additional_images_dir = os.path.join(event_dir, 'additional_images')
-        os.makedirs(additional_images_dir, exist_ok=True)
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     # Проверка, что связанное событие сохранено и имеет ID
+    #     if not self.event_id:
+    #         self.event.save()
+    #     # Создадим каталоги, если они ещё не существуют
+    #     event_dir = os.path.join(settings.MEDIA_ROOT, f'events/{self.event.id}')
+    #     additional_images_dir = os.path.join(event_dir, 'additional_images')
+    #     os.makedirs(additional_images_dir, exist_ok=True)
+    #     super().save(*args, **kwargs)
