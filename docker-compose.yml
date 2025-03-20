@@ -19,7 +19,9 @@ services:
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
 
   db:
-    image: postgres:15
+    build:
+      context: .
+      dockerfile: Dockerfile_db
     container_name: postgres_db
     volumes:
       - postgres_data:/var/lib/postgresql/data

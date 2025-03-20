@@ -14,3 +14,4 @@ COPY . .
 
 # Correct CMD syntax
 CMD ["celery", "-A", "eventManager", "worker", "--uid=nobody"]
+

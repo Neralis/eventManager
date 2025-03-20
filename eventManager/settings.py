@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.sites',
+    'django.contrib.postgres',
     'django_celery_beat',
     'phonenumber_field',
     'imagekit',

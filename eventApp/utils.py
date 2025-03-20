@@ -147,10 +147,32 @@ def delete_event_directory(instance) -> None:
             print(f"Ошибка при удалении файла: {e}")
 
 
-def delete_event_image_file(instance):
+def delete_event_image_file(instance) -> None:
     """Функция для удаления изображения при удалении объекта EventImages."""
     if instance.image and os.path.exists(instance.image.path):
         try:
             os.remove(instance.image.path)
         except OSError as e:
             print(f"Ошибка при удалении файла: {e}")
+
+
+def search_event(query: str, min_similarity: float = 0.2, min_rank: float = 0.01):
+    """Функция для поиска мероприятий по названию и описанию."""
+    from eventApp.models import Event
+    from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, TrigramSimilarity
+    from django.db.models import Q, F, Value
+
+    query = query.strip().lower()
+    search_query = SearchQuery(Value(query), config='russian')
+
+    result = Event.objects.annotate(
+        search=SearchVector('title', 'description', config='russian'),
+        rank=SearchRank(SearchVector('title', 'description', config='russian'), search_query),
+        title_similarity=TrigramSimilarity('title', Value(query)),
+        description_similarity=TrigramSimilarity('description', Value(query)),
+        weighted_similarity=(F('title_similarity') * 0.7) + (F('description_similarity') * 0.3),
+    ).filter(
+        weighted_similarity__gt=min_similarity
+    ).order_by('-weighted_similarity')
+
+    return result

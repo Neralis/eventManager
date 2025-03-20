@@ -45,7 +45,8 @@ class Event(models.Model):
     )
     description = models.TextField(
         blank=True,
-        verbose_name='Описание меропрития'
+        max_length=3500,
+        verbose_name='Описание мероприятия'
     )
     date_start = models.DateTimeField(
         verbose_name='Дата и время начала мероприятия'
