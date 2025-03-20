@@ -29,8 +29,8 @@
             <img src="{% static 'img/logo_img.png' %}" alt="logo" class="logo">
         </div>
         <div class="header_func">
-            <form action="" method="get" class="header_func_search">
-                <input type="text" class="search" placeholder="searh">
+            <form action="{% url 'event_search' %}" method="get" class="header_func_search">
+                <input name="q" type="text" class="search" placeholder="searh">
                 <input type="button" class="header_btn_search">
             </form>
             <a href="#" class="header_func_add_event" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Добавить мероприятие"></a>

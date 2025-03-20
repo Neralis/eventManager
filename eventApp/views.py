@@ -3,12 +3,13 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import ListView,DetailView,CreateView,UpdateView,DeleteView
-from .forms import EventForm, EventImagesForm
+from .forms import EventForm
 from django.utils.dateparse import parse_date
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from .models import Event,Category, EventImages
 from django.db.models import Count ,F
+from django.db.models import Q
 
 
 def primer(request):
@@ -20,6 +21,7 @@ class EventListView(ListView):
     model = Event
     template_name = 'event_list.html'
     paginate_by = 20
+
 
 
     def get_queryset(self):
@@ -175,6 +177,52 @@ class EventDeleteAjaxView(View):
             return JsonResponse({"message": "Событие удалено"}, status=200)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=400)
+        
+
+class SearchResultView(ListView):
+    model = Event
+    template_name = 'event_search.html'
+    context_object_name = 'event_list'
+    
+    def get_queryset(self):
+        queryset = Event.objects.all()
+
+        event_format = self.request.GET.get('event_format')
+        if event_format in ["Online", "Offline"]:
+            queryset = queryset.filter(event_format=event_format)
+
+        date_start = self.request.GET.get('date_start')
+        if date_start:
+            parsed_date = parse_date(date_start)  # Преобразуем строку в дату
+            if parsed_date:
+                queryset = queryset.filter(date_start__date=parsed_date)
+
+        category_id = self.request.GET.get("category")
+        if category_id:
+            try:
+                category_id = int(category_id)  # Преобразуем строку в число
+                queryset = queryset.filter(category=category_id)  # category вместо category_id
+            except (TypeError, ValueError):
+                pass
+
+        city = self.request.GET.get("city")
+        if city and city != "all":  # Если city не "all", применяем фильтр
+            queryset = queryset.filter(city=city)
+
+        query = self.request.GET.get('q')
+        queryset = queryset.filter(Q(title__icontains = query) | Q(city__icontains=query))
+
+        queryset = queryset.annotate(count_place=F('participants_limit') - Count('participants'))
+
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        context['cities'] = Event.objects.exclude(city__isnull=True).exclude(city="").values_list("city", flat=True).distinct()
+        context['event_count'] = self.get_queryset().count()
+        return context
+    
 
 
 

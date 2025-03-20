@@ -1,0 +1,73 @@
+{%extends 'index.html'%}
+{%load static%}
+{%block content%}
+<section class="all_event">
+    <div class="all_event_filter_items">
+        <div class="all_event_filter_item custom-select">
+            <select class="all_event_filter_item_category" id="event-category-filter">
+                <option value="all" {% if not request.GET.category or request.GET.category == "all" %}selected{% endif %}>
+                    Все категории
+                </option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>
+                        {{ category.title }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="all_event_filter_item custom-select">
+            <select class="all_event_filter_item_city" id="event-city-filter">
+                <option value="all" {% if not request.GET.city or request.GET.city == "all" %}selected{% endif %}>Все города</option>
+                {% for city in cities %}
+                    <option value="{{ city }}" {% if request.GET.city == city %}selected{% endif %}>{{ city }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        
+        <div class="all_event_filter_item">
+            <input type="date" id="event-date-filter" class="filter_name" 
+                   value="{{ request.GET.date_start|default_if_none:'' }}">
+        </div>
+        
+        <div class="all_event_filter_item custom-select">
+            <select class="all_event_filter_item_format" id="event-format-filter">
+                <option value="" {% if not request.GET.event_format %}selected{% endif %}>Все</option>
+                <option value="Online" {% if request.GET.event_format == "Online" %}selected{% endif %}>Онлайн</option>
+                <option value="Offline" {% if request.GET.event_format == "Offline" %}selected{% endif %}>Оффлайн</option>
+            </select>
+        </div>
+        <button class="all_event_reset_btn" class="btn btn-secondary" onclick="resetFilters()" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Сбросить все фильтры">Сбросить</button>
+        
+    </div>
+    <p class="all_event_text">{{event_count}} события</p>
+<ul class="all_event_grid">
+    {% for event in event_list %}
+    <li class="all_event_grid_item" id="event-{{ event.id }}">
+        <div class="all_event_grid_item_img_cont position-relative">
+            <img src="{% if event.main_photo %}{{ event.main_photo.url }}{% else %}{% static 'img/star.svg' %}{% endif %}" alt="event_img" class="all_event_grid_item_img">
+            
+            <!-- Кнопка удаления -->
+            <button class="delete-event-btn position-absolute" data-event-id="{{ event.id }}"
+                style="top: 5px; right: 5px; font-size: 18px; background: none; border: none; color: red;">
+                ×
+            </button>
+        </div>
+        
+        <p class="all_event_grid_item_organizer">{{ event.organizer }} организатор</p>
+        <p class="all_event_grid_item_title">{{ event.title }}</p>
+        <p class="all_event_grid_item_city">{{event.city}} {{ event.location_offline }}</p>
+        <p class="all_event_grid_item_date">{{ event.date_start|date:"j E Y, H:i" }}</p>
+        
+        <div class="all_event_grid_item_btn_count">
+            <button class="all_event_grid_item_btn">Записаться</button>
+            <p class="all_event_grid_item_place">осталось {{ event.count_place }} из {{ event.participants_limit }} мест</p>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+
+</section>
+<script src="{% static 'js/all_event.js' %}"
+{%endblock%}
+

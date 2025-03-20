@@ -9,7 +9,9 @@ urlpatterns = [
 
     path('<int:pk>/update/', views.EventUpdateView.as_view(), name='event_update'),
     path('create/', views.EventCreateView.as_view(), name='event_create'),
-    path('<int:pk>/delete/', views.EventDeleteView.as_view(), name='event_delete'),
+    path('delete/<int:pk>/', views.EventDeleteAjaxView.as_view(), name='event_delete'),
+    path('search/', views.SearchResultView.as_view(), name = 'event_search'),
+   
 
 
 ]

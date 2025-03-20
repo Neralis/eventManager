@@ -60,7 +60,7 @@
                 
                 <p class="all_event_grid_item_organizer">{{ event.organizer }} организатор</p>
                 <p class="all_event_grid_item_title">{{ event.title }}</p>
-                <p class="all_event_grid_item_city">{{ event.location_offline }}</p>
+                <p class="all_event_grid_item_city">{{event.city}} {{ event.location_offline }}</p>
                 <p class="all_event_grid_item_date">{{ event.date_start|date:"j E Y, H:i" }}</p>
                 
                 <div class="all_event_grid_item_btn_count">
@@ -70,130 +70,49 @@
             </li>
             {% endfor %}
         </ul>
+
+        {% if page_obj.paginator.num_pages > 1 %}
+        
+    <div class="all_event_pages">
+        {% if page_obj.has_previous %}
+            <a href="?{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}
+                      {% if request.GET.city %}city={{ request.GET.city }}&{% endif %}
+                      {% if request.GET.date_start %}date_start={{ request.GET.date_start }}&{% endif %}
+                      {% if request.GET.event_format %}event_format={{ request.GET.event_format }}&{% endif %}
+                      page={{ page_obj.previous_page_number }}" class="all_event_pages_previous">
+                ← Предыдущая страница
+            </a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <div class="all_event_pages_circle active"><a href="?page={{ num }}">{{ num }}</a></div>
+            {% else %}
+                <div class="all_event_pages_circle"><a href="?page={{ num }}">{{ num }}</a></div>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <a href="?{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}
+                      {% if request.GET.city %}city={{ request.GET.city }}&{% endif %}
+                      {% if request.GET.date_start %}date_start={{ request.GET.date_start }}&{% endif %}
+                      {% if request.GET.event_format %}event_format={{ request.GET.event_format }}&{% endif %}
+                      page={{ page_obj.next_page_number }}" class="all_event_pages_next">
+                Следующая страница →
+            </a>
+        {% endif %}
+    </div>
+{% endif %}
+
         
 
         </section>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    <script>
-        document.getElementById("event-format-filter").addEventListener("change", function () {
-            let format = this.value;
-            let url = new URL(window.location.href);
-            
-            if (format) {
-                url.searchParams.set("event_format", format);
-            } else {
-                url.searchParams.delete("event_format");
-            }
-            
-            window.location.href = url.toString();  // Обновляем страницу с новым фильтром
-        });
-    </script>
-    <script>
-        document.getElementById("event-date-filter").addEventListener("change", function () {
-            let date = this.value;
-            let url = new URL(window.location.href);
-    
-            if (date) {
-                url.searchParams.set("date_start", date);
-            } else {
-                url.searchParams.delete("date_start");
-            }
-    
-            window.location.href = url.toString();  // Перезагрузка страницы с новым фильтром
-        });
-    </script>
-    <script>
-       document.addEventListener("DOMContentLoaded", function () {
-    const categorySelect = document.getElementById("event-category-filter");
-
-    if (categorySelect) {
-        categorySelect.addEventListener("change", function () {
-            let params = new URLSearchParams(window.location.search);
-
-            let category = categorySelect.value;
-            if (category) {
-                params.set("category", category);
-            } else {
-                params.delete("category");
-            }
-
-            window.location.search = params.toString();
-        });
-    }
-});
-
- 
-    </script>
-    <script src="{% static 'js/all_event.js'%}"></script>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-    const citySelect = document.getElementById("event-city-filter");
-
-    if (citySelect) {
-        citySelect.addEventListener("change", function () {
-            let params = new URLSearchParams(window.location.search);
-
-            let city = citySelect.value;
-            if (city === "all") {
-                params.delete("city");  // Удаляем параметр city, если выбрано "Все"
-            } else {
-                params.set("city", city);  // Устанавливаем параметр city
-            }
-
-            window.location.search = params.toString();  // Перезагрузка страницы с новым фильтром
-        });
-    }
-});
-
-    function resetFilters(){
-        const url = new URL(window.location.href)
-        const params = new URLSearchParams(url.search)
-
-        params.delete('category')
-        params.delete('city')
-        params.delete('date_start')
-        params.delete('event_format')
-
-        url.search = params.toString()
-        window.location.href = url.toString()
-    }
-    
-    </script>
-    <script>
-       document.addEventListener("DOMContentLoaded", function () {
-    let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
-
-    document.querySelectorAll(".delete-event-btn").forEach(button => {
-        button.addEventListener("click", function () {
-            let eventId = this.getAttribute("data-event-id");
-
-            if (!confirm("Вы уверены, что хотите удалить событие?")) {
-                return;
-            }
-
-            fetch(`/events/delete/${eventId}/`, {
-                method: "DELETE",
-                headers: {
-                    "X-CSRFToken": csrfToken,
-                    "Content-Type": "application/json"
-                }
-            }).then(response => response.json()).then(data => {
-                if (data.message) {
-                    document.getElementById(`event-${eventId}`).remove();
-                } else {
-                    alert("Ошибка при удалении: " + data.error);
-                }
-            }).catch(error => {
-                alert("Ошибка при удалении! " + error);
-            });
-        });
-    });
-});
-console.log("privet")
-        </script>
+        <script src="{% static 'js/all_event.js' %}"> </script>
         
-        {%endblock%}
+    
+        
+{%endblock%}
     
 
     
