@@ -1,57 +1,6 @@
+{% extends 'index.html' %}
 {%load static%}
-<!DOCTYPE html>
-
-<html lang="en">
-    <head>
-
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>eventManager</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sofia+Sans:ital,wght@0,1..1000;1,1..1000&display=swap" rel="stylesheet">
-    <meta name="viewport" content="width=device-width">
-    
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
-
-    <script src="https://api-maps.yandex.ru/v3/?apikey=97a85acd-ba8a-4b10-b1a1-8a55ae3b2fc7" type="text/javascript">
-    </script>
-        
-    </head>
-<body>
-    <header class="header">
-        <div class="header_logo">
-            <img src="{% static 'img/logo_img.png' %}" alt="logo" class="logo">
-        </div>
-        <div class="header_func">
-            <form action="" method="get" class="header_func_search">
-                <input type="text" class="search" placeholder="searh">
-                <input type="button" class="header_btn_search">
-            </form>
-            <a href="#" class="header_func_add_event"></a>
-            <div class="header_func_user">
-                <a class="header_func_user_sign_in">войти</a>
-                <a class="header_func_user_signout highlight_text">регистрация</a>
-            </div>
-
-            <div class="header_func_menu">
-                <div class="header_func_burger">
-                    <img src="{% static 'img/burger.png' %}" alt="burger" class="burger">
-                </div>
-                <ul class="header_func_menu_items">
-                    <li class="header_func_menu_item"><a href="#">Профиль</a></li>
-                    <li class="header_func_menu_item"><a href="#">Главная</a></li>
-                    <li class="header_func_menu_item"><a href="#">Мои мероприятия</a></li>
-                    <li class="header_func_menu_item"><a href="#">Запланированные мероприятия</a></li>
-                    <li class="header_func_menu_item"><a href="#">Выйти</a></li>
-                </ul>
-            </div>
-        </div>
-</header>
-<main>
+{% block content %}
     <section class="create_event">
         <div class="create_event_block">
             <div class="create_event_btn_title">
@@ -161,75 +110,8 @@
 
         </div>
     </section>
-</main>
 
-<footer class="footer">
-    <div class="footer_content">
-        <ul class="footer_link">
-            <li><a href="#">Главная</a></li>
-            <li><a href="#">О нас</a></li>
-            <li><a href="#">Реклама</a></li>
-            <li><a href="#">Помощь</a></li>
-            <li><a href="#">Задать вопрос</a></li>
-        </ul>
-    </div>
-</footer>
 
-<script>
-    function toggleAddressField() {
-    let format = document.querySelector("select[name='event_format']").value;
+<script src = "{% static 'js/event_update.js' %}"></script>
 
-    let offlineInput = document.querySelector("input[name='location_offline']");
-    let onlineInput = document.querySelector("input[name='location_online']");
-    let cityInput = document.querySelector("input[name='city']");  // Исправлено: имя поля 'city'
-
-    if (format === "Offline") {
-        document.getElementById("offline-address").style.display = "block";
-        document.getElementById("city").style.display = "block";
-        document.getElementById("online-address").style.display = "none";
-        onlineInput.value = "";  // Очищаем скрытое поле
-    } else {
-        document.getElementById("offline-address").style.display = "none";
-        document.getElementById("city").style.display = "none";
-        document.getElementById("online-address").style.display = "block";
-        offlineInput.value = "";  // Очищаем скрытое поле
-        cityInput.value = "";  // Очищаем поле города
-    }
-}
-let imagesToRemove = [];
-
-    // Функция для удаления дополнительного изображения
-    function removeImage(button, imageId) {
-        // Находим родительский элемент (колонку) и удаляем его
-        const imageItem = button.closest('.image-item');
-        if (imageItem) {
-            imageItem.remove();
-            
-            // Добавляем ID изображения в массив для удаления
-            imagesToRemove.push(imageId);
-            
-            // Обновляем скрытое поле с ID изображений для удаления
-            document.getElementById('images_to_remove').value = imagesToRemove.join(',');
-        }
-    }
-
-    // Функция для удаления главного изображения
-    function removeMainImage() {
-        // Скрываем изображение и родительский контейнер
-        const imageContainer = document.querySelector('.create_event_form_file .position-relative');
-        if (imageContainer) {
-            imageContainer.style.display = 'none';
-            
-            // Устанавливаем значение скрытого поля в true, чтобы удалить главное изображение
-            document.getElementById('remove_main_photo').value = 'true';
-        }
-    }
-
-    // Инициализация при загрузке страницы
-    window.onload = function() {
-        toggleAddressField();
-        document.querySelector("select[name='event_format']").addEventListener("change", toggleAddressField);
-    };
-</script>
-</body>
-</html>
+{% endblock %}
