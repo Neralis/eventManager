@@ -114,3 +114,16 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+document.addEventListener("DOMContentLoaded",function(){
+    const events = document.querySelectorAll(".all_event_grid_item")
+
+    events.forEach(event => {
+        event.addEventListener("click", function(){
+            const eventId = event.id.split("-")[1]
+            window.location.href = `/events/${eventId}/`
+
+        })
+        
+    })
+   
+})

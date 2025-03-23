@@ -1,74 +1,6 @@
+{% extends "index.html" %}
 {%load static%}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
-
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>eventManager</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sofia+Sans:ital,wght@0,1..1000;1,1..1000&display=swap" rel="stylesheet">
-    <meta name="viewport" content="width=device-width">
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    
-
-    <script src="https://api-maps.yandex.ru/v3/?apikey=97a85acd-ba8a-4b10-b1a1-8a55ae3b2fc7" type="text/javascript">
-    </script>
-     <meta charset="UTF-8">
-     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>eventManager</title>
-     <link rel="preconnect" href="https://fonts.googleapis.com">
-     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-     <link href="https://fonts.googleapis.com/css2?family=Sofia+Sans:ital,wght@0,1..1000;1,1..1000&display=swap" rel="stylesheet">
-     <meta name="viewport" content="width=device-width">
-     
-     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-     <link rel="stylesheet" href="{% static 'css/index.css' %}">
- 
-     <script src="https://api-maps.yandex.ru/v3/?apikey=97a85acd-ba8a-4b10-b1a1-8a55ae3b2fc7" type="text/javascript">
-     </script>
-    
-
-</head>
-<body>
-    <header class="header">
-        
-            <div class="event_main_img">
-            <img src="{% static 'img/logo_img.png' %}" alt="logo" class="logo">
-            </div>
-       
-        <div class="header_func">
-            <form action="" method="get" class="header_func_search">
-                <input type="text" class="search" placeholder="searh">
-                <input type="button" class="header_btn_search">
-            </form>
-            <a href="#" class="header_func_add_event"></a>
-            <div class="header_func_user">
-                <a class="header_func_user_sign_in">войти</a>
-                <a class="header_func_user_signout highlight_text">регистрация</a>
-            </div>
-
-            <div class="header_func_menu">
-                <div class="header_func_burger">
-                    <img src="{% static 'img/burger.png' %}" alt="burger" class="burger">
-                </div>
-                <ul class="header_func_menu_items">
-                    <li class="header_func_menu_item"><a href="#">Профиль</a></li>
-                    <li class="header_func_menu_item"><a href="#">Главная</a></li>
-                    <li class="header_func_menu_item"><a href="#">Мои мероприятия</a></li>
-                    <li class="header_func_menu_item"><a href="#">Запланированные мероприятия</a></li>
-                    <li class="header_func_menu_item"><a href="#">Выйти</a></li>
-                </ul>
-            </div>
-        </div>
-    </header>
-    <main>
-
+{% block content %}
 <section class="event">
     <div class="event_main">
         <h3 class="event_title">{{ object.title }}</h3>
@@ -151,19 +83,14 @@
             {% endif%}
            
         </div>
-        
-
     </div>
 
     <div class="event_to_organizer">
-        
-
-        
        {% if organizer_events %}
        <h4 class="event_description_title event_title_2">Также от организатора:</h4>
     <div class="all_event_grid">
         {% for organizer_event in organizer_events %}
-        <div class="all_event_grid_item">
+        <div class="all_event_grid_item" id = "event-{{organizer_event.id}}">
             <div class="all_event_grid_item_img_cont">
             <img src="{% if organizer_event.main_photo %}{{ organizer_event.main_photo.url }}{% else %}{% static 'img/default_event.jpg' %}{% endif %}" alt="event_img" class="all_event_grid_item_img">
             </div>
@@ -178,18 +105,15 @@
         </div>
         {% endfor %}
     </div>
-   
     {% endif %}
-</div>
 
+</div>
     <div class="event_other">
-        
-        <!-- Здесь карточка события -->
         {% if similiar_events %}
         <h4 class="event_description_title event_title_2">Похожие:</h4>
 <div class="all_event_grid">
     {% for similiar_event in similiar_events %}
-    <div class="all_event_grid_item">
+    <div class="all_event_grid_item" id = "event-{{similiar_event.id}}">
         <div class="all_event_grid_item_img_cont">
         <img src="{% if similiar_event.main_photo %}{{ similiar_event.main_photo.url }}{% else %}{% static 'img/default_event.jpg' %}{% endif %}" alt="event_img" class="all_event_grid_item_img">
         </div>
@@ -204,83 +128,10 @@
     </div>
     {% endfor %}
 </div>
-
-{% endif %}
-
-            
+{% endif %}         
     </div>
-    <!-- </div> -->
-
 </section>
-        </main>
-
-    <footer class="footer">
-        <div class="footer_content">
-             <ul class="footer_link">
-                <li class="footer_link_item"><a href="#">Главная</a></li>
-                <li class="footer_link_item"><a href="#">О нас</a></li>
-                <li class="footer_link_item"><a href="#">Реклама</a></li>
-                <li class="footer_link_item"><a href="#">Помощь</a></li>
-                <li class="footer_link_item"><a href="#">Задать вопрос</a></li>
-            </ul>
-            <ul class="footer_social">
-                <li class="footer_social_item telegram"><a href="#"></a></li>
-                <li class="footer_social_item vk"><a href="#"></a></li>
-                <li class="footer_social_item gmail"><a href="#"></a></li>
-            </ul>
-        </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-</body>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var isOnline = "{{ object.event_format }}"=== "Online";  // Предполагаем, что в объекте есть поле is_online (True/False)
         
-        if (isOnline) {
-            document.getElementById("location_onffine").style.display = "none";
-            document.getElementById("map_place").style.display = "none"
-            document.getElementById("location_online").style.display = "block"
-        }
-        else{
-            document.getElementById("location_onffine").style.display = "block";
-            document.getElementById("map_place").style.display = "block"
-            document.getElementById("location_online").style.display = "none"
-       
-        }
-    });
-    </script>
-    <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var city = "{{ object.city|default:''|escapejs }}";  // Город
-        var locationOffline = "{{ object.location_offline|default:''|escapejs }}";  // Улица и дом
-        var mapFrame = document.getElementById("mapFrame");
+<script src = "{% static 'js/event_detail.js' %}"></script>
     
-        var fullAddress = city && locationOffline ? `${city}, ${locationOffline}` : city || locationOffline;
-    
-        if (fullAddress && mapFrame) {
-            var yandexApiUrl = `https://geocode-maps.yandex.ru/1.x/?format=json&apikey=72ad0fbf-7eeb-44ea-8f5d-2bc7174230be&geocode=${encodeURIComponent(fullAddress)}&results=1`;
-    
-            fetch(yandexApiUrl)
-                .then(response => response.json())
-                .then(data => {
-                    var geoObjects = data.response.GeoObjectCollection.featureMember;
-    
-                    if (geoObjects.length > 0) {
-                        var geoObject = geoObjects[0].GeoObject;
-                        var coordinates = geoObject.Point.pos.split(" ");
-                        var lon = coordinates[0], lat = coordinates[1];
-    
-                        var mapSrc = `https://yandex.ru/map-widget/v1/?ll=${lon},${lat}&z=15&pt=${lon},${lat},pm2rdm`;
-                        mapFrame.src = mapSrc;
-                    } else {
-                        console.error("Адрес не найден");
-                    }
-                })
-                .catch(error => console.error("Ошибка загрузки карты:", error));
-        }
-    });
-    </script>
-    
-    
-</html>
+{% endblock %}
