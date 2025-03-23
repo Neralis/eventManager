@@ -1,3 +1,4 @@
+import logging
 from django.conf import settings
 from django.utils.timezone import now, timedelta
 from eventApp.models import Event
@@ -18,6 +19,8 @@ from tasksApp.constants import (
     MESSAGE_TEXT_EVENT_INFO,
     MESSAGE_TEXT_EVENT_URL
 )
+
+logger = logging.getLogger(__name__)
 
 
 @shared_task
@@ -86,4 +89,4 @@ def remove_notifications() -> None:
     try:
         Notification.objects.filter(created_at__lt=time_life).delete()
     except Exception as e:
-        print(f'error {e}')
+        logger.error(f'Ошибка {e}')

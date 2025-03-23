@@ -48,12 +48,11 @@ INSTALLED_APPS = [
     'django.contrib.postgres',
     'django_celery_beat',
     'phonenumber_field',
-    'imagekit',
-    'userApp.apps.UserappConfig',
-    'eventApp.apps.EventappConfig',
-    'participantApp.apps.ParticipantappConfig',
-    'reviewApp.apps.ReviewappConfig',
-    'tasksApp.apps.TasksappConfig',
+    'userApp',
+    'eventApp',
+    'participantApp',
+    'reviewApp',
+    'tasksApp',
 ]
 
 MIDDLEWARE = [
@@ -139,13 +138,16 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+
+MEDIA_ROOT = '/app/media'
+MEDIA_URL = '/media/'
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
-IMAGEKIT_DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 # ------------- SMTP -------------------------------------------
 
@@ -157,16 +159,65 @@ EMAIL_USE_SSL = True
 EMAIL_HOST_USER = 'ner4corp@gmail.com'
 EMAIL_HOST_PASSWORD = 'oimy thbj nfxn lfhx'
 
+# --------------- CELERY ----------------------------------------
+
 CELERY_BROKER_URL = 'redis://redis:6379/0'
 CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
-
-
 # ------------- SITE DOMAIN-------------------------------------
 
 SITE_ID = 1
 
+# --------------- LOGGING --------------------------------------
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'simple': {
+            'format': '{levelname} {asctime} {name} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+    },
+    'loggers': {
+        'eventApp': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'participantApp': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'reviewApp': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'userApp': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'tasksApp': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'utils.file_handler': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}

@@ -1,12 +1,14 @@
+import logging
 from django.db import models
 from django.db.models import Q, F, SET_DEFAULT
-from imagekit.models import ProcessedImageField
-from pilkit.processors import ResizeToFit
+from django.core.validators import FileExtensionValidator
 from eventApp.utils import get_default_organizer, event_main_photo_path, generate_unique_slug, \
-    update_available_places_from_participants_limit, delete_old_main_image, move_event_directory, \
-    delete_event_directory, event_additional_image_path, delete_old_additional_image, move_event_image_directory, \
-    delete_event_image_file
+    update_available_places_from_participants_limit, \
+    event_additional_image_path, delete_old_additional_image
 from userApp.models import CustomUser
+from utils.file_handler import FileHandler
+
+logger = logging.getLogger(__name__)
 
 
 class Category(models.Model):
@@ -110,12 +112,14 @@ class Event(models.Model):
         verbose_name='Статус активности мероприятия'
     )
 
-    main_photo = ProcessedImageField(
+    main_photo = models.ImageField(
         upload_to=event_main_photo_path,
-        processors=[ResizeToFit(800, 600)],
-        format='JPEG',
-        options={'quality': 70},
         blank=True,
+        max_length=255,
+        validators=[FileExtensionValidator(
+            allowed_extensions=['png', 'jpg', 'jpeg'],
+            message='Вы можете использовать только файлы с расширениями PNG и JPEG.'
+        )],
         verbose_name='Фото для обложки'
     )
 
@@ -149,12 +153,26 @@ class Event(models.Model):
     def save(self, *args, **kwargs):
         generate_unique_slug(self)
         update_available_places_from_participants_limit(self)
-        delete_old_main_image(self)
-        super().save(*args, **kwargs)
-        move_event_directory(self)
+        if self.id:
+            old_instance = self.__class__.objects.get(id=self.id)
+            if old_instance.main_photo != self.main_photo:
+                FileHandler.delete_old_image(self, self.__class__, 'main_photo')
+        if self.main_photo:
+            FileHandler.save_file(
+                instance=self,
+                file_field_name='main_photo',
+                path_function=event_main_photo_path,
+            )
+        try:
+            super().save(*args, **kwargs)
+        except Exception as e:
+            logger.error(f"Ошибка при сохранении объекта в базе данных: {e}")
+            if self.main_photo:
+                FileHandler.delete_event_folder(self.slug)
+            raise
 
     def delete(self, *args, **kwargs):
-        delete_event_directory(self)
+        FileHandler.delete_event_folder(self.slug)
         super().delete(*args, **kwargs)
 
 
@@ -165,11 +183,13 @@ class EventImages(models.Model):
         related_name='event_images',
         verbose_name='Мероприятие'
     )
-    image = ProcessedImageField(
+    image = models.ImageField(
         upload_to=event_additional_image_path,
-        processors=[ResizeToFit(800, 600)],
-        format='JPEG',
-        options={'quality': 70},
+        max_length=255,
+        validators=[FileExtensionValidator(
+            allowed_extensions=['png', 'jpg', 'jpeg'],
+            message='Вы можете использовать только файлы с расширениями PNG и JPEG.'
+        )],
         verbose_name='Картинки для мероприятия'
     )
 
@@ -179,9 +199,13 @@ class EventImages(models.Model):
 
     def save(self, *args, **kwargs):
         delete_old_additional_image(self)
+        FileHandler.save_file(
+            instance=self,
+            file_field_name='image',
+            path_function=event_additional_image_path
+        )
         super().save(*args, **kwargs)
-        move_event_image_directory(self)
 
     def delete(self, *args, **kwargs):
-        delete_event_image_file(self)
+        FileHandler.delete_event_image_with_folder_cleanup(self.image.name)
         super().delete(*args, **kwargs)
