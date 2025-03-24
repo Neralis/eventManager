@@ -150,6 +150,11 @@ class Event(models.Model):
         return f'{self.title}'
 
     def save(self, *args, **kwargs):
+        if not self.organizer.is_active:
+            raise ValueError(
+                'Нельзя создать мероприятие, '
+                'организатор не активен, необходимо изменить его статус с (is_active=False) на (is_active=True).'
+            )
         generate_unique_slug(self)
         update_available_places_from_participants_limit(self)
         if self.id:
@@ -165,7 +170,7 @@ class Event(models.Model):
         try:
             super().save(*args, **kwargs)
         except Exception as e:
-            logger.error(f"Ошибка при сохранении объекта в базе данных: {e}")
+            logger.error(f'Ошибка при сохранении объекта в базе данных: {e}')
             if self.main_photo:
                 FileHandler.delete_event_folder(self.slug)
             raise
