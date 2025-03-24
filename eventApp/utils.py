@@ -3,13 +3,7 @@ from random import choices
 from unidecode import unidecode
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError
-from userApp.models import CustomUser
 from utils.file_handler import FileHandler
-
-
-def get_default_organizer() -> int:
-    """Функция для получения id дефолтного пользователя."""
-    return CustomUser.objects.get(username='default_remove_user').id
 
 
 def event_main_photo_path(instance, filename: str) -> str:

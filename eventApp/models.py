@@ -1,8 +1,8 @@
 import logging
 from django.db import models
-from django.db.models import Q, F, SET_DEFAULT
+from django.db.models import Q, F
 from django.core.validators import FileExtensionValidator
-from eventApp.utils import get_default_organizer, event_main_photo_path, generate_unique_slug, \
+from eventApp.utils import event_main_photo_path, generate_unique_slug, \
     update_available_places_from_participants_limit, \
     event_additional_image_path, delete_old_additional_image
 from userApp.models import CustomUser
@@ -63,8 +63,7 @@ class Event(models.Model):
 
     organizer = models.ForeignKey(
         CustomUser,
-        default=get_default_organizer,
-        on_delete=SET_DEFAULT,
+        on_delete=models.PROTECT,
         related_name='events',
         verbose_name='Организатор мероприятия'
     )
