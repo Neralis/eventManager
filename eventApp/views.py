@@ -1,28 +1,25 @@
 from django.shortcuts import redirect, get_object_or_404
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.views.generic import DeleteView, FormView
 from eventApp.models import Event
 from eventApp.forms import ReasonForDeleteEventForm
 from tasksApp.tasks import send_mail_with_reason_task
+from utils.mixins import EventMixin
 
 
-class ReasonForDeleteEventView(FormView):
+class ReasonForDeleteEventView(EventMixin, FormView):
     """Представление для обработки формы ReasonForDeleteEventForm и удаления мероприятия."""
     form_class = ReasonForDeleteEventForm
     template_name = 'eventApp/reason_form.html'
     success_url = reverse_lazy('success')
 
-    def get_instance(self):
-        event_id = self.kwargs.get('event_id')
-        return get_object_or_404(Event, id=event_id)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['event'] = self.get_instance()
+        context['event'] = self.get_event()
         return context
 
     def form_valid(self, form):
-        event = self.get_instance()
+        event = self.get_event()
         reason = form.cleaned_data['reason']
         email_list = [participant.get_email() for participant in event.participants.all()]
         event_title = event.title
@@ -43,4 +40,4 @@ class DeleteEventView(DeleteView):
         return super().get(request, *args, **kwargs)
 
     def get_success_url(self):
-        return reverse('success')
+        return reverse_lazy('success')

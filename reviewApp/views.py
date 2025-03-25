@@ -8,6 +8,7 @@ from userApp.models import CustomUser
 from reviewApp.models import Review
 from reviewApp.utils import validate_token_for_review
 from reviewApp.forms import ReviewCreateForm
+from utils.mixins import EventMixin
 
 
 class ReviewListView(ListView):
@@ -24,22 +25,18 @@ class ReviewListView(ListView):
                 .select_related('participant__user', 'participant__not_auth_user'))  # Фильтруем отзывы по этим событиям
 
 
-class ReviewListViewOnEvent(ListView):
+class ReviewListViewOnEvent(EventMixin, ListView):
     model = Review
     paginate_by = 8
     template_name = 'reviewApp/review_list_on_event.html'
 
     def get_queryset(self):
-        event_id = self.kwargs.get('event_id')
-        event = get_object_or_404(Event, id=event_id)
-
-        return Review.objects.filter(event=event).select_related('participant__user', 'participant__not_auth_user')
+        return Review.objects.filter(event=self.get_event()
+                                     ).select_related('participant__user', 'participant__not_auth_user')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        event_id = self.kwargs.get('event_id')
-        event = get_object_or_404(Event, id=event_id)
-        context['event'] = event  # Добавляем объект event в контекст
+        context['event'] = self.get_event()
         return context
 
 
@@ -70,11 +67,8 @@ class ReviewCreateView(CreateView):
                 )
                 form.instance = review
                 return HttpResponseRedirect(self.get_success_url())
-            except ValidationError as e:
+            except (ValidationError, ValueError) as e:
                 form.add_error(None, e)
-                return self.form_invalid(form)
-            except ValueError as e:
-                form.add_error(None, str(e))
                 return self.form_invalid(form)
         except ValueError as e:
             form.add_error(None, str(e))

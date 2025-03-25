@@ -86,3 +86,8 @@ def validate_token(token: str, required_fields: Optional[List[str]] = None) -> D
     except (jwt.ExpiredSignatureError, jwt.InvalidTokenError) as e:
         logger.error(f'Ошибка при валидации токена {e}')
         raise
+
+
+def user_is_authenticated(request):
+    """Функция для проверки: авторизован пользователь или нет."""
+    return request.user.is_authenticated
