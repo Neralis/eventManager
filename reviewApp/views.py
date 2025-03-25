@@ -1,12 +1,12 @@
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DeleteView
 from eventApp.models import Event
-from reviewApp.models import Review
-from tasksApp.utils import validate_token
 from userApp.models import CustomUser
+from reviewApp.models import Review
+from reviewApp.utils import validate_token_for_review
 from reviewApp.forms import ReviewCreateForm
 
 
@@ -50,7 +50,7 @@ class ReviewCreateView(CreateView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        email, event_id = validate_token(self.kwargs['token'])
+        email, event_id = validate_token_for_review(self.kwargs['token'])
         self.event = get_object_or_404(Event, id=event_id)
         kwargs['event'] = self.event
         kwargs['email'] = email

@@ -1,6 +1,7 @@
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from participantApp.models import Participants
+from utils.constants_email import SEND_MAIL_REGISTER_ON_EVENT_TITLE, SEND_MAIL_REGISTER_ON_EVENT_TEXT
 
 
 @receiver(post_save, sender=Participants)
@@ -15,10 +16,12 @@ def update_available_places_on_save(sender, instance, created, **kwargs) -> None
 @receiver(post_save, sender=Participants)
 def registration_on_event(sender, instance, created, **kwargs) -> None:
     """Сигнал для отправки письма на почту пользователю после создания нового участника."""
-    from tasksApp.utils import registration_on_event
+    from utils.utils import send_mail_users
 
     if created:
-        registration_on_event(instance)
+        subject = f'{SEND_MAIL_REGISTER_ON_EVENT_TITLE}{instance.event.title}'
+        message = SEND_MAIL_REGISTER_ON_EVENT_TEXT
+        send_mail_users(subject, message, [instance.get_email()])
 
 
 @receiver(post_delete, sender=Participants)

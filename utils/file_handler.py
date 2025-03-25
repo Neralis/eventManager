@@ -11,6 +11,14 @@ class FileHandler:
     """Класс для обработки файлов."""
     @staticmethod
     def save_file(instance, file_field_name: str, path_function) -> None:
+        """
+        Функция для сохранения файла.
+        Args:
+            instance: объект модели(Event, EventImages...)
+            file_field_name: название поля модели(main_photo, image...)
+            path_function: функция для генерации пути
+        """
+
         file_field = getattr(instance, file_field_name)
         if file_field:
             try:
@@ -32,7 +40,12 @@ class FileHandler:
 
     @staticmethod
     def delete_file(file_path: str) -> None:
-        """Удаляет файл, если тот есть."""
+        """
+        Удаляет файл, если тот есть.
+        Args:
+            file_path: путь к файлу
+        """
+
         if file_path:
             try:
                 if default_storage.exists(file_path):
@@ -42,7 +55,14 @@ class FileHandler:
 
     @staticmethod
     def delete_old_image(instance, model_class, file_field_name: str) -> None:
-        """Удаляет старое изображение перед сохранением нового."""
+        """
+        Удаляет старое изображение перед сохранением нового.
+        Args:
+            instance: объект модели(Event, EventImages...)
+            model_class: модель
+            file_field_name: название поля модели(main_photo, image...)
+        """
+
         if instance.id:
             try:
                 old_instance = model_class.objects.get(id=instance.id)
@@ -55,7 +75,12 @@ class FileHandler:
 
     @staticmethod
     def delete_event_folder(slug) -> None:
-        """Удаляет полностью папку мероприятия."""
+        """
+        Удаляет полностью папку мероприятия.
+        Args:
+            slug(str): слаг объекта Event
+        """
+
         folder_path = os.path.join(settings.MEDIA_ROOT, 'events', slug)
         if os.path.exists(folder_path):
             try:
@@ -65,7 +90,12 @@ class FileHandler:
 
     @staticmethod
     def delete_folder_if_empty(folder_path: str) -> None:
-        """Удаляет папку, если она пуста."""
+        """
+        Удаляет папку, если она пуста.
+        Args:
+            folder_path: путь к папке
+        """
+
         if os.path.exists(folder_path):
             try:
                 if not os.listdir(folder_path):
@@ -75,7 +105,12 @@ class FileHandler:
 
     @staticmethod
     def delete_event_image_with_folder_cleanup(file_path: str) -> None:
-        """Удаляет файл и папку, если та пустая, после удаления объекта EventImages."""
+        """
+        Удаляет файл и папку, если та пустая, после удаления объекта EventImages.
+        Args:
+            file_path: путь к файлу
+        """
+
         if file_path:
             FileHandler.delete_file(file_path)
             folder_path = os.path.dirname(os.path.join(settings.MEDIA_ROOT, file_path))

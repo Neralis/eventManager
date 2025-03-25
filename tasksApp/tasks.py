@@ -2,17 +2,14 @@ import logging
 from django.conf import settings
 from django.utils.timezone import now, timedelta
 from eventApp.models import Event
+from eventApp.utils import update_completed_events
 from participantApp.models import Participants
+from reviewApp.utils import generate_token_for_review, generate_unique_url_for_participants, \
+    send_mail_to_not_auth_user_participant
 from userApp.models import Notification
 from django.core.mail import send_mail
 from celery import shared_task
-from tasksApp.utils import (
-    update_completed_events,
-    generate_token,
-    generate_unique_url_for_participants,
-    send_mail_to_not_auth_user_participant,
-)
-from tasksApp.constants import (
+from utils.constants_email import (
     SEND_MAIL_BEFORE_EVENT_TITLE,
     SEND_MAIL_BEFORE_EVENT_TEXT,
     MESSAGE_TITLE,
@@ -48,7 +45,7 @@ def send_email_for_participants_before_event() -> None:
 @shared_task
 def check_actual_date_event() -> None:
     """
-    Функция celery для проверки наличия актуальных событий.
+    Функция celery для проверки наличия актуальных событий, дата завершения которых прошла.
     Если такие существуют, то отправялется ссылка для создания отзыва участникам мероприятия.
     """
 
@@ -62,7 +59,7 @@ def check_actual_date_event() -> None:
     send_mails = []
     for participant in participants:
         event = participant.event
-        token = generate_token(participant.get_email(), event.id)
+        token = generate_token_for_review(participant.get_email(), event.id)
         unique_url = generate_unique_url_for_participants(token)
         if participant.user:
             notifications.append(

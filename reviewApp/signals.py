@@ -1,9 +1,8 @@
-from django.contrib.sites.models import Site
 from django.db.models.signals import post_save
-from django.urls import reverse
 from django.dispatch import receiver
 from reviewApp.models import Review
 from userApp.models import Notification
+from utils.utils import generate_unique_url
 
 
 @receiver(post_save, sender=Review)
@@ -14,13 +13,12 @@ def create_notifications_about_review(sender, instance, created, **kwargs):
 			raise ValueError('Отзыв не привязан к событию.')
 		if not instance.event.organizer:
 			raise ValueError('У события нет организатора.')
-		url_short = reverse('review_list_on_event', kwargs={'event_id': instance.event.id})
-		site_domain = Site.objects.get_current().domain
+		url = generate_unique_url('review_list_on_event', kwargs={'event_id': instance.event.id})
 		try:
 			Notification.objects.create(
 				user=instance.event.organizer,
 				text=f'На ваше мероприятия был оставлен отзыв.',
-				url_event=f'{site_domain}{url_short}',
+				url_event=url
 			)
 		except Exception as e:
 			print(f'error: {e}')

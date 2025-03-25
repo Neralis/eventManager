@@ -214,7 +214,7 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False,
         },
-        'utils.file_handler': {
+        'utils': {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': False,
