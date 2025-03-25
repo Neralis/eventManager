@@ -9,6 +9,8 @@ from django.utils.text import slugify
 from django.core.exceptions import ValidationError
 from django.db.models import QuerySet
 from utils.file_handler import FileHandler
+from utils.utils import send_mail_users
+from utils.constants.email_constants import DELETE_EVENT_MESSAGE_INFO, DELETE_EVENT_MESSAGE_TITLE
 
 logger = logging.getLogger(__name__)
 
@@ -146,3 +148,19 @@ def search_event(query: str, min_similarity: float = 0.2) -> QuerySet:
     ).order_by('-weighted_similarity')
 
     return result
+
+
+def send_mail_with_reason(email_list: List[str], event_title: str, reason: str = '') -> None:
+    """
+    Функция для отправки сообщений на почту участникам мероприятия, если организатор его отменит.
+    Args:
+        email_list: список email участников мероприятия
+        event_title: название мероприятия, которое удалили
+        reason: причина удаления мероприятия, по умполчанию None
+    """
+
+    subject = f'{DELETE_EVENT_MESSAGE_TITLE}{event_title}'
+    message = DELETE_EVENT_MESSAGE_INFO
+    if reason:
+        message += f'\nПричина отмены мероприятия: {reason}'
+    send_mail_users(subject, message, email_list)

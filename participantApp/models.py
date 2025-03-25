@@ -4,7 +4,7 @@ from django.db.models import Q, Count, QuerySet
 from django.core.exceptions import ValidationError
 from eventApp.models import Event
 from userApp.models import NotAuthUser, CustomUser
-from participantApp.constants import FAVOURITE_PARTICIPANT_THRESHOLD
+from utils.constants.participants_constants import FAVOURITE_PARTICIPANT_THRESHOLD
 
 
 class Participants(models.Model):

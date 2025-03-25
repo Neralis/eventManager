@@ -20,6 +20,7 @@ import reviewApp
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('events/', include('eventApp.urls')),
     path('reviews/', include('reviewApp.urls')),
     path('participants/', include('participantApp.urls')),
     path('users/', include('userApp.urls')),

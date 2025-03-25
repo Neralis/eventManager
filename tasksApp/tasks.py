@@ -1,15 +1,16 @@
 import logging
+from typing import List
 from django.conf import settings
 from django.utils.timezone import now, timedelta
 from eventApp.models import Event
-from eventApp.utils import update_completed_events
+from eventApp.utils import update_completed_events, send_mail_with_reason
 from participantApp.models import Participants
 from reviewApp.utils import generate_token_for_review, generate_unique_url_for_participants, \
     send_mail_to_not_auth_user_participant
 from userApp.models import Notification
 from django.core.mail import send_mail
 from celery import shared_task
-from utils.constants_email import (
+from utils.constants.email_constants import (
     SEND_MAIL_BEFORE_EVENT_TITLE,
     SEND_MAIL_BEFORE_EVENT_TEXT,
     MESSAGE_TITLE,
@@ -87,3 +88,16 @@ def remove_notifications() -> None:
         Notification.objects.filter(created_at__lt=time_life).delete()
     except Exception as e:
         logger.error(f'Ошибка {e}')
+
+
+@shared_task
+def send_mail_with_reason_task(email_list: List[str], event_title: str, reason: str) -> None:
+    """
+    Функция celery для отправки сообщений участникам о причине удаления мероприятия.
+    Args:
+        email_list: список email участников мероприятия
+        event_title: название мероприятия, которое удалили
+        reason: причина удаления мероприятия
+    """
+
+    send_mail_with_reason(email_list, event_title, reason)

@@ -1,7 +1,7 @@
 import jwt
 from typing import Optional, Tuple
 from utils.utils import generate_unique_url, generate_token, validate_token, send_mail_users
-from utils.constants_email import (
+from utils.constants.email_constants import (
     MESSAGE_TITLE,
     MESSAGE_TEXT_EVENT_INFO,
     MESSAGE_TEXT_EVENT_URL

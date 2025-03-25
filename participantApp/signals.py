@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from participantApp.models import Participants
-from utils.constants_email import SEND_MAIL_REGISTER_ON_EVENT_TITLE, SEND_MAIL_REGISTER_ON_EVENT_TEXT
+from utils.constants.email_constants import SEND_MAIL_REGISTER_ON_EVENT_TITLE, SEND_MAIL_REGISTER_ON_EVENT_TEXT
 
 
 @receiver(post_save, sender=Participants)
