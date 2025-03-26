@@ -57,6 +57,13 @@ class CustomUser(ModelAdmin):
     save_on_top = True
     inlines = [NotificationInline]
 
+    def save_model(self, request, obj, form, change):
+        if 'password' in form.cleaned_data:
+            raw_password = form.cleaned_data['password']
+            if not raw_password.startswith('pbkdf2_sha256$'):
+                obj.set_password(raw_password)
+        super().save_model(request, obj, form, change)
+
 
 @admin.register(NotAuthUser)
 class NotAuthUserAdmin(ModelAdmin):

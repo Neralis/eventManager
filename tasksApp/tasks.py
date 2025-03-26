@@ -7,6 +7,7 @@ from eventApp.utils import update_completed_events, send_mail_with_reason
 from participantApp.models import Participants
 from reviewApp.utils import generate_token_for_review, generate_unique_url_for_participants, \
     send_mail_to_not_auth_user_participant
+from userApp.utils import send_mail_user
 from userApp.models import Notification
 from django.core.mail import send_mail
 from celery import shared_task
@@ -101,3 +102,16 @@ def send_mail_with_reason_task(email_list: List[str], event_title: str, reason: 
     """
 
     send_mail_with_reason(email_list, event_title, reason)
+
+
+@shared_task
+def send_mail_for_activate_account_task(email: str, unique_url: str) -> None:
+    """
+    Функция celery для отправки сообщений пользователям для восстановления(активации) аккаунта.
+    Args:
+        email: список email участников мероприятия
+        unique_url: уникальная ссылка для восстановления аккаунта
+    """
+
+    send_mail_user(email, unique_url)
+
