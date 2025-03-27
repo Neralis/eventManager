@@ -12,7 +12,7 @@ def create_default_organizer(sender, instance, **kwargs) -> None:
         CustomUser.objects.get_or_create(
             username='default_remove_user',
             email='remove_user@gmail.com',
-            date_birthday=now(),
+            date_birthday='2025-03-27',
             phone='+12345678911'
         )
     except LookupError:
