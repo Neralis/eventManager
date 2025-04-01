@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+</head>
+<body>
+
+<section class="registration">
+    <div class="registration_block">
+        <div class="registration_btn_title">
+            <a href="#" class="registration_btn">←</a>
+            <h2>Регистрация</h2>
+        </div>
+
+        <form method="post" class="registration_form">
+            {% csrf_token %}
+
+            <!-- Поля формы -->
+            <div class="registration_form_item">
+                {{ form.first_name }}  <!-- Фамилия -->
+            </div>
+
+            <div class="registration_form_item">
+                {{ form.last_name }}  <!-- Имя -->
+            </div>
+
+            <div class="registration_form_item">
+                {{ form.otchestvo }}  <!-- Отчество -->
+            </div>
+
+            <div class="registration_form_item">
+                <input type="date" name="date_birthday" id="id_date_birthday" value="{{ form.date_birthday.value }}">
+            </div>
+
+            <div class="registration_form_item">
+                <input type="text" name="phone" id="id_phone" placeholder="+7 (___) ___-__-__" maxlength="20">
+            </div>
+
+            <div class="registration_form_item">
+                {{ form.email }}  <!-- Email -->
+            </div>
+
+            <div class="registration_form_item">
+                <input type="password" id="password1" name="password1" placeholder="пароль" minlength="8" required>
+            </div>
+
+            <div class="registration_form_item">
+                <input type="password" id="password2" name="password2" placeholder="повторите пароль" minlength="8" required>
+            </div>
+
+            <!-- Кнопка отправки формы -->
+            <input class="registration_form_item registration_form_item_btn" type="submit" value="Зарегистрироваться">
+        </form>
+    </div>
+    <script src = "{% static 'js/registration.js' %}"></script>
+</section>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    let phoneInput = document.getElementById("id_phone");
+
+    phoneInput.addEventListener("input", function (event) {
+        let numbers = phoneInput.value.replace(/\D/g, ""); // Удаляем все не-цифры
+
+        if (!numbers.startsWith("7")) {
+            numbers = "7" + numbers; // Всегда начинается с 7
+        }
+
+        if (numbers.length > 11) {
+            numbers = numbers.substring(0, 11); // Ограничиваем до 11 цифр (7 + 10 цифр)
+        }
+
+        let formattedNumber = "+7";
+        if (numbers.length > 1) formattedNumber += ` (${numbers.substring(1, 4)}`;
+        if (numbers.length >= 5) formattedNumber += `) ${numbers.substring(4, 7)}`;
+        if (numbers.length >= 8) formattedNumber += `-${numbers.substring(7, 9)}`;
+        if (numbers.length >= 10) formattedNumber += `-${numbers.substring(9, 11)}`;
+
+        phoneInput.value = formattedNumber;
+    });
+
+    // Убираем возможность удалить "+7" полностью
+    phoneInput.addEventListener("keydown", function (event) {
+        if (phoneInput.value.length <= 4 && event.key === "Backspace") {
+            event.preventDefault();
+        }
+    });
+});
+
+</script>
+</body>
+</html>

@@ -22,6 +22,10 @@ class EventListView(ListView):
     template_name = 'event_list.html'
     paginate_by = 20
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.request.user
+        return context
 
 
     def get_queryset(self):

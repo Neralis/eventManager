@@ -26,6 +26,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('events/', include('eventApp.urls')),
     path('', RedirectView.as_view(url='events/')),
+    path("accounts/", include("django.contrib.auth.urls")),
+    path("", include("userApp.urls")),
 ]
 if settings.DEBUG:
     urlpatterns += static('/main_images/', document_root=settings.BASE_DIR / 'main_images')

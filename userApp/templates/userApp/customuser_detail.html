@@ -1,0 +1,188 @@
+{% extends "index.html" %}
+{%load static%}
+{% block content %}
+<section class="profile">
+    <div class="profile_about_me">
+        <div class = "avatar_prof">
+            <img src="{% if object.avatar %}{{ object.avatar.url }}{% else %}{% static 'img/user.png' %}{% endif %}" alt="Аватар" class="avatar-img">
+        </div>
+        <div class="profile_about_me_info">
+            <div class="profile_about_me_info_name_edit">
+                <p class="profile_about_me_info_name">
+                    {{ user.first_name }} {{ user.last_name }}
+                </p>
+                <a href="{% url 'profile_edit' user.id %}" class="profile_about_me_edit_btn">
+                    <svg class="profile_about_me_edit_img" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256">
+                        <g fill="#8b4ad4">
+                            <path d="M19.17188,2c-0.72375,0 -1.4475,0.27562 -2,0.82813l-1.17187,1.17188l4,4l1.17188,-1.17187c1.104,-1.104 1.104,-2.895 0,-4c-0.5525,-0.5525 -1.27625,-0.82812 -2,-0.82812zM14.5,5.5l-11.5,11.5v4h4l11.5,-11.5z"></path>
+                        </g>
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Рейтинг с отзывами -->
+            <div class="profile_about_me_info_star_all_reviews">
+                <div class="rating-stars" data-rating="4.6">
+                    <span class="star" data-value="1">&#9733;</span>
+                    <span class="star" data-value="2">&#9733;</span>
+                    <span class="star" data-value="3">&#9733;</span>
+                    <span class="star" data-value="4">&#9733;</span>
+                    <span class="star" data-value="5">&#9733;</span>
+                </div>
+                <p class="profile_about_me_info_star_count">4.6</p>
+                <a href="#" class="profile_about_me_info_all_reviews">Все отзывы →</a>
+            </div>
+
+            <!-- Описание пользователя -->
+            <p class="profile_about_me_info_descr">
+                {{ user.description }}
+            </p>
+        </div>
+    </div>
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="profile_about_me_tab" role="presentation">
+          <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Мои мероприятия</button>
+        </li>
+        <li class="profile_about_me_tab" role="presentation">
+          <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Запланированные мероприятия</button>
+        </li>
+        <li class="profile_about_me_tab" role="presentation">
+          <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Завершенные</button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="myTabContent">
+    <!-- Мои мероприятия -->
+    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+        {% for event in events %}
+        <div class="profile_my_event">
+            <div class="dropdown profile_my_event_menu">
+                <p id="dropdownMenuButton{{ event.id }}" data-bs-toggle="dropdown" aria-expanded="false">...</p>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ event.id }}">
+                    <li><a class="dropdown-item" href="{% url 'event_update' event.pk %}">Редактировать</a></li>
+                    <li><a class="dropdown-item" href="#">Участники</a></li>
+                    <li>
+                        <a class="dropdown-item btn btn-primary" data-bs-toggle="modal" data-bs-target="#deleteModal{{ event.id }}" href="#">Удалить</a>
+                    </li>
+                </ul>
+            </div>
+            <a href="{% url 'event_detail' pk=event.pk %}">
+                <img src="{{ event.main_photo.url }}" class="profile_my_event_img" alt="{{ event.title }}">
+            </a>
+
+            <div class="profile_my_event_info">
+                <p class="profile_my_event_info_title">{{ event.title }}</p>
+                <div class="profile_my_event_info_date_count">
+                    <p class="profile_my_event_info_date">{{ event.date_start|date:"d.m.Y H:i" }}</p>
+                    <p class="profile_my_event_info_count">количество мест: {{ event.participants_limit }}</p>
+                </div>
+                <p class="profile_my_event_info_descr">{{ event.description|truncatechars:200 }}</p>
+            </div>
+        </div>
+
+                {% empty %}
+                <p>У вас пока нет мероприятий.</p>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- Запланированные мероприятия -->
+        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+            <div class="profile_my_event">
+                <img src="../img/event.jpg" class="profile_my_event_img" alt="event_img"></img>
+
+                <div class="profile_my_event_info">
+                    <p class="profile_my_event_info_title">Title event</p>
+                    <div class="profile_my_event_info_date_count">
+                        <p class="profile_my_event_info_date">01.01.2025 15:00</p>
+                        <p class="profile_my_event_info_count">количество мест: 30</p>
+                    </div>
+                    <p class="profile_my_event_info_descr">Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit, voluptatibus incidunt ipsum minima nam doloribus repellat beatae officiis blanditiis autem fugiat velit, corrupti numquam alias soluta sequi aut voluptatem perferendis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti deserunt rerum ab sed accusantium, dicta voluptate quos eos, inventore voluptas provident optio maxime cumque ipsum facilis, consequuntur doloribus tempore quibusdam natus tempora aliquid eaque! Voluptas minima explicabo, inventore quaerat natus numquam atque veniam itaque minus vel earum dignissimos facere? Placeat saepe hic sapiente provident laborum quaerat in impedit cumque exercitationem.</p>
+                </div>
+            </div>
+
+            <div class="profile_my_event">
+                <img src="../img/event.jpg" class="profile_my_event_img" alt="event_img"></img>
+
+                <div class="profile_my_event_info">
+                    <p class="profile_my_event_info_title">Title event</p>
+                    <div class="profile_my_event_info_date_count">
+                        <p class="profile_my_event_info_date">01.01.2025 15:00</p>
+                        <p class="profile_my_event_info_count">количество мест: 30</p>
+                    </div>
+                    <p class="profile_my_event_info_descr">Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit, voluptatibus incidunt ipsum minima nam doloribus repellat beatae officiis blanditiis autem fugiat velit, corrupti numquam alias soluta sequi aut voluptatem perferendis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti deserunt rerum ab sed accusantium, dicta voluptate quos eos, inventore voluptas provident optio maxime cumque ipsum facilis, consequuntur doloribus tempore quibusdam natus tempora aliquid eaque! Voluptas minima explicabo, inventore quaerat natus numquam atque veniam itaque minus vel earum dignissimos facere? Placeat saepe hic sapiente provident laborum quaerat in impedit cumque exercitationem.</p>
+                </div>
+            </div>
+
+            <div class="profile_my_event">
+                <img src="../img/event.jpg" class="profile_my_event_img" alt="event_img"></img>
+
+                <div class="profile_my_event_info">
+                    <p class="profile_my_event_info_title">Title event</p>
+                    <div class="profile_my_event_info_date_count">
+                        <p class="profile_my_event_info_date">01.01.2025 15:00</p>
+                        <p class="profile_my_event_info_count">количество мест: 30</p>
+                    </div>
+                    <p class="profile_my_event_info_descr">Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit, voluptatibus incidunt ipsum minima nam doloribus repellat beatae officiis blanditiis autem fugiat velit, corrupti numquam alias soluta sequi aut voluptatem perferendis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti deserunt rerum ab sed accusantium, dicta voluptate quos eos, inventore voluptas provident optio maxime cumque ipsum facilis, consequuntur doloribus tempore quibusdam natus tempora aliquid eaque! Voluptas minima explicabo, inventore quaerat natus numquam atque veniam itaque minus vel earum dignissimos facere? Placeat saepe hic sapiente provident laborum quaerat in impedit cumque exercitationem.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Завершенные -->
+        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+            <div class="profile_my_event">
+                <div class="dropdown profile_my_event_menu">
+                    <p class="" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">...</p>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <li><a class="dropdown-item" href="#">Участники</a></li>
+                        <li><a class="dropdown-item" href="#">Отзывы</a></li>
+                    </ul>
+                </div>
+
+                <img src="../img/event.jpg" class="profile_my_event_img" alt="event_img"></img>
+
+                <div class="profile_my_event_info">
+                    <p class="profile_my_event_info_title">Title event</p>
+                    <div class="profile_my_event_info_date_count">
+                        <p class="profile_my_event_info_date">01.01.2025 15:00</p>
+                        <p class="profile_my_event_info_count">количество мест: 30</p>
+                    </div>
+                    <p class="profile_my_event_info_descr">Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit, voluptatibus incidunt ipsum minima nam doloribus repellat beatae officiis blanditiis autem fugiat velit, corrupti numquam alias soluta sequi aut voluptatem perferendis. Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti deserunt rerum ab sed accusantium, dicta voluptate quos eos, inventore voluptas provident optio maxime cumque ipsum facilis, consequuntur doloribus tempore quibusdam natus tempora aliquid eaque! Voluptas minima explicabo, inventore quaerat natus numquam atque veniam itaque minus vel earum dignissimos facere? Placeat saepe hic sapiente provident laborum quaerat in impedit cumque exercitationem.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title profile_modal_title" id="staticBackdropLabel">Удаление</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>Данное мероприятие будет удаленно безвозвратно!</p>
+              <p>Вы действительно этого хотите?</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+              <button type="button" class="btn btn-primary profile_modal_btn_primary">Да</button>
+            </div>
+          </div>
+        </div>
+    </div>
+</section>
+<style>
+    .avatar_prof {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    .avatar-img {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 50%;
+        aspect-ratio: 1 / 1;
+        display: block;
+    }
+</style>
+{% endblock %}

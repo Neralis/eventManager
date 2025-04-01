@@ -7,6 +7,9 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 
 class CustomUser(AbstractUser):
+    email = models.EmailField(unique=True)
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["username"]
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     otchestvo = models.CharField(
@@ -24,6 +27,15 @@ class CustomUser(AbstractUser):
         "auth.Group",
         related_name="custom_users",
         blank=True,
+    )
+    description = models.TextField(
+        blank=True,
+        null=True,
+    )
+    avatar = models.ImageField(
+        upload_to="avatars/",
+        blank=True,
+        null=True,
     )
 
     user_permissions = models.ManyToManyField(
@@ -77,3 +89,4 @@ class NotAuthUser(models.Model):
 
     def __str__(self):
         return self.email
+

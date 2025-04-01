@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+</head>
+<body>
+
+<section class="entry">
+    <div class="entry_block">
+        <div class="entry_btn_title">
+            <a href="#" class="entry_btn">←</a>
+            <h2>Вход</h2>
+        </div>
+
+        <form method="post" class="entry_form">
+            {% csrf_token %}
+
+            <!-- Поле Email -->
+            <div class="entry_form_item">
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="error">{{ form.username.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Поле Пароль -->
+            <div class="entry_form_item">
+                {{ form.password }}
+                {% if form.password.errors %}
+                    <div class="error">{{ form.password.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Ошибка входа -->
+            {% if messages %}
+                {% for message in messages %}
+                    <p class="error">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+
+            <div class="entry_form_validate">
+                <a href="{% url 'password_reset' %}" class="entry_form_forget_password">Забыли пароль?</a>
+            </div>
+
+            <!-- Кнопка входа -->
+            <input class="entry_form_item entry_form_item_btn" type="submit" value="Войти">
+        </form>
+    </div>
+</section>
+
+</body>
+</html>
