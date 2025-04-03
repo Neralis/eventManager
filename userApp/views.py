@@ -90,3 +90,7 @@ class ProfileEdit(generic.UpdateView):
 
     def get_success_url(self):
         return reverse_lazy("profile", kwargs={"pk": self.object.pk})
+    
+def user_logout(request):
+    logout(request)
+    return redirect(reverse_lazy('event_list'))

@@ -55,19 +55,21 @@
     <!-- Мои мероприятия -->
     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
         {% for event in events %}
-        <div class="profile_my_event">
+        <div class="profile_my_event" id="event-{{event.id}}">
             <div class="dropdown profile_my_event_menu">
                 <p id="dropdownMenuButton{{ event.id }}" data-bs-toggle="dropdown" aria-expanded="false">...</p>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ event.id }}">
                     <li><a class="dropdown-item" href="{% url 'event_update' event.pk %}">Редактировать</a></li>
                     <li><a class="dropdown-item" href="#">Участники</a></li>
                     <li>
-                        <a class="dropdown-item btn btn-primary" data-bs-toggle="modal" data-bs-target="#deleteModal{{ event.id }}" href="#">Удалить</a>
+                        <!-- Измените класс кнопки на delete-event-btn -->
+                    <a class="dropdown-item btn btn-primary delete-event-btn" data-event-id="{{ event.id }}" href="#">Удалить</a>
+
                     </li>
                 </ul>
             </div>
             <a href="{% url 'event_detail' pk=event.pk %}">
-                <img src="{{ event.main_photo.url }}" class="profile_my_event_img" alt="{{ event.title }}">
+                <img src="{%if event.main_photo %} {{ event.main_photo.url }}{% else %} {% static 'img/star.svg' %} {% endif %}" class="profile_my_event_img" alt="{{ event.title }}">
             </a>
 
             <div class="profile_my_event_info">
@@ -185,4 +187,35 @@
         display: block;
     }
 </style>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+
+    document.querySelectorAll(".delete-event-btn").forEach(button => {
+        button.addEventListener("click", function () {
+            let eventId = this.getAttribute("data-event-id");
+
+            if (!confirm("Вы уверены, что хотите удалить событие?")) {
+                return;
+            }
+
+            fetch(`/events/delete/${eventId}/`, {
+                method: "DELETE",
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                    "Content-Type": "application/json"
+                }
+            }).then(response => response.json()).then(data => {
+                if (data.message) {
+                    document.getElementById(`event-${eventId}`).remove();
+                } else {
+                    alert("Ошибка при удалении: " + data.error);
+                }
+            }).catch(error => {
+                alert("Ошибка при удалении! " + error);
+            });
+        });
+    });
+});
+</script>
 {% endblock %}

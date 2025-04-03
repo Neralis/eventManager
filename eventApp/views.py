@@ -3,6 +3,8 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import ListView,DetailView,CreateView,UpdateView,DeleteView
+
+from participantApp.models import Participants
 from .forms import EventForm
 from django.utils.dateparse import parse_date
 from django.shortcuts import get_object_or_404
@@ -227,7 +229,37 @@ class SearchResultView(ListView):
         context['event_count'] = self.get_queryset().count()
         return context
     
+from django.views.decorators.csrf import csrf_exempt 
 
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def register_for_event(request, event_id):
+    if request.method != "POST":
+        return JsonResponse({"success": False, "message": "Неверный запрос"}, status=400)
+
+    try:
+        # Получаем событие с аннотацией count_place
+        event = Event.objects.annotate(
+            count_place=F('participants_limit') - Count('participants')
+        ).get(id=event_id)
+        
+        if event.count_place <= 0:
+            return JsonResponse({"success": False, "message": "Нет свободных мест"}, status=400)
+
+        if Participants.objects.filter(event=event, user=request.user).exists():
+            return JsonResponse({"success": False, "message": "Вы уже записаны"}, status=400)
+
+        Participants.objects.create(event=event, user=request.user)
+        # Не нужно изменять count_place - он вычисляется динамически
+        
+        return JsonResponse({"success": True, "message": "Вы успешно записаны!"})
+
+    except Event.DoesNotExist:
+        return JsonResponse({"success": False, "message": "Событие не найдено"}, status=404)
+    except Exception as e:
+        return JsonResponse({"success": False, "message": f"Ошибка сервера: {str(e)}"}, status=500)
 
 
 

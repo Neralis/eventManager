@@ -11,6 +11,9 @@ urlpatterns = [
     path('create/', views.EventCreateView.as_view(), name='event_create'),
     path('delete/<int:pk>/', views.EventDeleteAjaxView.as_view(), name='event_delete'),
     path('search/', views.SearchResultView.as_view(), name = 'event_search'),
+    path('<int:event_id>/register/', views.register_for_event, name='register_for_event'),
+
+
    
 
 

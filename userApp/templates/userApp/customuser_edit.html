@@ -14,7 +14,7 @@
             <input class="edit_profile_form_item" type="text" name="last_name" placeholder="Фамилия" value="{{ form.last_name.value }}" >
             <input class="edit_profile_form_item" type="text" name="first_name" placeholder="Имя" value="{{ form.first_name.value }}" >
             <input class="edit_profile_form_item" type="text" name="otchestvo" placeholder="Отчество (необязательно)" value="{{ form.otchestvo.value }}">
-            <input class="edit_profile_form_item" type="date" name="date_birthday" value="{{ form.date_birthday.value|default:'' }}">
+            <input class="edit_profile_form_item" type="date" name="date_birthday" value="{{ form.date_birthday.value|default:''|date:'Y-m-d' }}">
             <input class="edit_profile_form_item registration_form_item_phone" type="tel" name="phone" placeholder="+7(___)___-__-__" value="{{ form.phone.value }}" >
             <input class="edit_profile_form_item" type="email" name="email" placeholder="Email" value="{{ form.email.value }}" >
             <textarea class="edit_profile_form_item add_review_form_item description" name="description" placeholder="о себе"></textarea>

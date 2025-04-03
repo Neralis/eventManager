@@ -1,4 +1,5 @@
 {% extends 'index.html' %}
+
 {%load static%}
 {%block content%}
 
@@ -50,12 +51,6 @@
             <li class="all_event_grid_item" id="event-{{ event.id }}">
                 <div class="all_event_grid_item_img_cont position-relative">
                     <img src="{% if event.main_photo %}{{ event.main_photo.url }}{% else %}{% static 'img/star.svg' %}{% endif %}" alt="event_img" class="all_event_grid_item_img">
-                    
-                    <!-- Кнопка удаления -->
-                    <button class="delete-event-btn position-absolute" data-event-id="{{ event.id }}"
-                        style="top: 5px; right: 5px; font-size: 18px; background: none; border: none; color: red;">
-                        ×
-                    </button>
                 </div>
                 
                 <p class="all_event_grid_item_organizer">{{ event.organizer }} организатор</p>
@@ -64,7 +59,7 @@
                 <p class="all_event_grid_item_date">{{ event.date_start|date:"j E Y, H:i" }}</p>
                 
                 <div class="all_event_grid_item_btn_count">
-                    <button class="all_event_grid_item_btn">Записаться</button>
+                    <button class="all_event_grid_item_btn" data-id="{{ event.id }}">Записаться</button>
                     <p class="all_event_grid_item_place">осталось {{ event.count_place }} из {{ event.participants_limit }} мест</p>
                 </div>
             </li>
