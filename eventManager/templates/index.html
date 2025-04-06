@@ -28,7 +28,7 @@
         </div>
         <div class="header_func">
             <form action="{% url 'event_search' %}" method="get" class="header_func_search">
-                <input type="text" class="search" placeholder="searh">
+                <input name="q" type="text" class="search" placeholder="searh">
                 <input type="button" class="header_btn_search">
             </form>
             <a href="{% url 'event_create' %}" class="header_func_add_event"></a>

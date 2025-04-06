@@ -73,36 +73,7 @@
         url.search = params.toString()
         window.location.href = url.toString()
     }
-    document.addEventListener("DOMContentLoaded", function () {
-        let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
-
-        document.querySelectorAll(".delete-event-btn").forEach(button => {
-            button.addEventListener("click", function () {
-                let eventId = this.getAttribute("data-event-id");
-
-                if (!confirm("Вы уверены, что хотите удалить событие?")) {
-                    return;
-                }
-            
-                fetch(`/events/delete/${eventId}/`, {
-                    method: "DELETE",
-                    headers: {
-                        "X-CSRFToken": csrfToken,
-                        "Content-Type": "application/json"
-                    }
-                }).then(response => response.json()).then(data => {
-                    if (data.message) {
-                        document.getElementById(`event-${eventId}`).remove();
-                    } else {
-                        alert("Ошибка при удалении: " + data.error);
-                    }
-                }).catch(error => {
-                    alert("Ошибка при удалении! " + error);
-                });
-            });
-        });
-    });
-
+    
     document.addEventListener("DOMContentLoaded", function () {
         // Получаем форму и кнопку по классу
         const form = document.querySelector(".header_func_search");

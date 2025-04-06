@@ -43,7 +43,7 @@
             <div class="event_place_btn"><a href="#">Записаться</a></div>
         </div>
 
-        <p id = "location_onffine" class="event_place_text adress">{{object.city}} {{object.location_offline}}</p>
+        <p id="location_offline" class="event_place_text adress">{{object.city}} {{object.location_offline}}</p>
         <p class="event_place_text adress" id="location_online">{{object.location_online}} </p>
 
         <div class="accordion accordion-flush event_place_map" id="map_place">
@@ -132,6 +132,14 @@
     </div>
 </section>
         
-<script src = "{% static 'js/event_detail.js' %}"></script>
+<script>
+    // Передаем данные из Django в JavaScript
+    var eventData = {
+        format: "{{ object.event_format }}",
+        city: "{{ object.city|default:''|escapejs }}",
+        locationOffline: "{{ object.location_offline|default:''|escapejs }}"
+    };
+</script>
+<script src="{% static 'js/event_detail.js' %}"></script>
     
 {% endblock %}
