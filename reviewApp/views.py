@@ -80,13 +80,14 @@ class ReviewCreateView(CreateView):
         return context
 
     def get_success_url(self):
-        return reverse_lazy('success')
+        return reverse_lazy('event_detail', kwargs={'event_id': self.event.id})
 
 
 class ReviewDeleteView(DeleteView):
     model = Review
-    success_url = reverse_lazy('success')
+    pk_url_kwarg = 'review_id'
 
-
-def index(request):
-    return HttpResponse("SUCCESS")
+    def get_success_url(self):
+        review_id = self.kwargs.get('review_id')
+        event_id = get_object_or_404(Review, id=review_id).event.id
+        return reverse_lazy('event_detail', kwargs={'event_id': event_id})

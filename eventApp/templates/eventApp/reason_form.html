@@ -1,0 +1,31 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<section class="add_review">
+    <div class="add_review_block">
+        <div class="add_review_btn_title">
+            <h2 class="add_review_btn_title">Удаление мероприятия</h2>
+        </div>
+        <p>Пожалуйста, укажите причину отмены мероприятия, чтобы участники были в курсе:</p>
+
+        <form method="post" class="add_review_form">
+            {% csrf_token %}
+            <div class="form-field">
+                {{ form.as_p }}
+                {% if form.errors %}
+                    <div class="field-errors add_review_star_error">
+                        {% for error in form.non_field_errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="add_review_form_item add_review_form_item_btn">Удалить мероприятие</button>
+                <a href="#" class="btn btn-secondary">Отмена</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

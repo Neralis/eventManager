@@ -1,0 +1,96 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<section class="participants">
+    <!-- Информация о мероприятии -->
+    <div class="participants_event">
+        <img src="{% if event.main_photo %}{{ event.main_photo.url }}{% else %}{% static 'img/event.jpg' %}{% endif %}" class="profile_my_event_img" alt="event_img">
+        <div class="profile_my_event_info">
+            <p class="profile_my_event_info_title">{{ event.title }}</p>
+            <div class="profile_my_event_info_date_count">
+                <p class="profile_my_event_info_date">{{ event.date_start|date:"d.m.Y H:i" }}</p>
+                <p class="profile_my_event_info_count">осталось {{ event.available_places }} мест</p>
+            </div>
+            <p class="profile_my_event_info_descr">{{ event.description }}</p>
+        </div>
+    </div>
+
+    <!-- Заголовок и количество участников -->
+    <h2 class="participants_title">Участники мероприятия</h2>
+    <p class="participants_count">{{ participants|length }} участника</p>
+
+    <!-- Таблица участников -->
+    <div class="participants_list">
+        <table class="participants_table">
+            <tbody>
+                {% for participant in participants %}
+                <tr class="participants_item">
+                    <td class="participants_item_num">{{ forloop.counter }}.</td>
+                    <!-- Отображаем email участника -->
+                    <td class="participants_item_name">
+                        {% if participant.user %}
+                            {{ participant.user.email }}
+                        {% elif participant.not_auth_user %}
+                            {{ participant.not_auth_user.email }}
+                        {% endif %}
+                    </td>
+                    <!-- Отображаем телефон с заглушкой -->
+                    <td class="participants_item_tel">
+                        {% if participant.user %}
+                            {{ participant.user.phone }}
+                        {% else %}
+                            {{ participant.not_auth_user.phone }}
+                        {% endif %}
+                    </td>
+                    <!-- Колонка "Действия" -->
+                    <td class="participants_item_func">
+                        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop{{ participant.id }}">
+                            <svg class="participants_item_trash" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0,0,256,256">
+                                <g class="participants_item_trash" fill="#8b4ad4" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+                                    <g transform="scale(10.66667,10.66667)">
+                                        <path d="M10,2l-1,1h-4c-0.552,0 -1,0.448 -1,1c0,0.552 0.448,1 1,1h2h10h2c0.552,0 1,-0.448 1,-1c0,-0.552 -0.448,-1 -1,-1h-4l-1,-1zM5,7v13c0,1.105 0.895,2 2,2h10c1.105,0 2,-0.895 2,-2v-13z"></path>
+                                    </g>
+                                </g>
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Модальные окна для каждого участника -->
+    {% for participant in participants %}
+    <div class="modal fade" id="staticBackdrop{{ participant.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel{{ participant.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title profile_modal_title" id="staticBackdropLabel{{ participant.id }}">Исключение</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Вы уверены, что хотите удалить участника
+                        {% if participant.user %}
+                            "{{ participant.user.email }}"
+                        {% elif participant.not_auth_user %}
+                            "{{ participant.not_auth_user.email }}"
+                        {% else %}
+                            "с неизвестным email"
+                        {% endif %}?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <form method="post" action="{% url 'delete_participant' event_id=event.id participant_id=participant.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary profile_modal_btn_primary">Да, удалить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</section>
+{% endblock %}

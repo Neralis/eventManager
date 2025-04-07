@@ -16,7 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-import reviewApp
+from django.conf.urls.static import static
+from django.views.generic import RedirectView
+from eventManager import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,4 +26,9 @@ urlpatterns = [
     path('reviews/', include('reviewApp.urls')),
     path('participants/', include('participantApp.urls')),
     path('users/', include('userApp.urls')),
+    path('', RedirectView.as_view(url='events/')),
 ]
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

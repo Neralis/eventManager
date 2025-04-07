@@ -30,7 +30,7 @@ class LoginUserView(LoginView):
         return redirect(self.get_success_url())
 
     def get_success_url(self):
-        return reverse_lazy('success')
+        return reverse_lazy('event_list')
 
 
 class RestoreUserAccountRequestView(View):
@@ -82,6 +82,7 @@ class DeactivateUserView(UpdateView):
     model = CustomUser
     template_name = 'userApp/delete_user.html'
     fields = ['is_active']
+    pk_url_kwarg = 'user_id'
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -91,9 +92,4 @@ class DeactivateUserView(UpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
-        return reverse_lazy('success')
-
-
-def index(request):
-    return HttpResponse("SUCCESS")
-
+        return reverse_lazy('event_list')

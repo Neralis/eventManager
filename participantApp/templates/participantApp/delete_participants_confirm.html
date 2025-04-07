@@ -1,0 +1,28 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<section class="participants">
+    <div class="registr_event_block">
+        <div class="registr_event_btn_title">
+            <h2 class="registr_event_btn_title">Удалить участника</h2>
+        </div>
+        <p>Вы уверены, что хотите удалить участника
+            {% if object.user %}
+                "{{ object.user.username }}"
+            {% elif object.not_auth_user %}
+                "{{ object.not_auth_user.email }}"
+            {% else %}
+                "с неизвестным email"
+            {% endif %}?
+        </p>
+        <form method="post" class="registr_event_form">
+            {% csrf_token %}
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary profile_modal_btn_primary">Да, удалить</button>
+                <a href="{% url 'participants_list' event_id=object.event.id %}" class="btn btn-secondary">Отмена</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

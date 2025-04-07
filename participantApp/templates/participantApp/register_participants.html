@@ -1,0 +1,20 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<section class="registration">
+    <div class="registr_event_block">
+        <div class="registr_event_btn_title">
+            <a href="{% url 'participants_list' event_id=event.id %}" class="registr_event_btn">←</a>
+            <h2 class="registr_event_btn_title">Регистрация на мероприятие: {{ event.title }}</h2>
+        </div>
+
+        <form method="post" class="registr_event_form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input class="registr_event_form_item registr_event_form_item_btn" type="submit" value="Зарегистрироваться">
+        </form>
+    </div>
+    <script defer src="{% static 'js/registration_for_event.js' %}"></script>
+</section>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<section class="registr_event">
+    <div class="registr_event_block">
+        <div class="registr_event_btn_title">
+            <h2 class="registr_event_btn_title">Восстановление аккаунта</h2>
+        </div>
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <div class="modal-footer">
+            <a href="{% url 'login' %}" class="btn btn-primary profile_modal_btn_primary">Вернуться к входу</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

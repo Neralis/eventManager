@@ -1,0 +1,21 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<section class="review">
+    <div class="registr_event_block">
+        <div class="registr_event_btn_title">
+            <h2 class="registr_event_btn_title">Удаление отзыва</h2>
+        </div>
+        <p>Вы уверены, что хотите удалить этот отзыв?</p>
+        <p><strong>{{ object }}</strong></p>
+        <form method="post" class="registr_event_form">
+            {% csrf_token %}
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary profile_modal_btn_primary">Удалить</button>
+                <a href="#" class="btn btn-secondary">Отмена</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

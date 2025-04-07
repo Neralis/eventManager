@@ -74,14 +74,14 @@ class FileHandler:
                 pass
 
     @staticmethod
-    def delete_event_folder(slug) -> None:
+    def delete_event_folder(uuid) -> None:
         """
         Удаляет полностью папку мероприятия.
         Args:
-            slug(str): слаг объекта Event
+            uuid(str): слаг объекта Event
         """
 
-        folder_path = os.path.join(settings.MEDIA_ROOT, 'events', slug)
+        folder_path = os.path.join(settings.MEDIA_ROOT, 'events', str(uuid))
         if os.path.exists(folder_path):
             try:
                 shutil.rmtree(folder_path)

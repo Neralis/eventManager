@@ -1,0 +1,117 @@
+{% extends 'index.html' %}
+{%load static%}
+{% block content %}
+    <section class="create_event">
+        <div class="create_event_block">
+            <div class="create_event_btn_title">
+                <a href="{% url 'event_detail' event.id %}" class="create_event_btn">←</a>
+                <h2>Редактирование мероприятия</h2>
+            </div>
+            
+            <form method="post" class="create_event_form" enctype="multipart/form-data">
+
+
+                {% csrf_token %}
+
+                <input class="create_event_form_item" type="text" name="title" placeholder="Название мероприятия" value="{{ event.title }}"  >
+
+                <select class="create_event_form_category" name="category"  >
+                    <option value="" disabled>Выберите категорию</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}" {% if event.category.id == category.id %}selected{% endif %}>{{ category.title }}</option>
+                    {% endfor %}
+                </select>
+
+                <div class="create_event_form_format_count">
+                    <select class="create_event_form_format" name="event_format"   onchange="toggleAddressField()">
+                        <option value="Online" {% if event.event_format == "Online" %}selected{% endif %}>Онлайн</option>
+                        <option value="Offline" {% if event.event_format == "Offline" %}selected{% endif %}>Оффлайн</option>
+                    </select>
+
+                    <input class="create_event_form_item number_of_participants" type="number" name="participants_limit" min="1" value="{{ event.participants_limit }}"  >
+                </div>
+
+                <div class="create_event_form_registration_type">
+                    <fieldset class="create_event_form_registration_type_cheked">
+                        <legend>Регистрация</legend>
+                        <label><input type="radio" name="registration_status" value="true" {% if event.registration_status %}checked{% endif %}> Обязательна</label>
+                        <label><input type="radio" name="registration_status" value="false" {% if not event.registration_status %}checked{% endif %}> Не обязательна</label>
+                    </fieldset>
+                </div>
+
+                <input class="create_event_form_item" type="number" name="age_limit" min="0" max="120" value="{{ event.age_limit }}"  >
+
+                <div class="create_event_form_dateStart_dateEnd">
+                    <input class="create_event_form_item" type="datetime-local" name="date_start"  value="{{ event.date_start|date:'Y-m-d\TH:i' }}"  >
+                    <input class="create_event_form_item" type="datetime-local" name="date_end" value="{{ event.date_end|date:'Y-m-d\TH:i' }}">
+                </div>
+
+                <input id="city" value="{{ event.city }}" class="create_event_form_item create_event_form_item_city" type="text" name="city" placeholder="город" >
+
+                <div id="offline-address" {% if event_format == "Online" %}style="display: none;"{% endif %}>
+                    
+                    <input value="{{ form.location_offline.value|default_if_none:'' }}" class="create_event_form_item create_event_form_item_adress" type="text" name="{{ form.location_offline.name }}" placeholder="Адрес мероприятия" style="width: 100%;">
+                </div>
+                
+                <!-- Поле для онлайн-ссылки -->
+                <div id="online-address" {% if event_format == "Offline" %}style="display: none;"{% endif %}>
+                    <input value="{{ form.location_online.value|default_if_none:'' }}" class="create_event_form_item create_event_form_item_url" type="text" name="{{ form.location_online.name }}" placeholder="Ссылка на мероприятие" style="width: 100%;">
+                </div>
+
+
+                <textarea class="create_event_form_item create_event_form_description" name="description" rows="10" placeholder="описание">{{ event.description }}  </textarea>
+                
+                <fieldset class="create_event_form_file">
+                    <legend>Главное изображение</legend>
+                    <input class="form-control mb-3" type="file" name="main_photo">
+                    {% if event.main_photo %}
+                        <div class="text-center mt-2 position-relative">
+                            <img src="{{ event.main_photo.url }}" alt="Главное изображение" class="img-thumbnail" style="max-width: 300px; max-height: 200px; object-fit: cover;">
+                            <button type="button" class="position-absolute" 
+                            style="top: -5px; right: 0px; font-size: 24px; width: 32px; height: 32px; color: black; background: none; border: none;" 
+                                    onclick="removeMainImage()" title="Удалить">×</button>
+                        </div>
+                    {% endif %}
+                    <!-- Скрытое поле для отслеживания удаления главного изображения -->
+                    <input type="hidden" name="remove_main_photo" id="remove_main_photo" value="false">
+                </fieldset>
+                
+                <fieldset class="create_event_form_file create_event_form_file2 mt-4">
+                    <legend>Дополнительные изображения</legend>
+                    <input class="form-control mb-3" type="file" name="event_images" multiple>
+                    
+                    {% if images %}
+                        <div class="mt-3">
+                            <div class="row g-2" id="additional-images-container">
+                                {% for image in images %}
+                                    <div class="col-6 col-md-4 col-lg-3 image-item" data-image-id="{{ image.id }}">
+                                        <div class="position-relative">
+                                            <img src="{{ image.image.url }}" alt="Доп. изображение" class="img-thumbnail" style="width: 100%; height: 120px; object-fit: cover;">
+                                            <button type="button" class="position-absolute" 
+                                            style="top: -5px; right: 0px; font-size: 24px; width: 32px; height: 32px; color: black; background: none; border: none;" 
+                                            onclick="removeImage(this, '{{ image.id }}')" 
+                                            title="Удалить">
+                                            ×
+                                            </button>
+                                           
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                    <!-- Скрытое поле для хранения ID изображений, которые нужно удалить -->
+                    <input type="hidden" name="images_to_remove" id="images_to_remove" value="">
+                </fieldset>
+
+
+                <button type="submit" class="create_event_form_item create_event_form_btn"  value="Сохранить" onMouseOver="this.style.backgroundColor='#bd84ff'" onMouseOut="this.style.backgroundColor ='#8b4ad4'" style="background-color: #8b4ad4;">Сохранить</button>
+                </form>
+
+        </div>
+    </section>
+
+
+<script src = "{% static 'js/event_update.js' %}"></script>
+
+{% endblock %}

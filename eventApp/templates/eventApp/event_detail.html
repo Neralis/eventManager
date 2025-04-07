@@ -1,0 +1,137 @@
+{% extends "index.html" %}
+{%load static%}
+{% block content %}
+<section class="event">
+    <div class="event_main">
+        <h3 class="event_title">{{ object.title }}</h3>
+        <p class="event_date">{{ object.date_start|date:"d.m.Y" }} в {{ object.date_start|date:"H:i" }}</p>
+        <p class="event_seats">осталось {{ count_place }} мест</p>
+        <div class="event_main_img">
+        <img src="{% if object.main_photo %} {{ object.main_photo.url}}{% else %}{% static 'img/star.svg' %} {% endif %}" alt="img_event" class="event_img_event">
+        </div>
+        <p class="event_organizer">{{ object.organizer }}</p>
+    </div>
+
+    <div class="event_description">
+    <h4 class="event_description_title event_title_2">Описание</h4>
+    <p class="event_description_text">{{ object.description }}</p> <!-- Закрыл тег здесь -->
+
+    <div id="carouselExampleControlsNoTouching" class="carousel slide" data-bs-touch="false" data-bs-interval="false">
+        <div class="carousel-inner">
+            {% for image in event_images %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <img src="{{ image.image.url }}" class="d-block w-100" alt="img">
+            </div>
+            {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControlsNoTouching" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Предыдущий</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControlsNoTouching" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Следующий</span>
+        </button>
+    </div>
+</div>
+
+
+    <div class="event_place">
+        <h4 class="event_place_title event_title_2">Место проведения</h4>
+
+        <div class="event_place_for_btn">
+            <div class="event_place_btn"><a href="#">Записаться</a></div>
+        </div>
+
+        <p id = "location_onffine" class="event_place_text adress">{{object.city}} {{object.location_offline}}</p>
+        <p class="event_place_text adress" id="location_online">{{object.location_online}} </p>
+
+        <div class="accordion accordion-flush event_place_map" id="map_place">
+            <div class="accordion-item">
+                <p class="event_place_show_map" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false">
+                    показать на карте
+                    <svg class="event_place_show_map_img" width="30px" height="64px" viewBox="0 0 24.00 24.00" xmlns="http://www.w3.org/2000/svg" fill="#595959" stroke="#595959" stroke-width="0.00024000000000000003"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path fill="none" d="M0 0h24v24H0z"></path> <path d="M12 15l-4.243-4.243 1.415-1.414L12 12.172l2.828-2.829 1.415 1.414z"></path> </g> </g></svg>
+                </p>
+                <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                    <div id="map">
+                        <iframe id="mapFrame" width="100%" height="400" frameborder="0"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p class="event_place_text">Справка по телефону <span class="event_place_phone">{{organizer_phone}}</span></p>
+
+        <div class="event_reviews">
+            
+        
+            {% if reviews %}
+            <h4 class="event_reviews_title event_title_2">Отзывы</h4>
+                {% for review in reviews %}
+                <div class="event_reviews_block">
+                    <div class="event_reviews_block_people">
+                        <p class="event_reviews_name">{{ review.participant }}</p>
+                        <div class="event_reviews_stars">
+                            {% for _ in ""|ljust:review.rating %}
+                                <img src="{% static 'img/star.svg' %}" alt="star" class="event_reviews_star">
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <p class="event_reviews_text">{{ review.text }}</p>
+                </div>
+                {% endfor %}
+            {% endif%}
+           
+        </div>
+    </div>
+
+    <div class="event_to_organizer">
+       {% if organizer_events %}
+       <h4 class="event_description_title event_title_2">Также от организатора:</h4>
+    <div class="all_event_grid">
+        {% for organizer_event in organizer_events %}
+        <div class="all_event_grid_item" id = "event-{{organizer_event.id}}">
+            <div class="all_event_grid_item_img_cont">
+            <img src="{% if organizer_event.main_photo %}{{ organizer_event.main_photo.url }}{% else %}{% static 'img/default_event.jpg' %}{% endif %}" alt="event_img" class="all_event_grid_item_img">
+            </div>
+            <p class="all_event_grid_item_organizer">{{ organizer_event.organizer }}</p>
+            <p class="all_event_grid_item_title">{{ organizer_event.title }}</p>
+            <p class="all_event_grid_item_city">{{ organizer_event.city }}</p>
+            <p class="all_event_grid_item_date">{{ organizer_event.date_start|date:"d.m.Y" }}</p>
+            <div class="all_event_grid_item_btn_count">
+                <button class="all_event_grid_item_btn">Записаться</button>
+                <p class="all_event_grid_item_place">осталось {{ organizer_event.participants_limit }} мест</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+</div>
+    <div class="event_other">
+        {% if similiar_events %}
+        <h4 class="event_description_title event_title_2">Похожие:</h4>
+<div class="all_event_grid">
+    {% for similiar_event in similiar_events %}
+    <div class="all_event_grid_item" id = "event-{{similiar_event.id}}">
+        <div class="all_event_grid_item_img_cont">
+        <img src="{% if similiar_event.main_photo %}{{ similiar_event.main_photo.url }}{% else %}{% static 'img/default_event.jpg' %}{% endif %}" alt="event_img" class="all_event_grid_item_img">
+        </div>
+        <p class="all_event_grid_item_organizer">{{ similiar_event.organizer }}</p>
+        <p class="all_event_grid_item_title">{{ similiar_event.title }}</p>
+        <p class="all_event_grid_item_city">{{ similiar_event.city }}</p>
+        <p class="all_event_grid_item_date">{{ similiar_event.date_start|date:"d.m.Y" }}</p>
+        <div class="all_event_grid_item_btn_count">
+            <button class="all_event_grid_item_btn">Записаться</button>
+            <p class="all_event_grid_item_place">осталось {{ similiar_event.participants_limit }} мест</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}         
+    </div>
+</section>
+        
+<script src = "{% static 'js/event_detail.js' %}"></script>
+    
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<section class="add_review">
+    <div class="add_review_block">
+        <div class="add_review_btn_title">
+            <h2 class="add_review_btn_title">Вход в аккаунт</h2>
+        </div>
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <p>{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <form method="post" class="add_review_form">
+            {% csrf_token %}
+            <div class="form-field">
+                {{ form.as_p }}
+                {% if form.errors %}
+                    <div class="field-errors add_review_star_error">
+                        {% for error in form.non_field_errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="add_review_form_item add_review_form_item_btn">Войти</button>
+                {% if request.session.user_data %}
+                    <a href="{% url 'restore_account_request' %}" class="btn btn-secondary">Восстановить аккаунт</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

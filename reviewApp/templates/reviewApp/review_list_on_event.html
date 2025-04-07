@@ -1,0 +1,77 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<section class="review">
+    <h2 class="review_title">Отзывы на мероприятие: {{ event.title }}</h2>
+
+    {% if review_list %}
+        <div class="review_list">
+            {% for review in review_list %}
+                <div class="review_list_item">
+                    <div class="review_list_item_title_date">
+                        <p class="event_reviews_name"><strong>Участник:</strong> {{ review.participant }} {% if review.participant.user %}{{ review.participant.user.email }}{% else %}Неавторизованный участник{% endif %}</p>
+                    </div>
+                    <div class="event_reviews_block_people">
+                        <p class="event_reviews_name"><strong>Рейтинг:</strong> {{ review.rating }}/5</p>
+                    </div>
+                    <p class="event_reviews_text"><strong>Комментарий:</strong> {{ review.text }}</p>
+                    <!-- Кнопка удаления -->
+                    <div class="participants_item_func">
+                        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop{{ review.id }}">
+                            <svg class="participants_item_trash" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0,0,256,256">
+                                <g class="participants_item_trash" fill="#8b4ad4" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+                                    <g transform="scale(10.66667,10.66667)">
+                                        <path d="M10,2l-1,1h-4c-0.552,0 -1,0.448 -1,1c0,0.552 0.448,1 1,1h2h10h2c0.552,0 1,-0.448 1,-1c0,-0.552 -0.448,-1 -1,-1h-4l-1,-1zM5,7v13c0,1.105 0.895,2 2,2h10c1.105,0 2,-0.895 2,-2v-13z"></path>
+                                    </g>
+                                </g>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <hr>
+                <!-- Модальное окно для подтверждения удаления -->
+                <div class="modal fade" id="staticBackdrop{{ review.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel{{ review.id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title profile_modal_title" id="staticBackdropLabel{{ review.id }}">Удаление отзыва</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Вы уверены, что хотите удалить отзыв от участника "{{ review.participant }} {% if review.participant.user %}{{ review.participant.user.email }}{% else %}Неавторизованный участник{% endif %}"?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                <a href="{% url 'review_delete' review.id %}" class="btn btn-primary profile_modal_btn_primary">Да, удалить</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="all_event_pages">
+            {% if page_obj.has_previous %}
+                <a href="?event_id={{ event.id }}&page=1" class="all_event_pages_previous">Первая</a>
+                <a href="?event_id={{ event.id }}&page={{ page_obj.previous_page_number }}" class="all_event_pages_previous">Назад</a>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <div class="all_event_pages_circle active">{{ num }}</div>
+                {% else %}
+                    <div class="all_event_pages_circle"><a href="?event_id={{ event.id }}&page={{ num }}">{{ num }}</a></div>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <a href="?event_id={{ event.id }}&page={{ page_obj.next_page_number }}" class="all_event_pages_next">Вперёд</a>
+                <a href="?event_id={{ event.id }}&page={{ page_obj.paginator.num_pages }}" class="all_event_pages_next">Последняя</a>
+            {% endif %}
+        </div>
+    {% else %}
+        <p>Нет отзывов на это мероприятие.</p>
+    {% endif %}
+</section>
+{% endblock %}

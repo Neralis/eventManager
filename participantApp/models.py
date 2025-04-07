@@ -66,10 +66,21 @@ class Participants(models.Model):
             return self.user.email
         return self.not_auth_user.email
 
+    @staticmethod
+    def check_organizer(event, user=None, email=None):
+        """Проверяет, не пытается ли организатор записаться на свое же мероприятие."""
+        organizer_email = event.organizer.email
+        if user and user.email == organizer_email:
+            raise ValidationError('Организатор не может зарегистрироваться на свое же мероприятия.')
+        if email and email == organizer_email:
+            raise ValidationError('Организатор не может зарегистрироваться на свое же мероприятия.')
+
     def clean(self):
         """Валидация данных перед сохранением"""
-        if self.user and self.user == self.event.organizer:
-            raise ValidationError('Организатор не может зарегистрироваться на свое же мероприятие.')
+        if self.user:
+            self.check_organizer(self.event, user=self.user)
+        elif self.not_auth_user:
+            self.check_organizer(self.event, email=self.not_auth_user.email)
 
         if self.event.registration_status and self.user:
             participant_date_birthday = self.user.date_birthday
@@ -98,11 +109,16 @@ class Participants(models.Model):
     def is_registered(cls, event: 'Event', user=None, email=None, phone=None) -> bool:
         """Проверяет, зарегистрирован ли пользователь(авторизованный или нет) как участник этого мероприятия."""
         if user:
+            cls.check_organizer(event, user=user)
             return cls.objects.filter(event=event, user=user).exists()
         if email and phone:
+            cls.check_organizer(event, email=email)
             if cls.objects.filter(event=event, user__email=email).exists():
                 return True
-            return cls.objects.filter(event=event, not_auth_user__email=email, not_auth_user__phone=phone).exists()
+            return cls.objects.filter(
+                Q(event=event, not_auth_user__email=email) |
+                Q(event=event, not_auth_user__phone=phone)
+            ).exists()
         return False
 
     @classmethod

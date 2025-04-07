@@ -1,0 +1,101 @@
+{% extends 'index.html'%}
+{%load static%}
+{% block content %}
+
+
+<section class="create_event">
+    <div class="create_event_block">
+        <div class="create_event_btn_title">
+            <a href="" class="create_event_btn">←</a>
+            <h2>Создание мероприятия</h2>
+        </div>
+        <form method="post" action="{% url 'event_create' %}" class="create_event_form" enctype="multipart/form-data">
+            {% csrf_token %}
+           
+            <input class="create_event_form_item" type="text" name="{{ form.title.name }}" placeholder="название мероприятия" required>
+            <select class="create_event_form_category" id="category" name="category" required>
+                <option value="" disabled selected>выберите категорию</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.title }}</option>             
+                {% endfor %}
+            </select>
+
+            <div class="create_event_form_format_count">
+                
+                <select class="create_event_form_format" id="format" name="event_format" required onchange="toggleAddressField()">
+                    <option value="" disabled selected>выберите формат</option>
+                    <option value="Online" {% if event_format == "Online" %}selected{% endif %}>Онлайн</option>
+                    <option value="Offline" {% if event_format == "Offline" %}selected{% endif %}>Оффлайн</option>
+                </select>
+
+            <input class="create_event_form_item number_of_participants" type="number" name="{{form.participants_limit.name}}" min="1" placeholder="количество участников" required>
+            </div>
+
+                <div class="create_event_form_registration_type">
+                    <fieldset class="create_event_form_registration_type_cheked">
+                        <legend>Регистрация на мероприятие</legend>
+                        <div class="create_event_form_registration_type_block">
+                            <div>
+                                <input type="radio" id="yes" name="registration_status" value="true" checked/>
+                                <label for="yes">Обязательна</label>  
+                            </div>
+                            <div>
+                                <input type="radio" id="no" name="registration_status" value="false"/>
+                                <label for="no">Не обязательна</label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+
+                <input class="create_event_form_item create_event_form_item_age" type="number" name="{{form.age_limit.name}}" min="0" max="120" placeholder="возрастное ограничение" required>
+
+                <div class="create_event_form_dateStart_dateEnd">
+                    <input class="create_event_form_item create_event_form_dateStart" type="datetime-local" name={{form.date_start.name}} placeholder="дата и время начала" required>
+                    <input class="create_event_form_item create_event_form_dateEnd" type="datetime-local" name={{form.date_end.name}} placeholder="дата и время окончания">
+                </div>
+                
+                <input id="city" class="create_event_form_item create_event_form_item_city" type="text" name="{{form.city.name}}" placeholder="город" >
+              
+                <div id="offline-address" {% if event_format == "Online" %}style="display: none;"{% endif %}>
+                    <input class="create_event_form_item create_event_form_item_adress" type="text" name="{{ form.location_offline.name }}" placeholder="Адрес мероприятия" style="width: 100%;">
+                </div>
+                
+                
+                
+                <!-- Поле для онлайн-ссылки -->
+                <div id="online-address" {% if event_format == "Offline" %}style="display: none;"{% endif %}>
+                    <input class="create_event_form_item create_event_form_item_url" type="text" name="{{ form.location_online.name }}" placeholder="Ссылка на мероприятие" style="width: 100%;">
+                </div>
+
+                <textarea class="create_event_form_item create_event_form_description" name={{form.description.name}} id="description" rows="10" placeholder="описание"></textarea>
+
+
+            
+
+                <fieldset class="create_event_form_file">
+                    <legend>Для главной</legend>
+                    <div class="create_event_form_title_img">
+                        <div class="mb-3">
+                            <input class="form-control" name={{form.main_photo.name}} type="file" id="formFile" >
+                        </div>
+                    </div>
+                </fieldset>
+                
+                <fieldset class="create_event_form_file create_event_form_file2">
+                    <legend>Дополнительные</legend>
+                    <div class="create_event_form_title_img">
+                        <div class="mb-3">
+                            <input class="form-control" name="event_images" type="file" multiple>
+                        </div>
+                    </div>
+                </fieldset>
+
+
+            <button type="submit" class="create_event_form_item create_event_form_btn" onMouseOver="this.style.backgroundColor='#bd84ff'" onMouseOut="this.style.backgroundColor ='#8b4ad4'" style="background-color: #8b4ad4;">Создать</button>
+        
+        </form>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script src="{% static 'js/event_create.js' %}"
+{% endblock %}

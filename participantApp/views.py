@@ -1,4 +1,3 @@
-from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -28,7 +27,7 @@ class ListParticipantsOnEvent(OrganizerPermissionMixin, EventMixin, ListView):
     def get_context_data(self, **kwargs):
         """Передает в контекст данные о мероприятии(id)."""
         context = super().get_context_data(**kwargs)
-        context['event_id'] = self.get_event_id()
+        context['event'] = self.get_event()
         return context
 
 
@@ -86,12 +85,6 @@ class RegistrationParticipantsView(EventMixin, CreateView):
             form.add_error(None, str(e))
             return self.form_invalid(form)
 
-    # def form_invalid(self, form):
-    #     for field, errors in form.errors.items():
-    #         for error in errors:
-    #             messages.error(self.request, f'Обнаружена ошибка {error}')
-    #     return super().form_invalid(form)
-
     def get_context_data(self, **kwargs):
         """Передает в контекст данные о мероприятии."""
         context = super().get_context_data(**kwargs)
@@ -100,7 +93,7 @@ class RegistrationParticipantsView(EventMixin, CreateView):
 
     def get_success_url(self):
         """Перенаправляет на страничку ..."""
-        return reverse_lazy('register_participant', kwargs={'event_id': self.get_event_id()})
+        return reverse_lazy('event_detail', kwargs={'event_id': self.get_event_id()})
 
 
 class FavouriteParticipants(OrganizerPermissionMixin, ListView):

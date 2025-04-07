@@ -1,4 +1,5 @@
 import logging
+import uuid
 from django.db import models
 from django.db.models import Q, F
 from django.core.validators import FileExtensionValidator
@@ -30,6 +31,13 @@ class Event(models.Model):
         ('Online', 'Онлайн'),
         ('Offline', 'Оффлайн'),
     ]
+
+    uuid = models.UUIDField(
+        default=uuid.uuid4,
+        editable=False,
+        unique=True,
+        verbose_name='Уникальный идентификатор',
+    )
 
     title = models.CharField(
         max_length=250,
@@ -157,11 +165,13 @@ class Event(models.Model):
             )
         generate_unique_slug(self)
         update_available_places_from_participants_limit(self)
+        old_main_photo = None
         if self.id:
             old_instance = self.__class__.objects.get(id=self.id)
-            if old_instance.main_photo != self.main_photo:
+            old_main_photo = old_instance.main_photo
+            if old_main_photo != self.main_photo:
                 FileHandler.delete_old_image(self, self.__class__, 'main_photo')
-        if self.main_photo:
+        if self.main_photo and (not old_main_photo or old_main_photo != self.main_photo):
             FileHandler.save_file(
                 instance=self,
                 file_field_name='main_photo',
@@ -172,11 +182,11 @@ class Event(models.Model):
         except Exception as e:
             logger.error(f'Ошибка при сохранении объекта в базе данных: {e}')
             if self.main_photo:
-                FileHandler.delete_event_folder(self.slug)
+                FileHandler.delete_event_folder(self.uuid)
             raise
 
     def delete(self, *args, **kwargs):
-        FileHandler.delete_event_folder(self.slug)
+        FileHandler.delete_event_folder(self.uuid)
         super().delete(*args, **kwargs)
 
 

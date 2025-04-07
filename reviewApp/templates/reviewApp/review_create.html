@@ -1,0 +1,49 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<section class="add_review">
+    <div class="add_review_block">
+        <div class="add_review_btn_title">
+            <h2 class="add_review_btn_title">Оставить отзыв на "{{ event.title }}"</h2>
+        </div>
+
+        {% if form.errors %}
+            <div class="errors add_review_star_error">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post" class="add_review_form">
+            {% csrf_token %}
+            <div class="form-field">
+                <label>Текст отзыва:</label>
+                {{ form.text }}
+                {% if form.text.errors %}
+                    <div class="field-errors add_review_star_error">
+                        {% for error in form.text.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-field">
+                <label>Рейтинг (1-5):</label>
+                {{ form.rating }}
+                {% if form.rating.errors %}
+                    <div class="field-errors add_review_star_error">
+                        {% for error in form.rating.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="add_review_form_item add_review_form_item_btn">Отправить отзыв</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

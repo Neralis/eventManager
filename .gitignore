@@ -1,0 +1,36 @@
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+/media/
+/staticfiles/
+db.sqlite3
+.env
+.env.local
+
+
+# Backup files
+*.bak
+*.dump
+
+# IDE and редакторы
+.idea/
+.vscode/
+*.swp
+*.swo
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Python
+venv/
+ENV/
+env/
+.venv/
+pythonenv-*/
+.Python
+pip-selfcheck.json

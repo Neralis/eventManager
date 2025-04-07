@@ -23,7 +23,7 @@ def event_main_photo_path(instance, filename: str) -> str:
         filename: название файла для поля main_photo
     """
 
-    return f'events/{instance.slug}/main_photo/{filename}'
+    return f'events/{str(instance.uuid)}/main_photo/{filename}'
 
 
 def event_additional_image_path(instance, filename: str) -> str:
@@ -34,7 +34,7 @@ def event_additional_image_path(instance, filename: str) -> str:
         filename: название файла для поля image
     """
 
-    return f'events/{instance.event.slug}/additional_images/{filename}'
+    return f'events/{str(instance.event.uuid)}/additional_images/{filename}'
 
 
 def get_random_string() -> str:

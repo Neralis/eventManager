@@ -1,0 +1,21 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<section class="registr_event">
+    <div class="registr_event_block">
+        <div class="registr_event_btn_title">
+            <h2 class="registr_event_btn_title">Удаление мероприятия</h2>
+        </div>
+        <p>Вы уверены, что хотите удалить мероприятие "{{ object.title }}"?</p>
+        <p>Это действие нельзя отменить.</p>
+        <form method="post" class="registr_event_form">
+            {% csrf_token %}
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary profile_modal_btn_primary">Подтвердить удаление</button>
+                <a href="#" class="btn btn-secondary">Отмена</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

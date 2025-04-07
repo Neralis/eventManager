@@ -1,0 +1,29 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<section class="participants">
+    <h2 class="participants_title">Избранные участники</h2>
+    <p class="participants_count">{{ favourite|length }} участника</p>
+
+    <div class="participants_list">
+        <table class="participants_table">
+            <tbody>
+                {% for participant in favourite %}
+                <tr class="participants_item">
+                    <td class="participants_item_num">{{ forloop.counter }}.</td>
+                    <td class="participants_item_email">
+                        {% if participant.not_auth_user %}
+                            {{ participant.not_auth_user.email }}
+                        {% else %}
+                            {{ participant.user.email }}
+                        {% endif %}
+                    </td>
+                    <td class="participants_item_tel">Количество регистраций: {{ participant.registration_count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
