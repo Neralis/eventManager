@@ -40,8 +40,8 @@
                 <input class="create_event_form_item" type="number" name="age_limit" min="0" max="120" value="{{ event.age_limit }}"  >
 
                 <div class="create_event_form_dateStart_dateEnd">
-                    <input class="create_event_form_item" id = "date_start" type="datetime-local" name="date_start"  value="{{ event.date_start|date:'Y-m-d\TH:i' }}"  >
-                    <input class="create_event_form_item" id = "date_end" type="datetime-local" name="date_end" value="{{ event.date_end|date:'Y-m-d\TH:i' }}">
+                    <input class="create_event_form_item create_event_form_dateStart" id = "date_start" type="datetime-local" name="date_start"  value="{{ event.date_start|date:'Y-m-d\TH:i' }}"  >
+                    <input class="create_event_form_item create_event_form_dateEnd" id = "date_end" type="datetime-local" name="date_end" value="{{ event.date_end|date:'Y-m-d\TH:i' }}">
                 </div>
 
                 <input id="city" value="{{ event.city }}" class="create_event_form_item create_event_form_item_city" type="text" name="city" placeholder="город" >

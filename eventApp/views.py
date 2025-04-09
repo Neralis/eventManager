@@ -9,7 +9,7 @@ from userApp.models import NotAuthUser
 from .forms import EventForm
 from django.utils.dateparse import parse_date
 from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 from .models import Event,Category, EventImages
 from django.db.models import Count ,F
 from django.db.models import Q
@@ -162,10 +162,20 @@ class EventDetailView(DetailView):
 
         return context
 
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
+
 class EventCreateView(CreateView):
     model = Event
     form_class = EventForm
     template_name = 'event_create.html'
+    
+    
+    def get(self, request, *args, **kwargs):
+        
+        if not request.user.is_authenticated:
+            raise Http404("Для создания события вы должны быть зарегистрированы")
+        return super().get(request, *args, **kwargs)
 
     def get_success_url(self):
         return reverse_lazy('event_detail', kwargs={'pk': self.object.pk})
@@ -261,7 +271,7 @@ class EventDeleteAjaxView(View):
             event.delete()
             return JsonResponse({"message": "Событие удалено"}, status=200)
         except Exception as e:
-            return JsonResponse({"error": str(e)}, status=400)
+            return JsonResponse({"error": "Нет прав для удаления"}, status=400)
         
 
 class SearchResultView(ListView):

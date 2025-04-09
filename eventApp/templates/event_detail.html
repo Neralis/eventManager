@@ -92,7 +92,7 @@
         {% for organizer_event in organizer_events %}
         <div class="all_event_grid_item" id = "event-{{organizer_event.id}}">
             <div class="all_event_grid_item_img_cont">
-            <img src="{% if organizer_event.main_photo %}{{ organizer_event.main_photo.url }}{% else %}{% static 'img/default_event.jpg' %}{% endif %}" alt="event_img" class="all_event_grid_item_img">
+            <img src="{% if organizer_event.main_photo %}{{ organizer_event.main_photo.url }}{% else %}{% static 'img/star.svg' %}{% endif %}" alt="event_img" class="all_event_grid_item_img">
             </div>
             <p class="all_event_grid_item_organizer">{{ organizer_event.organizer.get_full_name }} {{organizer_event.organizer.email }}</p>
             <p class="all_event_grid_item_title">{{ organizer_event.title }}</p>
@@ -117,7 +117,7 @@
     {% for similiar_event in similiar_events %}
     <div class="all_event_grid_item" id = "event-{{similiar_event.id}}">
         <div class="all_event_grid_item_img_cont">
-        <img src="{% if similiar_event.main_photo %}{{ similiar_event.main_photo.url }}{% else %}{% static 'img/default_event.jpg' %}{% endif %}" alt="event_img" class="all_event_grid_item_img">
+        <img src="{% if similiar_event.main_photo %}{{ similiar_event.main_photo.url }}{% else %}{% static 'img/star.svg' %}{% endif %}" alt="event_img" class="all_event_grid_item_img">
         </div>
         <p class="all_event_grid_item_organizer">{{ similiar_event.organizer.get_full_name }} {{similiar_event.organizer.email }}</p>
         <p class="all_event_grid_item_title">{{ similiar_event.title }}</p>

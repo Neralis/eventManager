@@ -1,3 +1,4 @@
+document.addEventListener("DOMContentLoaded", function () {
 function toggleAddressField() {
     let format = document.querySelector("select[name='event_format']").value;
 
@@ -64,26 +65,25 @@ let imagesToRemove = [];
         document.querySelector("select[name='event_format']").addEventListener("change", toggleAddressField);
     };
 
-    const create_form = document.querySelector('.create_event_form');
-const date_start = document.getElementById('date_start');
-const date_end = document.getElementById('date_end');
-
-create_form.addEventListener('input', () => {
-    if (date_start && date_end) {
+    const create_form = document.querySelector('.create_event_form')
+    const date_start = document.querySelector('.create_event_form_dateStart')
+    const date_end = document.querySelector('.create_event_form_dateEnd')
+    
+    create_form.addEventListener('change', () =>{
         const startDate = new Date(date_start.value);
         const endDate = new Date(date_end.value);
-
+        
         if (startDate >= endDate) {
             date_start.setCustomValidity("Дата конца не может быть раньше даты начала");
         } else {
-            date_start.setCustomValidity("");  
+            date_start.setCustomValidity("");
         }
-    }
-});
+    });
 
 create_form.addEventListener('submit', (event) => {
     if (!create_form.checkValidity()) {
-        event.preventDefault();  // Не отправлять форму, если есть ошибки
+        event.preventDefault();
         console.log("Форма невалидна");
     }
+});
 });

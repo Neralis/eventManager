@@ -1,3 +1,4 @@
+document.addEventListener("DOMContentLoaded", function () {
 function toggleAddressField() {
     let format = document.querySelector("select[name='event_format']").value;
 
@@ -52,7 +53,7 @@ create_form.addEventListener('change', () =>{
         date_start.setCustomValidity("");
     }
 });
-
+});
 
 
 
