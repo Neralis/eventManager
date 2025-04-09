@@ -52,7 +52,7 @@
 
                 <div class="create_event_form_dateStart_dateEnd">
                     <input class="create_event_form_item create_event_form_dateStart" type="datetime-local" name={{form.date_start.name}} placeholder="дата и время начала" required>
-                    <input class="create_event_form_item create_event_form_dateEnd" type="datetime-local" name={{form.date_end.name}} placeholder="дата и время окончания">
+                    <input class="create_event_form_item create_event_form_dateEnd" type="datetime-local" name={{form.date_end.name}} placeholder="дата и время окончания" required>
                 </div>
                 
                 <input id="city" class="create_event_form_item create_event_form_item_city" type="text" name="{{form.city.name}}" placeholder="город" >
@@ -61,17 +61,11 @@
                     <input class="create_event_form_item create_event_form_item_adress" type="text" name="{{ form.location_offline.name }}" placeholder="Адрес мероприятия" style="width: 100%;">
                 </div>
                 
-                
-                
-                <!-- Поле для онлайн-ссылки -->
                 <div id="online-address" {% if event_format == "Offline" %}style="display: none;"{% endif %}>
                     <input class="create_event_form_item create_event_form_item_url" type="text" name="{{ form.location_online.name }}" placeholder="Ссылка на мероприятие" style="width: 100%;">
                 </div>
 
                 <textarea class="create_event_form_item create_event_form_description" name={{form.description.name}} id="description" rows="10" placeholder="описание"></textarea>
-
-
-            
 
                 <fieldset class="create_event_form_file">
                     <legend>Для главной</legend>

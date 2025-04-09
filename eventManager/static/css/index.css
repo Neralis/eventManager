@@ -259,6 +259,7 @@ a {
 .header_func_user a:hover{
     color: rgb(177, 178, 255);
     transition: 0.3s;
+    cursor: pointer;
 }
 
 .footer_social_item{
@@ -350,10 +351,22 @@ p{
     
 }
 
-.all_event_grid_item_img{
-    object-fit: cover;
+.all_event_grid_item_img_cont{
+    height: 230px;
+    text-align: center;
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
+    overflow: hidden;
+    background-position: center center; 
+    background-repeat: no-repeat;      
+    background-size: cover; 
+    background-color: #464646;
+}
+
+.all_event_grid_item_img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
 }
 
 .all_event_grid_item_organizer,
@@ -379,6 +392,7 @@ p{
 
 .all_event_reset_btn:hover{
     background-color: var(--menu-color);
+    
 }
 
 .all_event_reset_btn:active{
@@ -413,6 +427,7 @@ p{
 .event_place_btn:hover,
 .registration_form_item:last-child:hover{
     background-color: var(--menu-color);
+    cursor: pointer;
 }
 
 
@@ -448,8 +463,10 @@ p{
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1px 8px;
-    font-size: 14px;
+    height: 25px;
+    width: 25px;
+    line-height: 12px;
+    font-size: 12px;
 }
 
 .all_event_pages_circle a{
@@ -540,6 +557,28 @@ p{
 .accordion-body{
     padding: 0;
     margin-bottom: 20px;
+}
+
+.event_main_img{
+    width: 100%;
+}
+
+.carousel-item,
+.event_img_event{
+    height: 700px;
+    max-height: 700px;
+    overflow: hidden;
+}
+
+.carousel-item{
+    background-color: #c5c5c5;
+}
+
+.carousel-item .d-block,
+.event_img_event{
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
 }
 
 .event_place_btn{
@@ -1395,19 +1434,19 @@ input[type='radio'] {
 }
 
 .add_review_stars{
-    font-size: 32px; /* Размер звёзд */
-    color: #ccc; /* Цвет по умолчанию (серый) */
-    display: inline-flex; /* Чтобы звёзды были в одной строке */
+    font-size: 32px;
+    color: #ccc; 
+    display: inline-flex;
 }
 
 .add_review_stars .add_review_star {
-    cursor: pointer; /* Курсор в виде указателя */
-    transition: color 0.2s; /* Плавное изменение цвета */
-    margin-right: 5px; /* Отступ между звёздами */
+    cursor: pointer;
+    transition: color 0.2s;
+    margin-right: 5px;
 }
 
 .add_review_stars .add_review_star.active {
-    color: gold; /* Золотой цвет для активных звёзд */
+    color: gold;
 }
 
 .add_review_star_error{
@@ -1418,6 +1457,18 @@ input[type='radio'] {
 }
 
 /* --------------------MEDIA-------------------- */
+@media (max-width: 1480px){
+    .all_event_grid_item_img_cont{
+        height: 140px;
+    }
+
+    .carousel-item,
+    .event_img_event{
+        height: 400px;
+        overflow: hidden;
+    }
+}
+
 @media (max-width: 1180px){
     .search{
         width: 200px;
@@ -1440,11 +1491,31 @@ input[type='radio'] {
     .review_all_my_event_filter_btn{
         right: 50px;
     }
+
+    .all_event_grid_item_img_cont{
+        height: 230px;
+    }
+
+    .carousel-item,
+    .event_img_event{
+        height: 500px;
+        overflow: hidden;
+    }
 }
 
 @media (max-width: 768px){
     .search{
         width: 200px;
+    }
+
+    .all_event_grid_item_img_cont{
+        height: 155px;
+    }
+
+    .carousel-item,
+    .event_img_event{
+        height: 350px;
+        overflow: hidden;
     }
 }
 
@@ -1480,4 +1551,13 @@ input[type='radio'] {
         right: 20px;
     }
     
+    .all_event_grid_item_img_cont{
+        height: 240px;
+    }
+
+    .carousel-item,
+    .event_img_event{
+        height: 280px;
+        overflow: hidden;
+    }
 }

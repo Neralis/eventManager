@@ -53,7 +53,7 @@
                     <img src="{% if event.main_photo %}{{ event.main_photo.url }}{% else %}{% static 'img/star.svg' %}{% endif %}" alt="event_img" class="all_event_grid_item_img">
                 </div>
                 
-                <p class="all_event_grid_item_organizer">{{ event.organizer }} организатор</p>
+                <p class="all_event_grid_item_organizer">{{ event.organizer.get_full_name }} {{event.organizer.email}} организатор</p>
                 <p class="all_event_grid_item_title">{{ event.title }}</p>
                 {% if event.event_format == 'Offline' %}
                 <p class="all_event_grid_item_city">{{event.city}} {{ event.location_offline }}</p>

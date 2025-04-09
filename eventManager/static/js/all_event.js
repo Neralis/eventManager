@@ -8,7 +8,7 @@
             url.searchParams.delete("event_format");
         }
         
-        window.location.href = url.toString();  // Обновляем страницу с новым фильтром
+        window.location.href = url.toString();
     });
 
     document.getElementById("event-date-filter").addEventListener("change", function () {
@@ -21,7 +21,7 @@
             url.searchParams.delete("date_start");
         }
 
-        window.location.href = url.toString();  // Перезагрузка страницы с новым фильтром
+        window.location.href = url.toString();
     });
 
     document.addEventListener("DOMContentLoaded", function () {
@@ -52,12 +52,12 @@
 
                 let city = citySelect.value;
                 if (city === "all") {
-                    params.delete("city");  // Удаляем параметр city, если выбрано "Все"
+                    params.delete("city");  
                 } else {
-                    params.set("city", city);  // Устанавливаем параметр city
+                    params.set("city", city);  
                 }
 
-                window.location.search = params.toString();  // Перезагрузка страницы с новым фильтром
+                window.location.search = params.toString(); 
             });
         }
     });
@@ -99,50 +99,52 @@
     
     })
 
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll(".all_event_grid_item_btn").forEach(button => {
-                button.addEventListener("click", async function (e) {
-                    e.stopPropagation(); // Чтобы не срабатывали другие обработчики клика
-                    
-                    const eventId = this.getAttribute("data-id");
-                    const csrfToken = getCSRFToken();
-        
-                    try {
-                        const response = await fetch(`/events/${eventId}/register/`, {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "X-CSRFToken": csrfToken,
-                            },
-                            body: JSON.stringify({}),
-                        });
-        
-                        // Если ответ не JSON (например, 403 или 500)
-                        const contentType = response.headers.get("content-type");
-                        if (!contentType || !contentType.includes("application/json")) {
-                            const text = await response.text();
-                            throw new Error(text || "Ошибка сервера");
-                        }
-        
-                        const data = await response.json();
-                        
-                        if (!response.ok) {
-                            throw new Error(data.message || "Ошибка при записи");
-                        }
-        
-                        alert(data.message);
-                        if (data.success) {
-                            location.reload();
-                        }
-                    } catch (error) {
-                        console.error("Ошибка:", error);
-                        alert(error.message || "Произошла ошибка при записи");
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".all_event_grid_item_btn").forEach(button => {
+            button.addEventListener("click", async function (e) {
+                e.stopPropagation();
+    
+                const eventId = this.getAttribute("data-id");
+                const csrfToken = getCSRFToken();
+    
+                try {
+                    const response = await fetch(`/events/${eventId}/register/`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRFToken": csrfToken,
+                        },
+                        body: JSON.stringify({}),
+                    });
+    
+                    const contentType = response.headers.get("content-type") || "";
+    
+                    // Если вернулся не JSON — значит редирект на форму (или неавторизован)
+                    if (!contentType.includes("application/json")) {
+                        // Перенаправляем на форму для неавторизованных
+                        window.location.href = `/events/${eventId}/registration_not_auth_user/`;
+                        return;
                     }
-                });
+    
+                    const data = await response.json();
+    
+                    if (!response.ok) {
+                        throw new Error(data.message || "Ошибка при записи");
+                    }
+    
+                    alert(data.message);
+                    if (data.success) {
+                        location.reload();
+                    }
+                } catch (error) {
+                    console.error("Ошибка:", error);
+                    alert(error.message || "Произошла ошибка при записи");
+                }
             });
         });
-        
-        // Получение CSRF-токена из meta-тега (лучше, чем из cookie)
+    });
+    
+       
         function getCSRFToken() {
             return document.querySelector("meta[name='csrf-token']")?.content || "";
         }

@@ -9,12 +9,12 @@
         <div class="event_main_img">
         <img src="{% if object.main_photo %} {{ object.main_photo.url}}{% else %}{% static 'img/star.svg' %} {% endif %}" alt="img_event" class="event_img_event">
         </div>
-        <p class="event_organizer">{{ object.organizer }}</p>
+        <p class="event_organizer">{{ object.organizer.get_full_name}} {{object.organizer.email}}</p>
     </div>
 
     <div class="event_description">
     <h4 class="event_description_title event_title_2">Описание</h4>
-    <p class="event_description_text">{{ object.description }}</p> <!-- Закрыл тег здесь -->
+    <p class="event_description_text">{{ object.description }}</p> 
 
     <div id="carouselExampleControlsNoTouching" class="carousel slide" data-bs-touch="false" data-bs-interval="false">
         <div class="carousel-inner">
@@ -40,7 +40,7 @@
         <h4 class="event_place_title event_title_2">Место проведения</h4>
 
         <div class="event_place_for_btn">
-            <div class="event_place_btn"><a href="#">Записаться</a></div>
+            <button type="button" class="event_place_btn" data-id="{{ object.id }}">Записаться</button>
         </div>
 
         <p id="location_offline" class="event_place_text adress">{{object.city}} {{object.location_offline}}</p>
@@ -94,12 +94,14 @@
             <div class="all_event_grid_item_img_cont">
             <img src="{% if organizer_event.main_photo %}{{ organizer_event.main_photo.url }}{% else %}{% static 'img/default_event.jpg' %}{% endif %}" alt="event_img" class="all_event_grid_item_img">
             </div>
-            <p class="all_event_grid_item_organizer">{{ organizer_event.organizer }}</p>
+            <p class="all_event_grid_item_organizer">{{ organizer_event.organizer.get_full_name }} {{organizer_event.organizer.email }}</p>
             <p class="all_event_grid_item_title">{{ organizer_event.title }}</p>
+            {% if organizer_event.event_format == 'Offline' %}
             <p class="all_event_grid_item_city">{{ organizer_event.city }}</p>
+            {%endif%}
             <p class="all_event_grid_item_date">{{ organizer_event.date_start|date:"d.m.Y" }}</p>
             <div class="all_event_grid_item_btn_count">
-                <button class="all_event_grid_item_btn">Записаться</button>
+                <button class="all_event_grid_item_btn" data-id="{{organizer_event.id}}">Записаться</button>
                 <p class="all_event_grid_item_place">осталось {{ organizer_event.participants_limit }} мест</p>
             </div>
         </div>
@@ -117,9 +119,11 @@
         <div class="all_event_grid_item_img_cont">
         <img src="{% if similiar_event.main_photo %}{{ similiar_event.main_photo.url }}{% else %}{% static 'img/default_event.jpg' %}{% endif %}" alt="event_img" class="all_event_grid_item_img">
         </div>
-        <p class="all_event_grid_item_organizer">{{ similiar_event.organizer }}</p>
+        <p class="all_event_grid_item_organizer">{{ similiar_event.organizer.get_full_name }} {{similiar_event.organizer.email }}</p>
         <p class="all_event_grid_item_title">{{ similiar_event.title }}</p>
+        {% if similiar_event.event_format == 'Offline' %}
         <p class="all_event_grid_item_city">{{ similiar_event.city }}</p>
+        {%endif%}
         <p class="all_event_grid_item_date">{{ similiar_event.date_start|date:"d.m.Y" }}</p>
         <div class="all_event_grid_item_btn_count">
             <button class="all_event_grid_item_btn">Записаться</button>
@@ -141,5 +145,4 @@
     };
 </script>
 <script src="{% static 'js/event_detail.js' %}"></script>
-    
 {% endblock %}
