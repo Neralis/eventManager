@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView, FormView, ListView, UpdateView, CreateView, DetailView
@@ -6,13 +7,14 @@ from src.apps.eventApp.forms import ReasonForDeleteEventForm, EventForm
 from src.apps.tasksApp.tasks import send_mail_with_reason_task
 from src.utils.mixins import EventMixin
 from src.apps.eventApp.utils import search_event
+from src.utils.permissions import OwnerPermission
 
 
 class ReasonForDeleteEventView(EventMixin, FormView):
     """Представление для обработки формы ReasonForDeleteEventForm и удаления мероприятия."""
     form_class = ReasonForDeleteEventForm
     template_name = 'eventApp/reason_form.html'
-    success_url = reverse_lazy('success')
+    success_url = reverse_lazy('event_list')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -29,7 +31,7 @@ class ReasonForDeleteEventView(EventMixin, FormView):
         return super().form_valid(form)
 
 
-class DeleteEventView(DeleteView):
+class DeleteEventView(OwnerPermission, DeleteView):
     model = Event
     template_name = 'eventApp/event_delete.html'
     pk_url_kwarg = 'event_id'
@@ -85,7 +87,7 @@ class EventDetailView(DetailView):
         return context
 
 
-class EventCreateView(CreateView):
+class EventCreateView(LoginRequiredMixin, CreateView):
     model = Event
     form_class = EventForm
     template_name = 'eventApp/event_create.html'
@@ -110,7 +112,7 @@ class EventCreateView(CreateView):
         return reverse_lazy('event_detail', kwargs={'event_id': self.object.pk})
 
 
-class EventUpdateView(UpdateView):
+class EventUpdateView(OwnerPermission, UpdateView):
     model = Event
     form_class = EventForm
     template_name = 'eventApp/event_update.html'

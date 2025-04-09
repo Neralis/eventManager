@@ -1,34 +1,41 @@
 from django.core.exceptions import ValidationError
-from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DeleteView
 from src.apps.eventApp.models import Event
-from src.apps.userApp.models import CustomUser
 from src.apps.reviewApp.models import Review
 from src.apps.reviewApp.utils import validate_token_for_review
 from src.apps.reviewApp.forms import ReviewCreateForm
 from src.utils.mixins import EventMixin
+from src.utils.permissions import OnlyOrganizer
 
 
-class ReviewListView(ListView):
+class ReviewListView(OnlyOrganizer, ListView):
+    """
+    Представление для отображения списка всех комментариев для организатора.
+    """
+
     model = Review
     paginate_by = 8
     template_name = 'reviewApp/review_list.html'
 
-    def get_queryset(self):
-        user_id = self.kwargs.get('user_id')
-        user = get_object_or_404(CustomUser, id=user_id)  # Находим пользователя или выдаём 404, если его нет
-        events = Event.objects.filter(organizer=user)  # Получаем все события, организованные этим пользователем
+    def get_event_for_permission(self):
+        """Возвращает мероприятие или None для проверки прав."""
+        return None
 
-        return (Review.objects.filter(event__in=events)
+    def get_queryset(self):
+        return (Review.objects.filter(event__organizer=self.request.user)
                 .select_related('participant__user', 'participant__not_auth_user'))  # Фильтруем отзывы по этим событиям
 
 
-class ReviewListViewOnEvent(EventMixin, ListView):
+class ReviewListViewOnEvent(OnlyOrganizer, EventMixin, ListView):
     model = Review
     paginate_by = 8
     template_name = 'reviewApp/review_list_on_event.html'
+
+    def get_event_for_permission(self):
+        """Возвращает мероприятие или None для проверки прав."""
+        return self.get_event()
 
     def get_queryset(self):
         return Review.objects.filter(event=self.get_event()
@@ -66,7 +73,7 @@ class ReviewCreateView(CreateView):
                     rating=form.cleaned_data['rating'],
                 )
                 form.instance = review
-                return HttpResponseRedirect(self.get_success_url())
+                return redirect(self.get_success_url())
             except (ValidationError, ValueError) as e:
                 form.add_error(None, e)
                 return self.form_invalid(form)
@@ -83,11 +90,15 @@ class ReviewCreateView(CreateView):
         return reverse_lazy('event_detail', kwargs={'event_id': self.event.id})
 
 
-class ReviewDeleteView(DeleteView):
+class ReviewDeleteView(OnlyOrganizer, DeleteView):
     model = Review
     pk_url_kwarg = 'review_id'
 
-    def get_success_url(self):
+    def get_event_for_permission(self):
+        """Возвращает мероприятие или None для проверки прав."""
         review_id = self.kwargs.get('review_id')
-        event_id = get_object_or_404(Review, id=review_id).event.id
-        return reverse_lazy('event_detail', kwargs={'event_id': event_id})
+        self.event = get_object_or_404(Review, id=review_id).event
+        return self.event
+
+    def get_success_url(self):
+        return reverse_lazy('event_detail', kwargs={'event_id': self.event.id})

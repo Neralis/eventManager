@@ -40,7 +40,7 @@
         <h4 class="event_place_title event_title_2">Место проведения</h4>
 
         <div class="event_place_for_btn">
-            <div class="event_place_btn"><a href="#">Записаться</a></div>
+            <div class="event_place_btn"><a href="{% url 'register_participant' event_id=object.id %}">Записаться</a></div>
         </div>
 
         <p id = "location_onffine" class="event_place_text adress">{{object.city}} {{object.location_offline}}</p>
@@ -99,7 +99,7 @@
             <p class="all_event_grid_item_city">{{ organizer_event.city }}</p>
             <p class="all_event_grid_item_date">{{ organizer_event.date_start|date:"d.m.Y" }}</p>
             <div class="all_event_grid_item_btn_count">
-                <button class="all_event_grid_item_btn">Записаться</button>
+                <a href="{% url 'register_participant' event_id=similiar_event.id %}" class="all_event_grid_item_btn">Записаться</a>
                 <p class="all_event_grid_item_place">осталось {{ organizer_event.participants_limit }} мест</p>
             </div>
         </div>
@@ -122,7 +122,7 @@
         <p class="all_event_grid_item_city">{{ similiar_event.city }}</p>
         <p class="all_event_grid_item_date">{{ similiar_event.date_start|date:"d.m.Y" }}</p>
         <div class="all_event_grid_item_btn_count">
-            <button class="all_event_grid_item_btn">Записаться</button>
+            <a href="{% url 'register_participant' event_id=similiar_event.id %}" class="all_event_grid_item_btn">Записаться</a>
             <p class="all_event_grid_item_place">осталось {{ similiar_event.participants_limit }} мест</p>
         </div>
     </div>

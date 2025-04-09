@@ -19,6 +19,11 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.views.generic import RedirectView
 from src.eventManager import settings
+from src.utils import error_handler
+
+handler403 = error_handler.handler403
+handler404 = error_handler.handler404
+handler500 = error_handler.handler500
 
 urlpatterns = [
     path('admin/', admin.site.urls),

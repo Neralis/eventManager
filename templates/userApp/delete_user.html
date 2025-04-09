@@ -3,18 +3,20 @@
 
 {% block content %}
 <section class="registr_event">
-    <div class="registr_event_block">
-        <div class="registr_event_btn_title">
-            <h2 class="registr_event_btn_title">Подтверждение действия</h2>
-        </div>
-        <p>Вы уверены, что хотите удалить пользователя "{{ object.username }}"?</p>
-        <form method="post" class="registr_event_form">
-            {% csrf_token %}
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary profile_modal_btn_primary">Да</button>
-                <a href="#" class="btn btn-secondary">Отмена</a>
+    <div class="registr_event_container">
+        <div class="registr_event_block">
+            <div class="registr_event_btn_title">
+                <h2 class="registr_event_btn_title">Подтверждение действия</h2>
             </div>
-        </form>
+            <p>Вы уверены, что хотите удалить пользователя "{{ object.username }}"?</p>
+            <form method="post" class="registr_event_form">
+                {% csrf_token %}
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary profile_modal_btn_primary">Да</button>
+                    <a href="{% url 'event_list' %}" class="btn btn-secondary">Отмена</a>
+                </div>
+            </form>
+        </div>
     </div>
 </section>
 {% endblock %}

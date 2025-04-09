@@ -67,12 +67,13 @@ class Participants(models.Model):
         return self.not_auth_user.email
 
     @staticmethod
-    def check_organizer(event, user=None, email=None):
+    def check_organizer(event, user=None, email=None, phone=None):
         """Проверяет, не пытается ли организатор записаться на свое же мероприятие."""
         organizer_email = event.organizer.email
+        organizer_phone = event.organizer.phone
         if user and user.email == organizer_email:
             raise ValidationError('Организатор не может зарегистрироваться на свое же мероприятия.')
-        if email and email == organizer_email:
+        if (email or phone) and (email == organizer_email or phone == organizer_phone):
             raise ValidationError('Организатор не может зарегистрироваться на свое же мероприятия.')
 
     def clean(self):
@@ -80,7 +81,7 @@ class Participants(models.Model):
         if self.user:
             self.check_organizer(self.event, user=self.user)
         elif self.not_auth_user:
-            self.check_organizer(self.event, email=self.not_auth_user.email)
+            self.check_organizer(self.event, email=self.not_auth_user.email, phone=self.not_auth_user.phone)
 
         if self.event.registration_status and self.user:
             participant_date_birthday = self.user.date_birthday
@@ -112,7 +113,7 @@ class Participants(models.Model):
             cls.check_organizer(event, user=user)
             return cls.objects.filter(event=event, user=user).exists()
         if email and phone:
-            cls.check_organizer(event, email=email)
+            cls.check_organizer(event, email=email, phone=phone)
             if cls.objects.filter(event=event, user__email=email).exists():
                 return True
             return cls.objects.filter(

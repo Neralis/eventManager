@@ -1,16 +1,15 @@
-from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, DeleteView
 from django.core.exceptions import ValidationError
 from src.apps.participantApp.forms import RegistrationParticipantsForm
 from src.apps.participantApp.models import Participants
-from src.apps.participantApp.permissions import OrganizerPermissionMixin
 from src.utils.utils import user_is_authenticated
 from src.utils.mixins import EventMixin
+from src.utils.permissions import OnlyOrganizer
 
 
-class ListParticipantsOnEvent(OrganizerPermissionMixin, EventMixin, ListView):
+class ListParticipantsOnEvent(OnlyOrganizer, EventMixin, ListView):
     """
     Представление для отображения списка участников для конкретного мероприятия.
     Доступно только организатору мероприятия.
@@ -20,9 +19,13 @@ class ListParticipantsOnEvent(OrganizerPermissionMixin, EventMixin, ListView):
     template_name = 'participantApp/participants_list.html'
     context_object_name = 'participants'
 
+    def get_event_for_permission(self):
+        """Возвращает мероприятие или None для проверки прав."""
+        return self.get_event()
+
     def get_queryset(self):
         """Возвращает QuerySet участников для мероприятия, указанного в URL."""
-        return Participants.objects.filter(event__id=self.get_event_id())
+        return Participants.objects.filter(event=self.get_event())
 
     def get_context_data(self, **kwargs):
         """Передает в контекст данные о мероприятии(id)."""
@@ -31,7 +34,7 @@ class ListParticipantsOnEvent(OrganizerPermissionMixin, EventMixin, ListView):
         return context
 
 
-class DeleteParticipants(OrganizerPermissionMixin, EventMixin, DeleteView):
+class DeleteParticipants(OnlyOrganizer, EventMixin, DeleteView):
     """
     Представление для удаления участников для конкретного мероприятия.
     Доступно только организатору мероприятия.
@@ -40,10 +43,14 @@ class DeleteParticipants(OrganizerPermissionMixin, EventMixin, DeleteView):
     model = Participants
     template_name = 'participantApp/delete_participants_confirm.html'
 
+    def get_event_for_permission(self):
+        """Возвращает мероприятие или None для проверки прав."""
+        return self.get_event()
+
     def get_object(self, queryset=None):
         """Возвращает участника для удаления или вызывает 404, если участник не найден."""
         participant_id = self.kwargs.get('participant_id')
-        return get_object_or_404(Participants, id=participant_id, event__id=self.get_event_id())
+        return get_object_or_404(Participants, id=participant_id, event=self.get_event())
 
     def get_success_url(self):
         return reverse_lazy('participants_list', kwargs={'event_id': self.get_event_id()})
@@ -80,7 +87,7 @@ class RegistrationParticipantsView(EventMixin, CreateView):
                 phone=form.cleaned_data['phone'],
             )
             form.instance = participant
-            return HttpResponseRedirect(self.get_success_url())
+            return redirect(self.get_success_url())
         except (ValidationError, ValueError) as e:
             form.add_error(None, str(e))
             return self.form_invalid(form)
@@ -96,11 +103,15 @@ class RegistrationParticipantsView(EventMixin, CreateView):
         return reverse_lazy('event_detail', kwargs={'event_id': self.get_event_id()})
 
 
-class FavouriteParticipants(OrganizerPermissionMixin, ListView):
+class FavouriteParticipants(OnlyOrganizer, ListView):
     """Отображает список избранных участников для организатора."""
     model = Participants
     template_name = 'participantApp/favourite_participants.html'
     paginate_by = 20
+
+    def get_event_for_permission(self):
+        """Возвращает мероприятие или None для проверки прав."""
+        return None
 
     def get_context_data(self, **kwargs):
         """Добавляет список избранных участников в контекст шаблона."""
