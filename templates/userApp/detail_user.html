@@ -1,0 +1,161 @@
+{% extends "index.html" %}
+{% load static %}
+
+{% block content %}
+<section class="profile">
+    <div class="profile_about_me">
+        <div class="avatar_prof">
+            <img src="{% if user.profile.avatar %}{{ user.profile.avatar.url }}{% else %}{% static 'img/user.png' %}{% endif %}" alt="Аватар" class="avatar-img">
+        </div>
+        <div class="profile_about_me_info">
+            <div class="profile_about_me_info_name_edit">
+                <p class="profile_about_me_info_name">
+                    {{ user.first_name }} {{ user.last_name }}
+                </p>
+                <div class="profile_actions">
+                    {% if request.user == user %}
+                        <a href="{% url 'profile_edit' %}" class="btn btn-sm btn-outline-primary profile_action_btn">Редактировать профиль</a>
+                        <a href="{% url 'delete' %}" class="btn btn-sm btn-outline-danger profile_action_btn">Удалить профиль</a>
+                    {% endif %}
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'favourite_participants' %}" class="btn btn-sm btn-outline-secondary profile_action_btn">Избранные участники</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="profile_about_me_info_star_all_reviews">
+                <div class="rating-stars" data-rating="4.6">
+                    <span class="star" data-value="1">★</span>
+                    <span class="star" data-value="2">★</span>
+                    <span class="star" data-value="3">★</span>
+                    <span class="star" data-value="4">★</span>
+                    <span class="star" data-value="5">★</span>
+                </div>
+                <p class="profile_about_me_info_star_count">4.6</p>
+                <a href="{% url 'review_list' %}" class="profile_about_me_info_all_reviews">Все отзывы →</a>
+            </div>
+            <p class="profile_about_me_info_descr">
+                {{ user.profile.description|default:'Нет описания' }}
+            </p>
+        </div>
+    </div>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="profile_about_me_tab" role="presentation">
+            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Мои мероприятия</button>
+        </li>
+        <li class="profile_about_me_tab" role="presentation">
+            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Запланированные мероприятия</button>
+        </li>
+        <li class="profile_about_me_tab" role="presentation">
+            <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Завершенные</button>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <!-- Мои мероприятия -->
+        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+            {% for event in events %}
+                <div class="profile_my_event" id="event-{{ event.id }}">
+                    <div class="dropdown profile_my_event_menu">
+                        <p id="dropdownMenuButton{{ event.id }}" data-bs-toggle="dropdown" aria-expanded="false">...</p>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ event.id }}">
+                            <li><a class="dropdown-item" href="{% url 'event_update' event.id %}">Редактировать</a></li>
+                            <li><a class="dropdown-item" href="{% url 'participants_list' event_id=event.pk %}">Участники</a></li>
+                            <li><a class="dropdown-item" href="{% url 'event_delete' event.id %}">Удалить</a></li>
+                        </ul>
+                    </div>
+                    <a href="{% url 'event_detail' event_id=event.pk %}">
+                        <img src="{% if event.main_photo %}{{ event.main_photo.url }}{% else %}{% static 'img/star.svg' %}{% endif %}" class="profile_my_event_img" alt="{{ event.title }}">
+                    </a>
+                    <div class="profile_my_event_info">
+                        <p class="profile_my_event_info_title">{{ event.title }}</p>
+                        <div class="profile_my_event_info_date_count">
+                            <p class="profile_my_event_info_date">{{ event.date_start|date:"d.m.Y H:i" }}</p>
+                            <p class="profile_my_event_info_count">Количество мест: {{ event.participants_limit }}</p>
+                        </div>
+                        <p class="profile_my_event_info_descr">{{ event.description|truncatechars:200 }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p>У вас пока нет мероприятий.</p>
+            {% endfor %}
+        </div>
+        <!-- Запланированные мероприятия -->
+        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+            {% for participation in user.participations.all %}
+                {% if participation.event.date_start > now %}
+                    <div class="profile_my_event">
+                        <a href="{% url 'event_detail' event_id=participation.event.pk %}">
+                            <img src="{% if participation.event.main_photo %}{{ participation.event.main_photo.url }}{% else %}{% static 'img/star.svg' %}{% endif %}" class="profile_my_event_img" alt="{{ participation.event.title }}">
+                        </a>
+                        <div class="profile_my_event_info">
+                            <p class="profile_my_event_info_title">{{ participation.event.title }}</p>
+                            <div class="profile_my_event_info_date_count">
+                                <p class="profile_my_event_info_date">{{ participation.event.date_start|date:"d.m.Y H:i" }}</p>
+                                <p class="profile_my_event_info_count">Количество мест: {{ event.participants_limit }}</p>
+                            </div>
+                            <p class="profile_my_event_info_descr">{{ participation.event.description|truncatechars:200 }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            {% empty %}
+                <p>Нет запланированных мероприятий.</p>
+            {% endfor %}
+        </div>
+        <!-- Завершенные -->
+        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+            {% for participation in user.participations.all %}
+                {% if participation.event.date_end < now %}
+                    <div class="profile_my_event">
+                        <div class="dropdown profile_my_event_menu">
+                            <p id="dropdownMenuButton{{ participation.event.id }}" data-bs-toggle="dropdown" aria-expanded="false">...</p>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ participation.event.id }}">
+                                <li><a class="dropdown-item" href="{% url 'participants_list' event_id=participation.event.pk %}">Участники</a></li>
+                                <li><a class="dropdown-item" href="{% url 'review_list_on_event' event_id=participation.event.pk %}">Отзывы</a></li>
+                            </ul>
+                        </div>
+                        <a href="{% url 'event_detail' event_id=participation.event.pk %}">
+                            <img src="{% if participation.event.main_photo %}{{ participation.event.main_photo.url }}{% else %}{% static 'img/star.svg' %}{% endif %}" class="profile_my_event_img" alt="{{ participation.event.title }}">
+                        </a>
+                        <div class="profile_my_event_info">
+                            <p class="profile_my_event_info_title">{{ participation.event.title }}</p>
+                            <div class="profile_my_event_info_date_count">
+                                <p class="profile_my_event_info_date">{{ participation.event.date_start|date:"d.m.Y H:i" }}</p>
+                                <p class="profile_my_event_info_count">Количество мест: {{ participation.event.participants_limit }}</p>
+                            </div>
+                            <p class="profile_my_event_info_descr">{{ participation.event.description|truncatechars:200 }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            {% empty %}
+                <p>Нет завершённых мероприятий.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+<style>
+.avatar_prof {
+    text-align: center;
+    margin-bottom: 10px;
+}
+.avatar-img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    aspect-ratio: 1 / 1;
+    display: block;
+}
+.profile_about_me_info_name_edit {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.profile_actions {
+    display: flex;
+    gap: 10px;
+}
+.profile_action_btn {
+    margin: 0;
+}
+</style>
+{% endblock %}

@@ -2,18 +2,25 @@
 {% load static %}
 
 {% block content %}
-<section class="registr_event">
-    <div class="registr_event_block">
-        <div class="registr_event_btn_title">
-            <h2 class="registr_event_btn_title">Удаление мероприятия</h2>
+<section class="registration">
+    <div class="registration_block">
+        <div class="registration_btn_title">
+            <h2>Удаление мероприятия</h2>
         </div>
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <p class="activation-message">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
         <p>Вы уверены, что хотите удалить мероприятие "{{ object.title }}"?</p>
         <p>Это действие нельзя отменить.</p>
         <form method="post" class="registr_event_form">
             {% csrf_token %}
             <div class="modal-footer">
                 <button type="submit" class="btn btn-primary profile_modal_btn_primary">Подтвердить удаление</button>
-                <a href="#" class="btn btn-secondary">Отмена</a>
+                <a href="{% url 'event_detail' object.pk %}" class="btn btn-secondary">Отмена</a>
             </div>
         </form>
     </div>

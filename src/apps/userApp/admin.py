@@ -1,6 +1,6 @@
 from django.contrib import admin
 from unfold.admin import TabularInline, ModelAdmin
-from src.apps.userApp.models import CustomUser, NotAuthUser, Notification
+from src.apps.userApp.models import CustomUser, NotAuthUser, Notification, UserProfile
 
 
 @admin.register(Notification)
@@ -63,6 +63,14 @@ class CustomUser(ModelAdmin):
             if not raw_password.startswith('pbkdf2_sha256$'):
                 obj.set_password(raw_password)
         super().save_model(request, obj, form, change)
+
+
+@admin.register(UserProfile)
+class UserProfileAdmin(ModelAdmin):
+    list_display = [
+        'user',
+        'description'
+    ]
 
 
 @admin.register(NotAuthUser)

@@ -30,7 +30,11 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lamb
 
 # Application definition
 
+AUTHENTICATION_BACKENDS = ['src.apps.userApp.auth_backend.EmailBackend']
+
 AUTH_USER_MODEL = 'userApp.CustomUser'
+
+LOGIN_URL = '/users/login/'
 
 INSTALLED_APPS = [
     'unfold',
@@ -80,7 +84,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'src.eventManager.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases

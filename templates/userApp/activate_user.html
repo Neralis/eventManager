@@ -2,15 +2,15 @@
 {% load static %}
 
 {% block content %}
-<section class="registr_event">
-    <div class="registr_event_block">
-        <div class="registr_event_btn_title">
-            <h2 class="registr_event_btn_title">Восстановление аккаунта</h2>
+<section class="registration">
+    <div class="registration_block">
+        <div class="registration_btn_title">
+            <h2>Восстановление аккаунта</h2>
         </div>
         {% if messages %}
             <div class="messages">
                 {% for message in messages %}
-                    <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+                    <p class="activation-message">{{ message }}</p>
                 {% endfor %}
             </div>
         {% endif %}

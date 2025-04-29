@@ -25,10 +25,10 @@ class ListParticipantsOnEvent(OnlyOrganizer, EventMixin, ListView):
 
     def get_queryset(self):
         """Возвращает QuerySet участников для мероприятия, указанного в URL."""
-        return Participants.objects.filter(event=self.get_event())
+        return Participants.objects.filter(event=self.get_event()).select_related('event', 'user')
 
     def get_context_data(self, **kwargs):
-        """Передает в контекст данные о мероприятии(id)."""
+        """Передает в контекст данные о мероприятии."""
         context = super().get_context_data(**kwargs)
         context['event'] = self.get_event()
         return context

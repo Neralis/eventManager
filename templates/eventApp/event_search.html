@@ -46,12 +46,6 @@
     <li class="all_event_grid_item" id="event-{{ event.id }}">
         <div class="all_event_grid_item_img_cont position-relative">
             <img src="{% if event.main_photo %}{{ event.main_photo.url }}{% else %}{% static 'img/star.svg' %}{% endif %}" alt="event_img" class="all_event_grid_item_img">
-            
-            <!-- Кнопка удаления -->
-            <button class="delete-event-btn position-absolute" data-event-id="{{ event.id }}"
-                style="top: 5px; right: 5px; font-size: 18px; background: none; border: none; color: red;">
-                ×
-            </button>
         </div>
         
         <p class="all_event_grid_item_organizer">{{ event.organizer }} организатор</p>
@@ -68,6 +62,6 @@
 </ul>
 
 </section>
-<script src="{% static 'js/all_event.js' %}"
+<script src="{% static 'js/all_event.js' %}"></script>
 {%endblock%}
 

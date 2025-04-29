@@ -1,0 +1,114 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<section class="create_event">
+    <div class="create_event_block">
+        <div class="create_event_btn_title">
+            <a href="{% url 'profile' %}" class="create_event_btn">←</a>
+            <h2>Редактирование профиля</h2>
+        </div>
+
+        {% if request.user == user %}
+            <form method="post" enctype="multipart/form-data" class="create_event_form">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <input class="create_event_form_item" type="text" name="last_name" placeholder="Фамилия" value="{{ form.last_name.value|default:'' }}" style="width: 100%;">
+                    {% if form.last_name.errors %}
+                        <div class="text-danger">{{ form.last_name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <input class="create_event_form_item" type="text" name="first_name" placeholder="Имя" value="{{ form.first_name.value|default:'' }}" style="width: 100%;">
+                    {% if form.first_name.errors %}
+                        <div class="text-danger">{{ form.first_name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <input class="create_event_form_item" type="text" name="otchestvo" placeholder="Отчество (необязательно)" value="{{ form.otchestvo.value|default:'' }}" style="width: 100%;">
+                    {% if form.otchestvo.errors %}
+                        <div class="text-danger">{{ form.otchestvo.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <input class="create_event_form_item create_event_form_dateStart" type="date" name="date_birthday" value="{{ form.date_birthday.value|default:''|date:'Y-m-d' }}" style="width: 100%;">
+                    {% if form.last_name.errors %}
+                        <div class="text-danger">{{ form.last_name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <input class="create_event_form_item registration_form_item_phone" type="tel" name="phone" placeholder="+7(___)___-__-__" value="{{ form.phone.value|default:'' }}" style="width: 100%;">
+                    {% if form.phone.errors %}
+                        <div class="text-danger">{{ form.phone.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <input class="create_event_form_item" type="email" name="email" placeholder="Email" value="{{ form.email.value|default:'' }}" style="width: 100%;">
+                    {% if form.email.errors %}
+                        <div class="text-danger">{{ form.email.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <textarea class="create_event_form_item create_event_form_description" name="description" placeholder="О себе" rows="10" style="width: 100%;">{{ form.description.value|default:'' }}</textarea>
+                    {% if form.description.errors %}
+                        <div class="text-danger">{{ form.description.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <input class="create_event_form_item password_old" type="password" name="old_password" placeholder="Старый пароль" minlength="8" style="width: 100%;">
+                    {% if form.old_password.errors %}
+                        <div class="text-danger">{{ form.old_password.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <input class="create_event_form_item password_new" type="password" name="new_password1" placeholder="Новый пароль" minlength="8" style="width: 100%;">
+                    {% if form.new_password1.errors %}
+                        <div class="text-danger">{{ form.new_password1.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <input class="create_event_form_item password_replay" type="password" name="new_password2" placeholder="Повторите пароль" minlength="8" style="width: 100%;">
+                    {% if form.new_password2.errors %}
+                        <div class="text-danger">{{ form.new_password2.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <fieldset class="create_event_form_file">
+                    <legend>Изменить фото профиля</legend>
+                    <div class="create_event_form_title_img">
+                        <div class="mb-3">
+                            <input class="form-control" type="file" name="avatar" style="width: 100%;">
+                            {% if form.avatar.errors %}
+                                <div class="text-danger">{{ form.avatar.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </fieldset>
+
+                <button type="submit" class="create_event_form_item create_event_form_btn" onMouseOver="this.style.backgroundColor='#bd84ff'" onMouseOut="this.style.backgroundColor='#8b4ad4'" style="background-color: #8b4ad4; width: 100%;">Сохранить</button>
+            </form>
+        {% else %}
+            <p>У вас нет доступа к редактированию этого профиля.</p>
+        {% endif %}
+    </div>
+</section>
+<style>
+.form-group {
+    margin-bottom: 15px;
+}
+.text-danger {
+    color: red;
+    font-size: 0.9em;
+}
+</style>
+{% endblock %}

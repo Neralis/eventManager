@@ -4,6 +4,16 @@ from src.utils.utils import generate_token, validate_token, generate_unique_url,
 from src.utils.constants.email_constants import RECOVER_ACCOUNT_INFO, RECOVER_ACCOUNT_TITLE
 
 
+def user_avatar_path(instance, filename: str) -> str:
+    """
+    Динамический путь для аватарки пользователя.
+    Args:
+        instance: объект UserProfile
+        filename: название файла для поля avatar
+    """
+    return f'users/{instance.user.id}/avatar/{filename}'
+
+
 def generate_token_for_user(email: str, user_id: int) -> str:
     """
     Фукнция генерации токена для восстановления аккаунта.
@@ -21,9 +31,9 @@ def generate_token_for_user(email: str, user_id: int) -> str:
 
 def validate_token_for_user(token: str) -> Tuple[Optional[str], Optional[int]]:
     """
-        Валидация токена для пользователя.
-        Args:
-            token: токен для валидации
+    Валидация токена для пользователя.
+    Args:
+        token: токен для валидации
     """
 
     try:

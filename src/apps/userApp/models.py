@@ -1,9 +1,22 @@
+import logging
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
+from src.apps.userApp.utils import user_avatar_path
+from src.utils.file_handler import FileHandler
+
+logger = logging.getLogger(__name__)
 
 
 class CustomUser(AbstractUser):
+    email = models.EmailField(
+        unique=True,
+        verbose_name='Email'
+    )
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
     first_name = models.CharField(
         max_length=100,
         verbose_name='Имя',
@@ -48,6 +61,63 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return f'({self.username}) {self.first_name} {self.last_name} {self.email}'
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='profile',
+        verbose_name='Пользователь'
+    )
+    avatar = models.ImageField(
+        upload_to=user_avatar_path,
+        blank=True,
+        null=True,
+        max_length=255,
+        validators=[FileExtensionValidator(
+            allowed_extensions=['png', 'jpg', 'jpeg'],
+            message='Вы можете использовать только файлы с расширениями PNG и JPEG.'
+        )],
+        verbose_name='Аватар'
+    )
+    description = models.TextField(
+        blank=True,
+        default='',
+        verbose_name='Описание профиля'
+    )
+
+    class Meta:
+        verbose_name = 'Профиль пользователя'
+        verbose_name_plural = 'Профили пользователей'
+
+    def __str__(self):
+        return f"Профиль пользователя {self.user.username}"
+
+    def save(self, *args, **kwargs):
+        old_avatar = None
+        if self.id:
+            old_instance = self.__class__.objects.get(id=self.id)
+            old_avatar = old_instance.avatar
+            if old_avatar != self.avatar:
+                FileHandler.delete_old_image(self, self.__class__, 'avatar')
+        if self.avatar and (not old_avatar or old_avatar != self.avatar):
+            FileHandler.save_file(
+                instance=self,
+                file_field_name='avatar',
+                path_function=user_avatar_path,
+            )
+        try:
+            super().save(*args, **kwargs)
+        except Exception as e:
+            logger.error(f'Ошибка при сохранении профиля пользователя: {e}')
+            if self.avatar:
+                FileHandler.delete_user_folder(self.user.id)
+            raise
+
+    def delete(self, *args, **kwargs):
+        FileHandler.delete_user_folder(self.id)
+        super().delete(*args, **kwargs)
 
 
 class Notification(models.Model):

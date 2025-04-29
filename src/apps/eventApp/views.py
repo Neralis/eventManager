@@ -2,6 +2,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView, FormView, ListView, UpdateView, CreateView, DetailView
+from django.db import transaction
+
 from src.apps.eventApp.models import Event, EventImages, Category
 from src.apps.eventApp.forms import ReasonForDeleteEventForm, EventForm
 from src.apps.tasksApp.tasks import send_mail_with_reason_task
@@ -16,17 +18,12 @@ class ReasonForDeleteEventView(EventMixin, FormView):
     template_name = 'eventApp/reason_form.html'
     success_url = reverse_lazy('event_list')
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        self.event = self.get_event()
-        context['event'] = self.event
-        return context
-
     def form_valid(self, form):
+        event = self.get_event()
         reason = form.cleaned_data['reason']
-        email_list = [participant.get_email() for participant in self.event.participants.all()]
-        event_title = self.event.title
-        self.event.delete()
+        email_list = [participant.get_email() for participant in event.participants.all()]
+        event_title = event.title
+        event.delete()
         send_mail_with_reason_task.delay(email_list, event_title, reason)
         return super().form_valid(form)
 
@@ -36,11 +33,11 @@ class DeleteEventView(OwnerPermission, DeleteView):
     template_name = 'eventApp/event_delete.html'
     pk_url_kwarg = 'event_id'
 
-    def delete(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         event = self.get_object()
-        if event.is_active:
+        if event.is_active and event.participants.exists():
             return redirect('reason_for_delete_event', event_id=event.id)
-        return super().delete(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def get_success_url(self):
         return reverse_lazy('event_list')
@@ -82,7 +79,7 @@ class EventDetailView(DetailView):
                                                            ).exclude(id=self.object.id)[:6]
         context['reviews'] = self.object.reviews.all()
         context['similiar_events'] = Event.objects.filter(category__in=self.object.category.all()
-                                                          ).exclude(id=self.object.id)[:6]
+                                                          ).exclude(id=self.object.id).distinct()[:6]
 
         return context
 
@@ -95,18 +92,22 @@ class EventCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
-        # context['event_format'] = self.request.POST.get('event_format', 'Offline')  # что за хуйня?
         return context
 
     def form_valid(self, form):
-        images = self.request.FILES.getlist('event_images')
         try:
-            for image in images:
-                EventImages.objects.create(event=self.object, image=image)
+            with transaction.atomic():
+                self.object = form.save(commit=False)
+                self.object.organizer = self.request.user
+                self.object.save()
+
+                images = self.request.FILES.getlist('event_images')
+                for image in images:
+                    self.object.images.create(image=image)
         except Exception as e:
             form.add_error(None, str(e))
             return self.form_invalid(form)
-        return self.form_valid(form)
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse_lazy('event_detail', kwargs={'event_id': self.object.pk})
@@ -121,7 +122,6 @@ class EventUpdateView(OwnerPermission, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
-        # context['event_format'] = self.request.POST.get('event_format', 'Offline')  # опять же, что за хуйня?
         context['images'] = EventImages.objects.filter(event=self.object)
         return context
 
@@ -149,7 +149,7 @@ class SearchResultView(EventMixin, ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        query = self.request.GET.get('query')
+        query = self.request.GET.get('q')
         queryset = search_event(query) if query else Event.objects.all()
         queryset = self.queryset_filter(queryset)
         return queryset

@@ -74,19 +74,39 @@ class FileHandler:
                 pass
 
     @staticmethod
-    def delete_event_folder(uuid) -> None:
+    def delete_folder(name_folder: str, object_id: int) -> None:
         """
-        Удаляет полностью папку мероприятия.
+        Удаляет полностью папку.
         Args:
-            uuid(str): слаг объекта Event
+            name_folder(str): название папки
+            object_id(int): идентификатор
         """
 
-        folder_path = os.path.join(settings.MEDIA_ROOT, 'events', str(uuid))
+        folder_path = os.path.join(settings.MEDIA_ROOT, name_folder, str(object_id))
         if os.path.exists(folder_path):
             try:
                 shutil.rmtree(folder_path)
             except Exception as e:
                 logger.error(f"Ошибка при удалении папки {folder_path}: {e}")
+
+    @staticmethod
+    def delete_event_folder(uuid) -> None:
+        """
+        Удаляет полностью папку мероприятия.
+        Args:
+            uuid(int): uuid объекта Event
+        """
+
+        FileHandler.delete_folder('events', uuid)
+
+    @staticmethod
+    def delete_user_folder(user_id) -> None:
+        """
+        Удаляет полностью папку пользователя.
+        Args:
+            user_id(int): id пользователя
+        """
+        FileHandler.delete_folder('users', user_id)
 
     @staticmethod
     def delete_folder_if_empty(folder_path: str) -> None:

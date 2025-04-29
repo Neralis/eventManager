@@ -27,10 +27,9 @@ class Category(models.Model):
 
 
 class Event(models.Model):
-    EVENT_FORMAT = [
-        ('Online', 'Онлайн'),
-        ('Offline', 'Оффлайн'),
-    ]
+    class EventFormat(models.TextChoices):
+        ONLINE = 'Online', 'Онлайн'
+        OFFLINE = 'Offline', 'Оффлайн'
 
     uuid = models.UUIDField(
         default=uuid.uuid4,
@@ -78,7 +77,7 @@ class Event(models.Model):
 
     event_format = models.CharField(
         max_length=7,
-        choices=EVENT_FORMAT,
+        choices=EventFormat.choices,
         verbose_name='Формат мероприятия'
     )
     registration_status = models.BooleanField(
@@ -213,12 +212,13 @@ class EventImages(models.Model):
 
     def save(self, *args, **kwargs):
         delete_old_additional_image(self)
+        super().save(*args, **kwargs)
         FileHandler.save_file(
             instance=self,
             file_field_name='image',
             path_function=event_additional_image_path
         )
-        super().save(*args, **kwargs)
+        super().save(update_fields=['image'])
 
     def delete(self, *args, **kwargs):
         FileHandler.delete_event_image_with_folder_cleanup(self.image.name)

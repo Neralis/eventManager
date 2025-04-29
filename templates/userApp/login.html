@@ -10,7 +10,7 @@
         {% if messages %}
             <div class="messages">
                 {% for message in messages %}
-                    <p>{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+                    <p class="login-message">{{ message }}</p>
                 {% endfor %}
             </div>
         {% endif %}
@@ -29,7 +29,7 @@
             <div class="modal-footer">
                 <button type="submit" class="add_review_form_item add_review_form_item_btn">Войти</button>
                 {% if request.session.user_data %}
-                    <a href="{% url 'restore_account_request' %}" class="btn btn-secondary">Восстановить аккаунт</a>
+                    <a href="{% url 'restore_account_request' %}" class="add_review_form_item add_review_form_item_btn">Восстановить аккаунт</a>
                 {% endif %}
             </div>
         </form>

@@ -1,66 +1,63 @@
 /* Reset and base styles  */
 * {
-	padding: 0px;
-	margin: 0px;
-	border: none;
+    padding: 0px;
+    margin: 0px;
+    border: none;
 }
 
 *,
 *::before,
 *::after {
-	box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 /* Links */
-
-a, a:link, a:visited  {
+a, a:link, a:visited {
     text-decoration: none;
 }
 
-a:hover  {
+a:hover {
     text-decoration: none;
     color: white;
 }
 
 /* Common */
-
 aside, nav, footer, header, section, main {
-	display: block;
+    display: block;
 }
 
 h1, h2, h3, h4, h5, h6, p {
     font-size: inherit;
-	font-weight: inherit;
+    font-weight: inherit;
 }
 
 ul, ul li {
-	list-style: none;
+    list-style: none;
 }
 
 img {
-	vertical-align: top;
+    vertical-align: top;
 }
 
 img, svg {
-	max-width: 100%;
-	height: auto;
+    max-width: 100%;
+    height: auto;
 }
 
 address {
-  font-style: normal;
+    font-style: normal;
 }
 
 /* Form */
-
 input, textarea, button, select {
-	font-family: inherit;
+    font-family: inherit;
     font-size: inherit;
     color: inherit;
     background-color: transparent;
 }
 
 input::-ms-clear {
-	display: none;
+    display: none;
 }
 
 button, input[type="submit"] {
@@ -77,32 +74,33 @@ button:focus, button:active {
 }
 
 button::-moz-focus-inner {
-	padding: 0;
-	border: 0;
+    padding: 0;
+    border: 0;
 }
 
 label {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 legend {
-	display: block;
+    display: block;
 }
 
 select:focus {
     outline: none;
 }
+
 /* ---------------------------------------------------------- */
 
 /* Главные стили */
-:root{
+:root {
     --main-color: #8b4ad4;
     --menu-color: #bd84ff;
     --main-font: "Sofia Sans", serif;
     --hover: #d4c4ff;
 }
 
-body{
+body {
     font-family: var(--main-font);
 }
 
@@ -115,13 +113,13 @@ a {
 .registration,
 .profile,
 .participants,
-.review{
+.review {
     padding: 40px 314px;
     min-height: calc(100vh - 100px);
 }
 
 /* --------------------HEADER-------------------- */
-.header{
+.header {
     width: 100%;
     height: 45px;
     display: flex;
@@ -133,13 +131,13 @@ a {
 
 .header_func,
 .header_func_user,
-.header_func_search{
+.header_func_search {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.search{
+.search {
     background-color: aliceblue;
     height: 26px;
     width: 300px;
@@ -148,7 +146,7 @@ a {
     font-size: 14px;
 }
 
-.header_func_menu_item{
+.header_func_menu_item {
     display: flex;
     align-items: center;
     height: 38px;
@@ -156,21 +154,21 @@ a {
     font-size: 14px;
 }
 
-.header_func_menu_item:hover{
+.header_func_menu_item:hover {
     background-color: var(--hover);
     transition: 0.3s;
 }
 
-.header_func_menu_item a:active{
-    color:aliceblue;
+.header_func_menu_item a:active {
+    color: aliceblue;
     transition: 0.3s;
 }
 
-.header_func_menu_item:last-child{
+.header_func_menu_item:last-child {
     margin-top: 30px;
 }
 
-.header_func_menu_items{
+.header_func_menu_items {
     display: none;
     position: absolute;
     top: 45px;
@@ -182,13 +180,13 @@ a {
     z-index: 1;
 }
 
-.header_btn_search{
+.header_btn_search {
     width: 20px;
     height: 20px;
     background: url('../img/search.png') no-repeat center / contain;
 }
 
-.header_func_add_event{
+.header_func_add_event {
     background: url("../img/plus.png") no-repeat center / contain;
     min-width: 20px;
     min-height: 20px;
@@ -196,18 +194,18 @@ a {
     margin-left: 10px;
 }
 
-.header_func_user{
+.header_func_user {
     font-size: 14px;
     margin-right: 10px;
     color: white;
     font-weight: 200;
 }
 
-.highlight_text{
+.highlight_text {
     font-weight: 400;
 }
 
-.header_func_menu{
+.header_func_menu {
     min-height: 45px;
     display: flex;
     align-items: center;
@@ -215,27 +213,26 @@ a {
     padding: 0 20px 0 0;
 }
 
-.header_func_menu:hover .header_func_menu_items{
+.header_func_menu:hover .header_func_menu_items {
     display: block;
 }
 
-.logo{
+.logo {
     width: 60px;
 }
 
-.burger
-{
+.burger {
     min-width: 25px;
 }
 
 /* --------------------FOOTER-------------------- */
-.footer{
+.footer {
     width: 100%;
     height: 180px;
     background-color: var(--main-color);
 }
 
-.footer_content{
+.footer_content {
     display: flex;
     align-items: center;
     height: 100%;
@@ -245,71 +242,71 @@ a {
 }
 
 .footer_link,
-.footer_social{
+.footer_social {
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
 }
 
-.footer_link a{
+.footer_link a {
     color: white;
 }
 
 .footer_link a:hover,
-.header_func_user a:hover{
+.header_func_user a:hover {
     color: rgb(177, 178, 255);
     transition: 0.3s;
     cursor: pointer;
 }
 
-.footer_social_item{
+.footer_social_item {
     width: 30px;
     height: 30px;
     border-radius: 50%;
 }
 
 .footer_social_item:hover,
-.header_func_add_event:hover{
+.header_func_add_event:hover {
     transform: scale(1.2);
     transition: 0.3s;
 }
 
 .telegram,
 .vk,
-.gmail{
+.gmail {
     width: 30px;
     height: 30px;
     border-radius: 50%;
 }
 
-.telegram{
+.telegram {
     background: url("../img/telegram.png") no-repeat center / contain;
 }
 
-.vk{
+.vk {
     background: url("../img/vk.png") no-repeat center / contain;
 }
 
-.gmail{
+.gmail {
     background: url("../img/gmail.png") no-repeat center / contain;
 }
 
-p{
+p {
     margin-block-end: 0;
 }
 
 /* --------------------PAGE HOME-------------------- */
 .all_event_filter_items,
-.all_event_filter_item{
+.all_event_filter_item {
     display: flex;
     align-items: center;
 }
 
-.all_event_filter_items{
+.all_event_filter_items {
     flex-wrap: wrap;
 }
 
-.all_event_filter_item{
+.all_event_filter_item {
     padding: 3px 10px;
     gap: 10px;
     border-radius: 20px;
@@ -320,58 +317,57 @@ p{
     margin-right: 10px;
 }
 
-.filter_list{
+.filter_list {
     transform: rotate(180deg);
 }
 
-.all_event_title{
+.all_event_title {
     font-size: 24px;
     margin-bottom: 5px;
 }
 
-.all_event_text{
+.all_event_text {
     font-size: 14px;
     color: #7e7e7e;
     margin-bottom: 20px;
 }
 
-.all_event_grid{
+.all_event_grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 15px;
 }
 
-.all_event_grid_item{
+.all_event_grid_item {
     border-radius: 20px;
     transition: 0.5s;
 }
 
-.all_event_grid_item:hover{
+.all_event_grid_item:hover {
     box-shadow: 0px 0px 15px #7e7e7e;
-    
 }
 
-.all_event_grid_item_img_cont{
+.all_event_grid_item_img_cont {
     height: 230px;
     text-align: center;
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
     overflow: hidden;
-    background-position: center center; 
-    background-repeat: no-repeat;      
-    background-size: cover; 
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
     background-color: #464646;
 }
 
-.all_event_grid_item_img{
+.all_event_grid_item_img {
     width: 100%;
     height: 100%;
-    object-fit: cover; 
+    object-fit: cover;
 }
 
 .all_event_grid_item_organizer,
 .all_event_grid_item_date,
-.all_event_grid_item_city{
+.all_event_grid_item_city {
     font-size: 12px;
     padding-top: 4px;
     color: #7e7e7e;
@@ -379,7 +375,7 @@ p{
     margin-bottom: 0;
 }
 
-.all_event_reset_btn{
+.all_event_reset_btn {
     background-color: var(--main-color);
     color: white;
     padding: 2px 15px;
@@ -390,23 +386,22 @@ p{
     transition: 0.3s;
 }
 
-.all_event_reset_btn:hover{
+.all_event_reset_btn:hover {
     background-color: var(--menu-color);
-    
 }
 
-.all_event_reset_btn:active{
+.all_event_reset_btn:active {
     opacity: 0.6;
 }
 
-.all_event_grid_item_title{
+.all_event_grid_item_title {
     padding-top: 4px;
     font-size: 16px;
     padding: 0 10px;
     margin-bottom: 0;
 }
 
-.all_event_grid_item_btn_count{
+.all_event_grid_item_btn_count {
     display: flex;
     gap: 20px;
     align-items: center;
@@ -414,36 +409,35 @@ p{
     justify-content: space-between;
 }
 
-.all_event_grid_item_btn{
+.all_event_grid_item_btn {
     background-color: var(--main-color);
     border-radius: 20px;
     padding: 3px 20px;
     color: white;
     margin: 0 0px 10px 10px;
-    transition: background-color 0.3s
+    transition: background-color 0.3s;
 }
 
 .all_event_grid_item_btn:hover,
 .event_place_btn:hover,
-.registration_form_item:last-child:hover{
+.registration_form_item:last-child:hover {
     background-color: var(--menu-color);
     cursor: pointer;
 }
 
-
 .all_event_grid_item_btn:active,
 .event_place_btn:active,
 .registration_form_item:last-child:active,
-.entry_form_item_btn:active{
+.entry_form_item_btn:active {
     opacity: 0.6;
 }
 
-.all_event_grid_item_place{
+.all_event_grid_item_place {
     font-size: 10px;
     margin: 0 20px 0 0;
 }
 
-.all_event_pages{
+.all_event_pages {
     display: flex;
     justify-content: center;
     margin-top: 60px;
@@ -451,13 +445,13 @@ p{
 }
 
 .all_event_pages_previous,
-.all_event_pages_next{
+.all_event_pages_next {
     color: #7e7e7e;
     font-size: 14px;
     transition: 0.3s;
 }
 
-.all_event_pages_circle{
+.all_event_pages_circle {
     background-color: #d4c4ff;
     border-radius: 50%;
     display: flex;
@@ -469,119 +463,119 @@ p{
     font-size: 12px;
 }
 
-.all_event_pages_circle a{
+.all_event_pages_circle a {
     color: white;
     transition: 0.3s;
 }
 
-.all_event_pages .active{
+.all_event_pages .active {
     background-color: var(--main-color);
 }
 
-.all_event_pages a:hover{
+.all_event_pages a:hover {
     color: var(--main-color);
 }
 
 /* --------------------EVENT-------------------- */
-.event_title{
+.event_title {
     font-size: 30px;
     margin: 10px 0;
     font-weight: bold;
 }
 
-.event_date{
+.event_date {
     margin: 0;
     font-weight: 600;
 }
 
-.event_seats{
+.event_seats {
     margin: 0 0 10px 0;
     font-size: 14px;
 }
 
-.event_title_2{
+.event_title_2 {
     font-size: 24px;
     font-weight: 800;
     margin-top: 30px;
     margin-bottom: 20px;
 }
 
-.event_organizer{
+.event_organizer {
     margin: 10px 0;
 }
 
-.event_description_text{
+.event_description_text {
     margin-bottom: 20px;
 }
 
-.event_place_text{
+.event_place_text {
     margin: 0;
 }
 
-.adress{
+.adress {
     margin-top: -30px;
 }
 
-.event_place_phone{
+.event_place_phone {
     font-weight: bold;
 }
 
-.event_reviews_block_people{
+.event_reviews_block_people {
     display: flex;
     gap: 10px;
     font-weight: bold;
 }
 
-.event_reviews_name{
+.event_reviews_name {
     margin: 0;
 }
 
-.event_reviews_star{
+.event_reviews_star {
     width: 15px;
     padding: 3px 0 0 0;
 }
 
-.event_reviews_text{
+.event_reviews_text {
     width: 70%;
 }
 
-.event_reviews_block{
+.event_reviews_block {
     margin-bottom: 60px;
 }
 
-.event_place_show_map{
+.event_place_show_map {
     display: flex;
     align-items: center;
 }
 
-.accordion-body{
+.accordion-body {
     padding: 0;
     margin-bottom: 20px;
 }
 
-.event_main_img{
+.event_main_img {
     width: 100%;
 }
 
 .carousel-item,
-.event_img_event{
+.event_img_event {
     height: 700px;
     max-height: 700px;
     overflow: hidden;
 }
 
-.carousel-item{
+.carousel-item {
     background-color: #c5c5c5;
 }
 
 .carousel-item .d-block,
-.event_img_event{
+.event_img_event {
     width: 100%;
     height: 100%;
-    object-fit: cover; 
+    object-fit: cover;
 }
 
-.event_place_btn{
+.event_place_btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -593,7 +587,7 @@ p{
     transition: 0.3s;
 }
 
-.event_place_for_btn{
+.event_place_for_btn {
     display: flex;
     justify-content: right;
     position: sticky;
@@ -603,19 +597,18 @@ p{
     width: 100%;
 }
 
-.event_other{
+.event_other {
     margin-bottom: 70px;
 }
 
-
 /* --------------------REGISTRATION-------------------- */
-.registration{
+.registration {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.registration_block{
+.registration_block {
     background-color: #e0e0e0;
     min-width: 420px;
     width: 60%;
@@ -623,14 +616,13 @@ p{
     padding: 20px;
 }
 
-
-.registration_form{
+.registration_form {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-.registration_btn_title{
+.registration_btn_title {
     display: flex;
     align-items: center;
     gap: 25px;
@@ -640,7 +632,7 @@ p{
     font-weight: bold;
 }
 
-.registration_form_item{
+.registration_form_item {
     height: 25px;
     background-color: white;
     border-radius: 20px;
@@ -648,15 +640,15 @@ p{
     font-size: 14px;
 }
 
-.registration_form_item:focus{
+.registration_form_item:focus {
     box-shadow: 0 0 5px var(--menu-color);
 }
 
-.registration_form_item:nth-last-child(3){
+.registration_form_item:nth-last-child(3) {
     margin-top: 20px;
 }
 
-.registration_form_item:last-child{
+.registration_form_item:last-child {
     align-self: center;
     background-color: var(--main-color);
     color: rgb(255, 255, 255);
@@ -665,20 +657,20 @@ p{
     transition: 0.3s;
 }
 
-.registration_btn{
+.registration_btn {
     margin: -7px 0 0 10px;
     color: var(--main-color);
     transition: 0.3s;
 }
 
 /* --------------------ENTRY-------------------- */
-.entry{
+.entry {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.entry_block{
+.entry_block {
     background-color: #e0e0e0;
     min-width: 420px;
     width: 60%;
@@ -686,14 +678,13 @@ p{
     padding: 20px;
 }
 
-
-.entry_form{
+.entry_form {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-.entry_btn_title{
+.entry_btn_title {
     display: flex;
     align-items: center;
     gap: 25px;
@@ -703,7 +694,7 @@ p{
     font-weight: bold;
 }
 
-.entry_form_item{
+.entry_form_item {
     height: 25px;
     background-color: white;
     border-radius: 20px;
@@ -711,7 +702,7 @@ p{
     font-size: 14px;
 }
 
-.entry_form_item:last-child{
+.entry_form_item:last-child {
     align-self: center;
     background-color: var(--main-color);
     color: rgb(255, 255, 255);
@@ -720,53 +711,51 @@ p{
     transition: 0.3s;
 }
 
-.entry_form_item:focus{
+.entry_form_item:focus {
     box-shadow: 0 0 5px var(--menu-color);
 }
 
-
-.entry_btn{
+.entry_btn {
     margin: -7px 0 0 10px;
     color: var(--main-color);
     transition: 0.3s;
 }
 
-.entry{
+.entry {
     padding: 40px 314px;
     min-height: calc(100vh - 190px);
 }
 
-.entry_form_validate{
+.entry_form_validate {
     display: flex;
     justify-content: space-between;
 }
 
-.entry_form_invalid_password{
+.entry_form_invalid_password {
     color: red;
     font-size: 12px;
     margin: 0 0 0 20px;
 }
 
-.entry_form_forget_password{
+.entry_form_forget_password {
     color: var(--main-color);
     transition: 0.3s;
 }
 
-.entry_form_forget_password:hover{
+.entry_form_forget_password:hover {
     color: var(--hover);
 }
 
-.entry_form_item_btn{
+.entry_form_item_btn {
     transition: 0.3s;
 }
 
-.entry_form_item_btn:hover{
+.entry_form_item_btn:hover {
     background-color: var(--menu-color);
 }
 
 /* --------------------CREATE EVENT-------------------- */
-
-.create_event{
+.create_event {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -774,7 +763,7 @@ p{
     min-height: calc(100vh - 190px);
 }
 
-.create_event_block{
+.create_event_block {
     background-color: #e0e0e0;
     min-width: 420px;
     width: 60%;
@@ -782,14 +771,13 @@ p{
     padding: 20px;
 }
 
-
-.create_event_form{
+.create_event_form {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-.create_event_btn_title{
+.create_event_btn_title {
     display: flex;
     align-items: center;
     gap: 25px;
@@ -799,7 +787,7 @@ p{
     font-weight: bold;
 }
 
-.create_event_form_item{
+.create_event_form_item {
     height: 25px;
     background-color: white;
     border-radius: 20px;
@@ -807,12 +795,12 @@ p{
     font-size: 14px;
 }
 
-.create_event_form_item:focus{
+.create_event_form_item:focus {
     box-shadow: 0 0 5px var(--menu-color);
 }
 
 .create_event_form_category,
-.create_event_form_format{
+.create_event_form_format {
     background-color: white;
     border-radius: 20px;
     padding: 3px 15px;
@@ -823,29 +811,29 @@ p{
 .number_of_participants,
 .create_event_form_format,
 .create_event_form_dateStart,
-.create_event_form_dateEnd{
+.create_event_form_dateEnd {
     width: 50%;
 }
 
 .create_event_form_format_count,
 .create_event_form_registration_type,
-.create_event_form_dateStart_dateEnd{
+.create_event_form_dateStart_dateEnd {
     display: flex;
     gap: 10px;
 }
 
-.create_event_form_registration_type_cheked{
+.create_event_form_registration_type_cheked {
     font-size: 14px;
     padding: 0 10px;
 }
 
 .create_event_form_registration_type_cheked legend,
-.create_event_form_file legend{
+.create_event_form_file legend {
     font-size: 15px;
     color: var(--main-color);
 }
 
-.create_event_form_file legend{
+.create_event_form_file legend {
     padding: 0 10px;
 }
 
@@ -853,58 +841,69 @@ input[type='radio'] {
     accent-color: var(--main-color);
 }
 
-.create_event_form_description{
+.create_event_form_description {
     height: 250px;
     padding: 10px 20px;
     resize: none;
 }
 
-.create_event_form_description:focus{
+.create_event_form_description:focus {
     outline: none;
 }
 
-.create_event_form_btn{
+.create_event_form_btn {
     align-self: center;
     color: rgb(255, 255, 255);
     width: 55%;
     transition: 0.3s;
 }
 
-.create_event_form_btn{
-    transition: 0.3s;
-}
-
-.create_event_btn{
+.create_event_btn {
     margin: -7px 0 0 10px;
     color: var(--main-color);
     transition: 0.3s;
 }
 
-.form-control{
+.form-control {
     border-radius: 20px;
     font-size: 14px;
     height: 30px;
     padding: 4px 10px;
+    background-color: white;
+    border: none;
+    width: 100%;
 }
 
-.create_event_form_registration_type_block{
+.form-control:focus {
+    box-shadow: 0 0 5px var(--menu-color);
+    outline: none;
+}
+
+.form-control:-webkit-autofill,
+.form-control:-webkit-autofill:hover,
+.form-control:-webkit-autofill:focus {
+    background-color: white !important;
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+}
+
+.create_event_form_registration_type_block {
     display: flex;
     gap: 20px;
 }
 
-.create_event_form_file2{
+.create_event_form_file2 {
     margin-top: -15px;
 }
 
 /* --------------------PROFILE-------------------- */
-.profile_about_me{
+.profile_about_me {
     display: flex;
     align-items: center;
     gap: 20px;
     margin: 0 0 60px 0;
 }
 
-.profile_about_me_img{
+.profile_about_me_img {
     height: 190px;
     min-width: 150px;
     width: 150px;
@@ -914,51 +913,51 @@ input[type='radio'] {
 
 .profile_about_me_info_name_edit,
 .profile_about_me_info_star_all_reviews,
-.profile_my_event_info_date_count{
+.profile_my_event_info_date_count {
     display: flex;
     gap: 20px;
     align-items: center;
 }
 
-.profile_about_me_info_name{
+.profile_about_me_info_name {
     font-size: 22px;
     font-weight: bold;
 }
 
-.profile_about_me_edit_img{
+.profile_about_me_edit_img {
     transition: 0.3s;
 }
 
-.profile_about_me_edit_img:hover{
+.profile_about_me_edit_img:hover {
     transform: scale(1.1);
 }
 
-.profile_about_me_info_all_reviews{
+.profile_about_me_info_all_reviews {
     color: #7e7e7e;
     transition: 0.3s;
     margin-top: 5px;
 }
 
-.profile_about_me_info_all_reviews:hover{
+.profile_about_me_info_all_reviews:hover {
     color: var(--menu-color);
 }
 
-.profile_about_me_info_descr{
+.profile_about_me_info_descr {
     margin-top: 10px;
     -webkit-line-clamp: 3;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    overflow: hidden; 
+    overflow: hidden;
 }
 
-.tab-pane{
+.tab-pane {
     padding: 15px 0;
     overflow-y: auto;
     max-height: 460px;
     scrollbar-color: var(--menu-color);
 }
 
-.profile_my_event{
+.profile_my_event {
     display: flex;
     align-items: center;
     padding: 10px 10px;
@@ -967,33 +966,33 @@ input[type='radio'] {
     transition: 0.5s;
 }
 
-.profile_my_event:hover{
+.profile_my_event:hover {
     box-shadow: 0 0 10px #7e7e7e;
 }
 
-.profile_my_event_img{
+.profile_my_event_img {
     max-width: 214px;
     max-height: 134px;
     object-fit: cover / center;
 }
 
-.profile_my_event_info_title{
+.profile_my_event_info_title {
     font-size: 18px;
 }
 
-.profile_my_event_info_date_count{
+.profile_my_event_info_date_count {
     font-size: 14px;
     color: #7e7e7e;
 }
 
-.profile_my_event_info_descr{
+.profile_my_event_info_descr {
     -webkit-line-clamp: 3;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    overflow: hidden; 
+    overflow: hidden;
 }
 
-.profile_my_event_menu{
+.profile_my_event_menu {
     position: absolute;
     top: 0px;
     right: 20px;
@@ -1003,7 +1002,7 @@ input[type='radio'] {
     color: var(--main-color);
 }
 
-.dropdown-item:hover{
+.dropdown-item:hover {
     background-color: #d4c4ff;
 }
 
@@ -1012,7 +1011,7 @@ input[type='radio'] {
     transition: 0.3s;
 }
 
-.nav-link:hover{
+.nav-link:hover {
     color: var(--main-color);
 }
 
@@ -1020,13 +1019,13 @@ input[type='radio'] {
     color: var(--main-color);
 }
 
-.profile_modal_title{
+.profile_modal_title {
     font-size: 18px;
     color: var(--main-color);
     font-weight: bold;
 }
 
-.profile_modal_btn_primary{
+.profile_modal_btn_primary {
     background-color: var(--main-color);
     border: 0;
     transition: 0.3s;
@@ -1034,46 +1033,46 @@ input[type='radio'] {
 
 .profile_modal_btn_primary:hover,
 .profile_modal_btn_primary:active,
-.profile_modal_btn_primary:focus{
+.profile_modal_btn_primary:focus {
     background-color: var(--menu-color);
     box-shadow: 0 0px 5px #d4c4ff;
 }
 
 .rating-stars {
-    font-size: 24px; /* Размер звёзд */
-    color: #ccc; /* Цвет по умолчанию (серый) */
-    display: inline-flex; /* Чтобы звёзды были в одной строке */
+    font-size: 24px;
+    color: #ccc;
+    display: inline-flex;
 }
 
 .rating-stars .star {
     cursor: pointer;
     position: relative;
     -webkit-text-fill-color: transparent;
-    background-clip: text; 
-    background-image: linear-gradient(to right, gold 0%, gold 100%); 
+    background-clip: text;
+    background-image: linear-gradient(to right, gold 0%, gold 100%);
 }
 
 .rating-stars .star::before {
     content: "★";
-    position: absolute; 
+    position: absolute;
     left: 0;
-    -webkit-text-fill-color: #ccc; 
-    z-index: -1; 
+    -webkit-text-fill-color: #ccc;
+    z-index: -1;
 }
 
-.profile_about_me_info_star_count{
+.profile_about_me_info_star_count {
     font-size: 20px;
     margin-left: -12px;
 }
 
 /* --------------------REGISTRATION FOR EVENT-------------------- */
-.registration{
+.registration {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.registr_event_block{
+.registr_event_block {
     background-color: #e0e0e0;
     min-width: 420px;
     width: 60%;
@@ -1081,14 +1080,13 @@ input[type='radio'] {
     padding: 20px;
 }
 
-
-.registr_event_form{
+.registr_event_form {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-.registr_event_btn_title{
+.registr_event_btn_title {
     display: flex;
     align-items: center;
     gap: 25px;
@@ -1098,7 +1096,7 @@ input[type='radio'] {
     font-weight: bold;
 }
 
-.registr_event_form_item{
+.registr_event_form_item {
     height: 25px;
     background-color: white;
     border-radius: 20px;
@@ -1106,11 +1104,11 @@ input[type='radio'] {
     font-size: 14px;
 }
 
-.registr_event_form_item:focus{
+.registr_event_form_item:focus {
     box-shadow: 0 0 5px var(--menu-color);
 }
 
-.registr_event_form_item:last-child{
+.registr_event_form_item:last-child {
     align-self: center;
     background-color: var(--main-color);
     color: rgb(255, 255, 255);
@@ -1119,14 +1117,14 @@ input[type='radio'] {
     transition: 0.3s;
 }
 
-.registr_event_btn{
+.registr_event_btn {
     margin: -7px 0 0 10px;
     color: var(--main-color);
     transition: 0.3s;
 }
 
 /* --------------------EDIT PROFILE-------------------- */
-.edit_profile_block{
+.edit_profile_block {
     background-color: #e0e0e0;
     min-width: 420px;
     width: 60%;
@@ -1134,14 +1132,13 @@ input[type='radio'] {
     padding: 20px;
 }
 
-
-.edit_profile_form{
+.edit_profile_form {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-.edit_profile_btn_title{
+.edit_profile_btn_title {
     display: flex;
     align-items: center;
     gap: 25px;
@@ -1151,7 +1148,7 @@ input[type='radio'] {
     font-weight: bold;
 }
 
-.edit_profile_form_item{
+.edit_profile_form_item {
     height: 25px;
     background-color: white;
     border-radius: 20px;
@@ -1159,11 +1156,11 @@ input[type='radio'] {
     font-size: 14px;
 }
 
-.edit_profile_form_item:focus{
+.edit_profile_form_item:focus {
     box-shadow: 0 0 5px var(--menu-color);
 }
 
-.edit_profile_form_item:last-child{
+.edit_profile_form_item:last-child {
     align-self: center;
     background-color: var(--main-color);
     color: rgb(255, 255, 255);
@@ -1172,30 +1169,30 @@ input[type='radio'] {
     transition: 0.3s;
 }
 
-.edit_profile_btn{
+.edit_profile_btn {
     margin: -7px 0 0 10px;
     color: var(--main-color);
     transition: 0.3s;
 }
 
-.edit_profile_form_item:nth-last-child(5){
+.edit_profile_form_item:nth-last-child(5) {
     margin-top: 20px;
 }
 
-.edit_profile_form_file legend{
+.edit_profile_form_file legend {
     font-size: 15px;
     color: var(--main-color);
 }
 
-.edit_profile_form_file legend{
+.edit_profile_form_file legend {
     padding: 0 10px;
 }
 
-.edit_profile_form_file{
+.edit_profile_form_file {
     margin-top: 20px;
 }
 
-.participants_event{
+.participants_event {
     display: flex;
     align-items: center;
     padding: 10px 10px;
@@ -1204,7 +1201,6 @@ input[type='radio'] {
 }
 
 /* --------------------PARTICIPANTS-------------------- */
-
 .star_people {
     font-size: 30px;
     cursor: pointer;
@@ -1217,28 +1213,28 @@ input[type='radio'] {
     color: #ffd700;
 }
 
-.star_people:active{
+.star_people:active {
     transform: scale(0.9);
 }
 
-.participants_title{
+.participants_title {
     font-size: 24px;
     margin-top: 40px;
 }
 
-.participants_count{
+.participants_count {
     font-size: 14px;
     margin-top: -5px;
     color: #7e7e7e;
 }
 
-.participants_list{
+.participants_list {
     margin: 30px 0;
     height: 460px;
     overflow-y: auto;
 }
 
-.participants_item{
+.participants_item {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1247,30 +1243,31 @@ input[type='radio'] {
 }
 
 .participants_item:nth-child(odd) {
-    background-color: #f3f0fc; 
+    background-color: #f3f0fc;
 }
 
-.participants_item:hover{
+.participants_item:hover {
     background-color: #f8f8f8;
 }
 
-.participants_item_data{
+.participants_item_data {
     display: flex;
     gap: 30px;
 }
 
-.participants_item_num{
+.participants_item_num {
     width: 20px;
 }
 
-.participants_item_name{
+.participants_item_name {
     width: 300px;
     overflow-x: auto;
     white-space: nowrap;
     display: block;
 }
+
 .participants_item_email,
-.participants_item_tel{
+.participants_item_tel {
     width: 150px;
     -webkit-line-clamp: 1;
     display: -webkit-box;
@@ -1278,25 +1275,25 @@ input[type='radio'] {
     overflow: hidden;
 }
 
-.participants_item_func{
+.participants_item_func {
     display: flex;
     align-items: center;
     gap: 15px;
 }
 
-.participants_item_trash{
+.participants_item_trash {
     transition: 0.2s;
 }
 
-.participants_item_trash:hover{
+.participants_item_trash:hover {
     fill: var(--menu-color);
 }
 
-.participants_item_trash:active{
+.participants_item_trash:active {
     transform: scale(0.95);
 }
 
-.participants_event:hover{
+.participants_event:hover {
     box-shadow: 0;
 }
 
@@ -1328,11 +1325,11 @@ input[type='radio'] {
 }
 
 /* --------------------REVIEW_FOR_EVENT-------------------- */
-.review_list_item{
+.review_list_item {
     margin-top: 30px;
 }
 
-.review_list_item_title_date{
+.review_list_item_title_date {
     display: flex;
     gap: 20px;
     color: #7e7e7e;
@@ -1340,7 +1337,7 @@ input[type='radio'] {
     padding-bottom: 5px;
 }
 
-.review_my_event_filter_btn{
+.review_my_event_filter_btn {
     width: auto;
     height: 30px;
     position: absolute;
@@ -1351,33 +1348,32 @@ input[type='radio'] {
     border-radius: 20px;
 }
 
-.review_my_event_filter_btn option:hover{
+.review_my_event_filter_btn option:hover {
     background: #d4c4ff;
 }
 
 .review_list_item {
     position: relative;
 }
+
 .review_list_item .participants_item_func {
     position: absolute;
     top: 10px;
     right: 10px;
 }
 
-
 /* --------------------REVIEW_ALL-------------------- */
-
-.review_title{
+.review_title {
     font-size: 24px;
 }
 
-.review_count{
+.review_count {
     font-size: 14px;
     margin-top: -5px;
     color: #7e7e7e;
 }
 
-.review_all_my_event_filter_btn{
+.review_all_my_event_filter_btn {
     width: auto;
     height: 30px;
     position: absolute;
@@ -1388,15 +1384,14 @@ input[type='radio'] {
     border-radius: 20px;
 }
 
-
 /* --------------------ADD_REVIEW-------------------- */
-.add_review{
+.add_review {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.add_review_block{
+.add_review_block {
     background-color: #e0e0e0;
     min-width: 420px;
     width: 60%;
@@ -1404,14 +1399,13 @@ input[type='radio'] {
     padding: 20px;
 }
 
-
-.add_review_form{
+.add_review_form {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-.add_review_btn_title{
+.add_review_btn_title {
     display: flex;
     align-items: center;
     gap: 25px;
@@ -1421,7 +1415,7 @@ input[type='radio'] {
     font-weight: bold;
 }
 
-.add_review_form_item{
+.add_review_form_item {
     height: 25px;
     background-color: white;
     border-radius: 20px;
@@ -1429,7 +1423,7 @@ input[type='radio'] {
     font-size: 14px;
 }
 
-.add_review_form_item:last-child{
+.add_review_form_item:last-child {
     align-self: center;
     background-color: var(--main-color);
     color: rgb(255, 255, 255);
@@ -1438,44 +1432,43 @@ input[type='radio'] {
     transition: 0.3s;
 }
 
-.add_review_form_item:focus{
+.add_review_form_item:focus {
     box-shadow: 0 0 5px var(--menu-color);
 }
 
-
-.add_review_btn{
+.add_review_btn {
     margin: -7px 0 0 10px;
     color: var(--main-color);
     transition: 0.3s;
 }
 
-.add_review{
+.add_review {
     padding: 40px 314px;
     min-height: calc(100vh - 190px);
 }
 
-.add_review_form_item_btn{
+.add_review_form_item_btn {
     transition: 0.3s;
 }
 
-.add_review_form_item_btn:hover{
+.add_review_form_item_btn:hover {
     background-color: var(--menu-color);
 }
 
-.add_review_form_item.description{
+.add_review_form_item.description {
     height: 150px;
     resize: none;
     padding: 10px 20px;
 }
 
-.add_review_form_item:focus{
+.add_review_form_item:focus {
     border: none;
     outline: none;
 }
 
-.add_review_stars{
+.add_review_stars {
     font-size: 32px;
-    color: #ccc; 
+    color: #ccc;
     display: inline-flex;
 }
 
@@ -1489,32 +1482,88 @@ input[type='radio'] {
     color: gold;
 }
 
-.add_review_star_error{
+.add_review_star_error {
     font-size: 12px;
     padding: 15px 0 0 5px;
     color: red;
     visibility: hidden;
 }
 
+/* Скрываем метки формы */
+.add_review_form label {
+    display: none;
+}
+
+/* Стили для сообщений */
+.login-message {
+    color: black;
+    font-size: 14px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.activation-message {
+    color: black;
+    font-size: 14px;
+    visibility: visible;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Центрирование кнопок и одинаковый стиль */
+.modal-footer {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: center; /* Центрируем кнопки */
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Стили для кнопок (применяются к <button> и <a>) */
+.add_review_form_item_btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--main-color);
+    color: rgb(255, 255, 255);
+    border-radius: 20px;
+    font-size: 14px;
+    width: 200px; /* Фиксированная ширина */
+    height: 30px; /* Фиксированная высота */
+    transition: background-color 0.3s;
+    text-align: center;
+    text-decoration: none; /* Убираем подчеркивание для <a> */
+    line-height: 30px; /* Центрируем текст по вертикали */
+}
+
+.add_review_form_item_btn:hover {
+    background-color: var(--menu-color);
+}
+
+.add_review_form_item_btn:active {
+    opacity: 0.6;
+}
+
 /* --------------------MEDIA-------------------- */
-@media (max-width: 1480px){
-    .all_event_grid_item_img_cont{
+@media (max-width: 1480px) {
+    .all_event_grid_item_img_cont {
         height: 140px;
     }
 
     .carousel-item,
-    .event_img_event{
+    .event_img_event {
         height: 400px;
         overflow: hidden;
     }
 }
 
-@media (max-width: 1180px){
-    .search{
+@media (max-width: 1180px) {
+    .search {
         width: 200px;
     }
 
-    .all_event_grid{
+    .all_event_grid {
         grid-template-columns: repeat(2, 1fr);
     }
 
@@ -1523,55 +1572,55 @@ input[type='radio'] {
     .create_event,
     .profile,
     .participants,
-    .review{
+    .review {
         padding: 40px 50px;
     }
 
     .review_my_event_filter_btn,
-    .review_all_my_event_filter_btn{
+    .review_all_my_event_filter_btn {
         right: 50px;
     }
 
-    .all_event_grid_item_img_cont{
+    .all_event_grid_item_img_cont {
         height: 230px;
     }
 
     .carousel-item,
-    .event_img_event{
+    .event_img_event {
         height: 500px;
         overflow: hidden;
     }
 }
 
-@media (max-width: 768px){
-    .search{
+@media (max-width: 768px) {
+    .search {
         width: 200px;
     }
 
-    .all_event_grid_item_img_cont{
+    .all_event_grid_item_img_cont {
         height: 155px;
     }
 
     .carousel-item,
-    .event_img_event{
+    .event_img_event {
         height: 350px;
         overflow: hidden;
     }
 }
 
-@media (max-width: 568px){
-    .header_func_user{
+@media (max-width: 568px) {
+    .header_func_user {
         display: none;
     }
 
-    .all_event_grid{
+    .all_event_grid {
         grid-template-columns: repeat(1, 1fr);
     }
 
-    .profile_my_event_info_date_count{
+    .profile_my_event_info_date_count {
         flex-direction: column;
         justify-content: left;
-        align-items:flex-start;
+        align-items: flex-start;
         gap: 0;
     }
 
@@ -1582,21 +1631,21 @@ input[type='radio'] {
     .create_event,
     .profile,
     .participants,
-    .review{
+    .review {
         padding: 40px 20px;
     }
 
     .review_my_event_filter_btn,
-    .review_all_my_event_filter_btn{
+    .review_all_my_event_filter_btn {
         right: 20px;
     }
-    
-    .all_event_grid_item_img_cont{
+
+    .all_event_grid_item_img_cont {
         height: 240px;
     }
 
     .carousel-item,
-    .event_img_event{
+    .event_img_event {
         height: 280px;
         overflow: hidden;
     }

@@ -1,6 +1,7 @@
 from abc import abstractmethod
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
+from django.views.generic import DeleteView
 
 
 class OnlyOrganizer(LoginRequiredMixin):
@@ -12,7 +13,10 @@ class OnlyOrganizer(LoginRequiredMixin):
     """
 
     def dispatch(self, request, *args, **kwargs):
-        if request.method not in ['GET', 'DELETE']:
+        allowed_methods = ['GET', 'DELETE']
+        if isinstance(self, DeleteView):
+            allowed_methods.append('POST')
+        if request.method not in allowed_methods:
             raise PermissionDenied('Другие операции не доступны')
         event = self.get_event_for_permission()
         if event and request.user != event.organizer:

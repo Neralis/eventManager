@@ -90,19 +90,22 @@
        <h4 class="event_description_title event_title_2">Также от организатора:</h4>
     <div class="all_event_grid">
         {% for organizer_event in organizer_events %}
-        <div class="all_event_grid_item" id = "event-{{organizer_event.id}}">
-            <div class="all_event_grid_item_img_cont">
-            <img src="{% if organizer_event.main_photo %}{{ organizer_event.main_photo.url }}{% else %}{% static 'img/default_event.jpg' %}{% endif %}" alt="event_img" class="all_event_grid_item_img">
+            <div class="all_event_grid_item" id="event-{{ organizer_event.id }}">
+                <div class="all_event_grid_item_img_cont">
+                    <img src="
+                            {% if organizer_event.main_photo %}{{ organizer_event.main_photo.url }}{% else %}{% static 'img/default_event.jpg' %}{% endif %}"
+                         alt="event_img" class="all_event_grid_item_img">
+                </div>
+                <p class="all_event_grid_item_organizer">{{ organizer_event.organizer }}</p>
+                <p class="all_event_grid_item_title">{{ organizer_event.title }}</p>
+                <p class="all_event_grid_item_city">{{ organizer_event.city }}</p>
+                <p class="all_event_grid_item_date">{{ organizer_event.date_start|date:"d.m.Y" }}</p>
+                <div class="all_event_grid_item_btn_count">
+                    <a href="{% url 'register_participant' event_id=organizer_event.id %}"
+                       class="all_event_grid_item_btn">Записаться</a>
+                    <p class="all_event_grid_item_place">осталось {{ organizer_event.participants_limit }} мест</p>
+                </div>
             </div>
-            <p class="all_event_grid_item_organizer">{{ organizer_event.organizer }}</p>
-            <p class="all_event_grid_item_title">{{ organizer_event.title }}</p>
-            <p class="all_event_grid_item_city">{{ organizer_event.city }}</p>
-            <p class="all_event_grid_item_date">{{ organizer_event.date_start|date:"d.m.Y" }}</p>
-            <div class="all_event_grid_item_btn_count">
-                <a href="{% url 'register_participant' event_id=similiar_event.id %}" class="all_event_grid_item_btn">Записаться</a>
-                <p class="all_event_grid_item_place">осталось {{ organizer_event.participants_limit }} мест</p>
-            </div>
-        </div>
         {% endfor %}
     </div>
     {% endif %}
