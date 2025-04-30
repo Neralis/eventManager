@@ -1,7 +1,10 @@
+from dateutil.relativedelta import relativedelta
+
 from django.utils.timezone import now
 from django.db import models, transaction
 from django.db.models import Q, Count, QuerySet
 from django.core.exceptions import ValidationError
+
 from src.apps.eventApp.models import Event
 from src.apps.userApp.models import NotAuthUser, CustomUser
 from src.utils.constants.participants_constants import FAVOURITE_PARTICIPANT_THRESHOLD
@@ -69,11 +72,12 @@ class Participants(models.Model):
     @staticmethod
     def check_organizer(event, user=None, email=None, phone=None):
         """Проверяет, не пытается ли организатор записаться на свое же мероприятие."""
-        organizer_email = event.organizer.email
-        organizer_phone = event.organizer.phone
+        organizer = event.organizer
+        organizer_email, organizer_phone = organizer.email, organizer.phone
+
         if user and user.email == organizer_email:
             raise ValidationError('Организатор не может зарегистрироваться на свое же мероприятия.')
-        if (email or phone) and (email == organizer_email or phone == organizer_phone):
+        if email == organizer_email or phone == organizer_phone:
             raise ValidationError('Организатор не может зарегистрироваться на свое же мероприятия.')
 
     def clean(self):
@@ -83,24 +87,17 @@ class Participants(models.Model):
         elif self.not_auth_user:
             self.check_organizer(self.event, email=self.not_auth_user.email, phone=self.not_auth_user.phone)
 
-        if self.event.registration_status and self.user:
-            participant_date_birthday = self.user.date_birthday
-            today = now().date()
-            age = today.year - participant_date_birthday.year
-            if (today.month, today.day) < (participant_date_birthday.month, participant_date_birthday.day):
-                age -= 1
-            if age < self.event.age_limit:
-                raise ValidationError('Возрастное ограничение: вы не достигли необходимого возраста.')
-
         if not self.event.is_active or self.event.date_start < now():
             raise ValidationError('Нельзя зарегистрироваться на прошедшее или уже начавшееся событие.')
-
         if self.event.available_places <= 0:
             raise ValidationError('Нет свободных мест для регистрации на мероприятие.')
-
         if self.event.registration_status and self.not_auth_user:
             raise ValidationError(
                 'Неавторизованный пользователь не может записаться на мероприятие с обязательной регистрацией.')
+        if self.event.registration_status and self.user:
+            age_different = relativedelta(now().date(), self.user.date_birthday)
+            if age_different.years < self.event.age_limit:
+                raise ValidationError('Возрастное ограничение: вы не достигли необходимого возраста.')
 
     def save(self, *args, **kwargs):
         self.clean()
@@ -110,10 +107,8 @@ class Participants(models.Model):
     def is_registered(cls, event: 'Event', user=None, email=None, phone=None) -> bool:
         """Проверяет, зарегистрирован ли пользователь(авторизованный или нет) как участник этого мероприятия."""
         if user:
-            cls.check_organizer(event, user=user)
             return cls.objects.filter(event=event, user=user).exists()
         if email and phone:
-            cls.check_organizer(event, email=email, phone=phone)
             if cls.objects.filter(event=event, user__email=email).exists():
                 return True
             return cls.objects.filter(
@@ -125,9 +120,6 @@ class Participants(models.Model):
     @classmethod
     def create_participant(cls, event: 'Event', user=None, email=None, phone=None) -> 'Participants':
         """Создает участника для мероприятия. Возвращает созданного участника."""
-        if event.available_places <= 0:
-            raise ValueError('Свободные места для данного мероприятия закончились.')
-
         if cls.is_registered(event, user, email, phone):
             raise ValueError('Данный пользователь уже зарегестрирован на данное мероприятие.')
 
@@ -148,11 +140,11 @@ class Participants(models.Model):
         чем FAVOURITE_PARTICIPANT_THRESHOLD.
         """
 
-        participants = cls.objects.filter(event__organizer__id=organizer_id)
-        favourite_participants = (
-            participants
-            .values('not_auth_user__email', 'user__email')
-            .annotate(registration_count=Count('id'))
-            .filter(registration_count__gt=FAVOURITE_PARTICIPANT_THRESHOLD)
+        return (
+            cls.objects
+            .select_related('event')
+            .filter(event__organizer__id=organizer_id)
+            .values('user__email', 'not_auth_user__email')
+            .annotate(registred_count=Count('id'))
+            .filter(registred_count__gte=FAVOURITE_PARTICIPANT_THRESHOLD)
         )
-        return favourite_participants

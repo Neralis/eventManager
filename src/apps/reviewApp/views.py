@@ -39,7 +39,7 @@ class ReviewListViewOnEvent(OnlyOrganizer, EventMixin, ListView):
 
     def get_queryset(self):
         return Review.objects.filter(event=self.get_event()
-                                     ).select_related('participant__user', 'participant__not_auth_user')
+                                     ).select_related('event', 'participant__user', 'participant__not_auth_user')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -1,12 +1,18 @@
+import logging
+
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, DeleteView
 from django.core.exceptions import ValidationError
+
+from src.apps.eventApp.models import Event
 from src.apps.participantApp.forms import RegistrationParticipantsForm
 from src.apps.participantApp.models import Participants
 from src.utils.utils import user_is_authenticated
 from src.utils.mixins import EventMixin
 from src.utils.permissions import OnlyOrganizer
+
+logger = logging.getLogger(__name__)
 
 
 class ListParticipantsOnEvent(OnlyOrganizer, EventMixin, ListView):
@@ -25,7 +31,7 @@ class ListParticipantsOnEvent(OnlyOrganizer, EventMixin, ListView):
 
     def get_queryset(self):
         """Возвращает QuerySet участников для мероприятия, указанного в URL."""
-        return Participants.objects.filter(event=self.get_event()).select_related('event', 'user')
+        return Participants.objects.filter(event=self.get_event()).select_related('user')
 
     def get_context_data(self, **kwargs):
         """Передает в контекст данные о мероприятии."""
@@ -65,6 +71,10 @@ class RegistrationParticipantsView(EventMixin, CreateView):
     model = Participants
     form_class = RegistrationParticipantsForm
     template_name = 'participantApp/register_participants.html'
+
+    def get_event(self):
+        """Метод из миксина для получения мероприятия, оптимизирован для получения данных об организаторе."""
+        return get_object_or_404(Event.objects.select_related('organizer'), id=self.get_event_id())
 
     def get_form_kwargs(self):
         """Передает текущего пользователя и мероприятие в форму."""

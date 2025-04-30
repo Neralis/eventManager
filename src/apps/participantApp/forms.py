@@ -30,9 +30,6 @@ class RegistrationParticipantsForm(forms.ModelForm):
         if not self.event:
             raise forms.ValidationError('Событие не найдено.')
 
-        if self.event.registration_status and not self.user:
-            raise forms.ValidationError('Для участия в данном мероприятии необходимо авторизоваться.')
-
         email = cleaned_data.get('email', None)
         phone = cleaned_data.get('phone', None)
 

@@ -30,6 +30,11 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lamb
 
 # Application definition
 
+INTERNAL_IPS = [
+    '127.0.0.1',
+    '172.20.0.6',
+]
+
 AUTHENTICATION_BACKENDS = ['src.apps.userApp.auth_backend.EmailBackend']
 
 AUTH_USER_MODEL = 'userApp.CustomUser'
@@ -48,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.postgres',
     'django_celery_beat',
     'phonenumber_field',
+    'debug_toolbar',
     'src.apps.userApp.apps.UserAppConfig',
     'src.apps.eventApp.apps.EventAppConfig',
     'src.apps.participantApp.apps.ParticipantAppConfig',
@@ -63,6 +69,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'src.eventManager.urls'

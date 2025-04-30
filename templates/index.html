@@ -47,8 +47,10 @@
                         <li class="header_func_menu_item"><a href="{% url 'profile' %}">Мои мероприятия</a></li>
                         <li class="header_func_menu_item"><a href="#">Запланированные мероприятия</a></li>
                         <li class="header_func_menu_item"><a href="{% url 'event_list' %}">Главная</a></li>
+                        <li class="header_func_menu_item"><a href="{% url 'logout' %}">Выйти</a></li>
+                    {% else %}
+                        <li class="header_func_menu_item"><a href="{% url 'event_list' %}">Главная</a></li>
                     {% endif %}
-                    <li class="header_func_menu_item"><a href="{% url 'logout' %}">Выйти</a></li>
                 </ul>
             </div>
         </div>
@@ -67,9 +69,9 @@
                 <li class="footer_link_item"><a href="#">Задать вопрос</a></li>
             </ul>
             <ul class="footer_social">
-                <li class="footer_social_item telegram"><a href="https://t.me/your_telegram" target="_blank" rel="noopener noreferrer"></a></li>
+                <li class="footer_social_item telegram"><a href="https://t.me/lexa1a1" target="_blank" rel="noopener noreferrer"></a></li>
                 <li class="footer_social_item vk"><a href="https://vk.com/your_vk" target="_blank" rel="noopener noreferrer"></a></li>
-                <li class="footer_social_item gmail"><a href="mailto:your_email@gmail.com"></a></li>
+                <li class="footer_social_item gmail"><a href="mailto:chacknoris158@mail.ru"></a></li>
             </ul>
         </div>
     </footer>

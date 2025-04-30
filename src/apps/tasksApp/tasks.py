@@ -1,16 +1,18 @@
 import logging
 from typing import List
-from django.conf import settings
+from celery import shared_task
+
 from django.utils.timezone import now, timedelta
+
 from src.apps.eventApp.models import Event
 from src.apps.eventApp.utils import update_completed_events, send_mail_with_reason
 from src.apps.participantApp.models import Participants
 from src.apps.reviewApp.utils import generate_token_for_review, generate_unique_url_for_participants, \
     send_mail_to_not_auth_user_participant
-from src.apps.userApp.utils import send_mail_user
+from src.apps.userApp.utils import send_mail_user_for_activate_account
+from src.apps.participantApp.utils import send_mail_after_registration_on_event
 from src.apps.userApp.models import Notification
-from django.core.mail import send_mail
-from celery import shared_task
+from src.utils.utils import send_mail_users
 from src.utils.constants.email_constants import (
     SEND_MAIL_BEFORE_EVENT_TITLE,
     SEND_MAIL_BEFORE_EVENT_TEXT,
@@ -34,13 +36,10 @@ def send_email_for_participants_before_event() -> None:
         )
     ).select_related('event', 'user', 'not_auth_user')
     participant_email = [participant.get_email() for participant in participants]
-    # noinspection PyTypeChecker
-    send_mail(
+    send_mail_users(
         SEND_MAIL_BEFORE_EVENT_TITLE,
         SEND_MAIL_BEFORE_EVENT_TEXT,
-        settings.EMAIL_HOST_USER,
         participant_email,
-        fail_silently=False,
     )
 
 
@@ -109,9 +108,23 @@ def send_mail_for_activate_account_task(email: str, unique_url: str) -> None:
     """
     Функция celery для отправки сообщений пользователям для восстановления(активации) аккаунта.
     Args:
-        email: список email участников мероприятия
+        email: email пользователя
         unique_url: уникальная ссылка для восстановления аккаунта
     """
 
-    send_mail_user(email, unique_url)
+    send_mail_user_for_activate_account(email, unique_url)
+
+
+@shared_task
+def registration_on_event_task(email: str, event_title: str) -> None:
+    """
+    Функция celery для отправки сообщений пользователям после регистрации на мероприятие.
+    Args:
+        email: email участника
+        event_title: название мероприятия
+    """
+
+    send_mail_after_registration_on_event(email, event_title)
+
+
 

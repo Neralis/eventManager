@@ -169,6 +169,7 @@ class NotAuthUser(models.Model):
         verbose_name_plural = 'Неавторизованные пользователи'
         indexes = [
             models.Index(fields=['email']),
+            models.Index(fields=['phone']),
         ]
         constraints = [
             models.UniqueConstraint(

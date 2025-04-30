@@ -54,7 +54,7 @@ def generate_unique_url_for_user(token: str) -> str:
     return url
 
 
-def send_mail_user(email: str, unique_url: str) -> None:
+def send_mail_user_for_activate_account(email: str, unique_url: str) -> None:
     """
     Функция для отправки писем на почту пользователям для восстановления аккаунта.
     Args:

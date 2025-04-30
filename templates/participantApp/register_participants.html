@@ -5,7 +5,7 @@
 <section class="registration">
     <div class="registr_event_block">
         <div class="registr_event_btn_title">
-            <a href="{% url 'participants_list' event_id=event.id %}" class="registr_event_btn">←</a>
+            <a href="{% url 'event_detail' event_id=event.id %}" class="registr_event_btn">←</a>
             <h2 class="registr_event_btn_title">Регистрация на мероприятие: {{ event.title }}</h2>
         </div>
 
