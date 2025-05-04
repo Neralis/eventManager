@@ -1,6 +1,6 @@
 import logging
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import FileExtensionValidator
+from django.core.validators import FileExtensionValidator, MinValueValidator, MaxValueValidator
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from src.apps.userApp.utils import user_avatar_path
@@ -62,6 +62,10 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return f'({self.username}) {self.first_name} {self.last_name} {self.email}'
 
+    def delete(self, *args, **kwargs):
+        FileHandler.delete_user_folder(self.id)
+        super().delete(*args, **kwargs)
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(
@@ -69,6 +73,11 @@ class UserProfile(models.Model):
         on_delete=models.CASCADE,
         related_name='profile',
         verbose_name='Пользователь'
+    )
+    average_rating = models.FloatField(
+        default=0,
+        validators=[MinValueValidator(0.0), MaxValueValidator(5.0)],
+        verbose_name='Средний рейтинг пользователя, как организатора'
     )
     avatar = models.ImageField(
         upload_to=user_avatar_path,
@@ -90,6 +99,9 @@ class UserProfile(models.Model):
     class Meta:
         verbose_name = 'Профиль пользователя'
         verbose_name_plural = 'Профили пользователей'
+        indexes = [
+            models.Index(fields=['average_rating']),
+        ]
 
     def __str__(self):
         return f"Профиль пользователя {self.user.username}"
@@ -114,10 +126,6 @@ class UserProfile(models.Model):
             if self.avatar:
                 FileHandler.delete_user_folder(self.user.id)
             raise
-
-    def delete(self, *args, **kwargs):
-        FileHandler.delete_user_folder(self.id)
-        super().delete(*args, **kwargs)
 
 
 class Notification(models.Model):

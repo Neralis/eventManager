@@ -18,7 +18,9 @@
 <body>
     <header class="header">
         <div class="header_logo">
-            <img src="{% static 'img/logo_img.png' %}" alt="logo" class="logo">
+            <a href="{% url 'event_list' %}">
+                <img src="{% static 'img/logo_img.png' %}" alt="logo" class="logo">
+            </a>
         </div>
         <div class="header_func">
             <form action="{% url 'event_search' %}" method="get" class="header_func_search">

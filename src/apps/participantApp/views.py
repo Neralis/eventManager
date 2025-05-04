@@ -2,15 +2,16 @@ import logging
 
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, ListView, DeleteView
+from django.views.generic import CreateView, ListView, DeleteView, FormView
 from django.core.exceptions import ValidationError
 
 from src.apps.eventApp.models import Event
-from src.apps.participantApp.forms import RegistrationParticipantsForm
+from src.apps.participantApp.forms import RegistrationParticipantsForm, ReasonDeleteParticipantForm
 from src.apps.participantApp.models import Participants
 from src.utils.utils import user_is_authenticated
 from src.utils.mixins import EventMixin
 from src.utils.permissions import OnlyOrganizer
+from src.apps.tasksApp.tasks import send_email_users_after_delete_task
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +58,14 @@ class DeleteParticipants(OnlyOrganizer, EventMixin, DeleteView):
         """Возвращает участника для удаления или вызывает 404, если участник не найден."""
         participant_id = self.kwargs.get('participant_id')
         return get_object_or_404(Participants, id=participant_id, event=self.get_event())
+
+    def get(self, request, *args, **kwargs):
+        """Если мероприятие активно, то переведет на форму объяснения причины удаления участника."""
+        participant = self.get_object()
+        if participant.event.is_active:
+            redirect('reason_delete_participant',
+                     kwargs={'event_id': self.get_event_id(), 'participant_id': participant.id})
+        return super().get(request, *args, **kwargs)
 
     def get_success_url(self):
         return reverse_lazy('participants_list', kwargs={'event_id': self.get_event_id()})
@@ -128,3 +137,34 @@ class FavouriteParticipants(OnlyOrganizer, ListView):
         context = super().get_context_data(**kwargs)
         context['favourite'] = Participants.get_statistics_favourite_participant(self.request.user.id)
         return context
+
+
+class ReasonDeleteParticipants(OnlyOrganizer, EventMixin, FormView):
+    """Представление для указания причины удаления участника."""
+    form_class = ReasonDeleteParticipantForm
+    template_name = 'participantApp/reason_delete_participants.html'
+
+    def get_context_data(self, **kwargs):
+        """Передает в контекст данные о мероприятии."""
+        context = super().get_context_data(**kwargs)
+        context['event'] = self.get_event()
+        return context
+
+    def form_valid(self, form):
+        """Удаляет участника и отправляет ему на почту сообщение об этом."""
+        event = self.get_event()
+        participant = get_object_or_404(Participants, id=self.kwargs.get('participant_id'), event=event)
+        reason = form.cleaned_data['reason']
+        participant_email = participant.get_email()
+        participant.delete()
+        send_email_users_after_delete_task.delay(
+            participant_email,
+            event.organizer.email,
+            event.title,
+            reason
+        )
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """Перенаправляет на страницу списка участников."""
+        return reverse_lazy('participants_list', kwargs={'event_id': self.get_event_id()})

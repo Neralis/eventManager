@@ -36,3 +36,12 @@ class RegistrationParticipantsForm(forms.ModelForm):
         if not self.user and (not email or not phone):
             raise forms.ValidationError('Не все поля были заполнены для регистрации.')
         return cleaned_data
+
+
+class ReasonDeleteParticipantForm(forms.Form):
+    """Форма для заполнения причины удаления участника, если мероприятие активно."""
+    reason = forms.CharField(
+        widget=forms.Textarea,
+        label='Причина',
+        required=False
+    )

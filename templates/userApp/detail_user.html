@@ -23,14 +23,15 @@
                 </div>
             </div>
             <div class="profile_about_me_info_star_all_reviews">
-                <div class="rating-stars" data-rating="4.6">
-                    <span class="star" data-value="1">★</span>
-                    <span class="star" data-value="2">★</span>
-                    <span class="star" data-value="3">★</span>
-                    <span class="star" data-value="4">★</span>
-                    <span class="star" data-value="5">★</span>
+                <div class="rating-stars" data-rating="{{ user.profile.average_rating }}" role="img"
+                     aria-label="Рейтинг {{ user.profile.average_rating }} из 5">
+                    <span class="star" data-value="1" aria-hidden="true">★</span>
+                    <span class="star" data-value="2" aria-hidden="true">★</span>
+                    <span class="star" data-value="3" aria-hidden="true">★</span>
+                    <span class="star" data-value="4" aria-hidden="true">★</span>
+                    <span class="star" data-value="5" aria-hidden="true">★</span>
                 </div>
-                <p class="profile_about_me_info_star_count">4.6</p>
+                <p class="profile_about_me_info_star_count">{{ user.profile.average_rating }}</p>
                 <a href="{% url 'review_list' %}" class="profile_about_me_info_all_reviews">Все отзывы →</a>
             </div>
             <p class="profile_about_me_info_descr">
@@ -158,4 +159,8 @@
     margin: 0;
 }
 </style>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/rating.js' %}"></script>
 {% endblock %}

@@ -13,3 +13,9 @@ DELETE_EVENT_MESSAGE_INFO = 'Приносим извинения за неудо
 
 RECOVER_ACCOUNT_TITLE = 'Восстановление аккаунта'
 RECOVER_ACCOUNT_INFO = 'Перейдите по ссылке для восстановления: '
+
+SEND_MAIL_PARTICIPANT_AFTER_DEL_TITLE = 'Вы были исключены из участия в мероприятии: '
+SEND_MAIL_PARTICIPANT_AFTER_DEL_TEXT = 'Приносим свои извинения, нам жаль что так вышло('
+SEND_MAIL_PARTICIPANT_AFTER_DEL_REASON = 'Причину удаления вас из списка участников описал организатор: '
+SEND_MAIL_PARTICIPANT_AFTER_DEL_RELATION = ('\nЕсли хотите узнать больше информации,'
+                                            ' то свяжитесь с организатором по почте - ')

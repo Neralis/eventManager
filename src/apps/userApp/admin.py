@@ -69,7 +69,11 @@ class CustomUser(ModelAdmin):
 class UserProfileAdmin(ModelAdmin):
     list_display = [
         'user',
-        'description'
+        'description',
+        'average_rating'
+    ]
+    readonly_fields = [
+        'average_rating'
     ]
 
 

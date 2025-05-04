@@ -52,8 +52,15 @@ class EventListView(EventMixin, ListView):
     paginate_by = 20
 
     def get_queryset(self):
+        """
+        Сортировка и фильтрация. Сортировка происходит по среднему рейтингу пользователей,
+        чем выше рейтинг организатора(пользователя), тем выше он будет в итоговой выдаче.
+        """
+
         queryset = super().get_queryset()
         queryset = self.queryset_filter(queryset)
+        queryset = queryset.select_related('organizer__profile'
+                                           ).order_by('-organizer__profile__average_rating', '-date_start')
         return queryset
 
     def get_context_data(self, **kwargs):

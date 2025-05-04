@@ -8,4 +8,6 @@ urlpatterns = [
     path('<int:event_id>/delete_participant/<int:participant_id>/', views.DeleteParticipants.as_view(),
          name='delete_participant'),
     path('favourite_participants/', views.FavouriteParticipants.as_view(), name='favourite_participants'),
+    path('<int:event_id>/delete_participant/<int:participant_id>/reason_delete_participant/',
+         views.ReasonDeleteParticipants.as_view(), name='reason_delete_participant'),
 ]

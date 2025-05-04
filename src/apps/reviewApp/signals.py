@@ -1,8 +1,13 @@
+import logging
+
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+
 from src.apps.reviewApp.models import Review
 from src.apps.userApp.models import Notification
 from src.utils.utils import generate_unique_url
+
+logger = logging.getLogger(__name__)
 
 
 @receiver(post_save, sender=Review)
@@ -21,4 +26,12 @@ def create_notifications_about_review(sender, instance, created, **kwargs):
 				url_event=url
 			)
 		except Exception as e:
-			print(f'error: {e}')
+			logger.error(f'error: {e}')
+
+
+@receiver(post_save, sender=Review)
+def calculate_average_rating_organizer(sender, instance, created, **kwargs):
+	"""Сигнал для обновления среднего рейтинга организатора после создния нового отзыва."""
+	from src.apps.tasksApp.tasks import calculate_average_rating_organizer_task
+	if created:
+		calculate_average_rating_organizer_task.delay(instance.event.organizer.id)

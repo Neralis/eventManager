@@ -5,9 +5,9 @@
 <section class="add_review">
     <div class="add_review_block">
         <div class="add_review_btn_title">
-            <h2 class="add_review_btn_title">Удаление мероприятия</h2>
+            <h2 class="add_review_btn_title">Удаление участника</h2>
         </div>
-        <p>Пожалуйста, укажите причину отмены мероприятия, чтобы участники были в курсе:</p>
+        <p>Пожалуйста, укажите причину удаления, чтобы пользователь был осведомлен:</p>
         <form method="post" class="add_review_form">
             {% csrf_token %}
             <div class="form-group">
@@ -17,8 +17,8 @@
                 {% endif %}
             </div>
             <div class="modal-footer">
-                <button type="submit" class="add_review_form_item add_review_form_item_btn">Удалить мероприятие</button>
-                <a href="{% url 'profile' %}" class="btn btn-secondary">Отмена</a>
+                <button type="submit" class="add_review_form_item add_review_form_item_btn">Удалить участника</button>
+                <a href="{% url 'participants_list' event_id=event.id %}" class="add_review_form_item add_review_form_item_btn">Отмена</a>
             </div>
         </form>
     </div>

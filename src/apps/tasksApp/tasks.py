@@ -9,8 +9,8 @@ from src.apps.eventApp.utils import update_completed_events, send_mail_with_reas
 from src.apps.participantApp.models import Participants
 from src.apps.reviewApp.utils import generate_token_for_review, generate_unique_url_for_participants, \
     send_mail_to_not_auth_user_participant
-from src.apps.userApp.utils import send_mail_user_for_activate_account
-from src.apps.participantApp.utils import send_mail_after_registration_on_event
+from src.apps.userApp.utils import send_mail_user_for_activate_account, calculate_average_rating_organizer
+from src.apps.participantApp.utils import send_mail_after_registration_on_event, send_email_users_after_delete
 from src.apps.userApp.models import Notification
 from src.utils.utils import send_mail_users
 from src.utils.constants.email_constants import (
@@ -127,4 +127,27 @@ def registration_on_event_task(email: str, event_title: str) -> None:
     send_mail_after_registration_on_event(email, event_title)
 
 
+@shared_task
+def calculate_average_rating_organizer_task(user_id: int) -> None:
+    """
+    Функция celery для пересчета рейтинга пользователя.
+    Args:
+        user_id: id пользователя(организатора мероприятий)
+    """
 
+    calculate_average_rating_organizer(user_id)
+
+
+@shared_task
+def send_email_users_after_delete_task(email_participant: str, email_organizer: str, reason: str, event_title: str):
+    """
+    Функция celery для отправки сообщений пользователям,
+    после того, как организатор удалит их как участников мероприятия
+    Args:
+        email_participant: email участника мероприятия
+        email_organizer: email организатора мероприятия
+        reason: причина удаления
+        event_title: название мероприятия
+    """
+
+    send_email_users_after_delete(email_participant, email_organizer, reason, event_title)

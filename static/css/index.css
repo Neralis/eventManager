@@ -1060,6 +1060,15 @@ input[type='radio'] {
     z-index: -1;
 }
 
+.rating-stars .star.filled {
+    background-image: linear-gradient(to right, gold 100%, gold 100%);
+}
+
+.rating-stars .star.half-filled {
+    background-clip: text;
+    background-image: linear-gradient(to right, gold 50%, transparent 50%);
+}
+
 .profile_about_me_info_star_count {
     font-size: 20px;
     margin-left: -12px;

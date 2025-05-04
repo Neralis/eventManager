@@ -1,7 +1,14 @@
+import logging
 import jwt
 from typing import Tuple, Optional
+
+from django.db.models import Avg, FloatField
+from django.db.models.functions import Coalesce
+
 from src.utils.utils import generate_token, validate_token, generate_unique_url, send_mail_users
 from src.utils.constants.email_constants import RECOVER_ACCOUNT_INFO, RECOVER_ACCOUNT_TITLE
+
+logger = logging.getLogger(__name__)
 
 
 def user_avatar_path(instance, filename: str) -> str:
@@ -65,3 +72,24 @@ def send_mail_user_for_activate_account(email: str, unique_url: str) -> None:
     subject = RECOVER_ACCOUNT_TITLE
     message = f'{RECOVER_ACCOUNT_INFO}{unique_url}'
     send_mail_users(subject, message, [email])
+
+
+def calculate_average_rating_organizer(user_id: int) -> None:
+    """
+    Функция для расчета средней оценки организатора по отзывам на его мероприятия.
+    Args:
+        user_id: id пользователя(организатора)
+    """
+    from src.apps.userApp.models import UserProfile
+    from src.apps.reviewApp.models import Review
+
+    try:
+        avg_rating = (
+            Review.objects
+            .filter(event__organizer__id=user_id)
+            .aggregate(avg=Coalesce(Avg('rating', output_field=FloatField()), 0.0))['avg']
+        )
+        UserProfile.objects.filter(user__id=user_id).update(average_rating=round(avg_rating, 2))
+    except Exception as e:
+        logger.error(str(e))
+        raise
