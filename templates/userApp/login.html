@@ -2,10 +2,10 @@
 {% load static %}
 
 {% block content %}
-<section class="add_review">
-    <div class="add_review_block">
-        <div class="add_review_btn_title">
-            <h2 class="add_review_btn_title">Вход в аккаунт</h2>
+<section class="registration">
+    <div class="registration_block">
+        <div class="registration_btn_title">
+            <h2>Вход в аккаунт</h2>
         </div>
         {% if messages %}
             <div class="messages">
@@ -14,24 +14,21 @@
                 {% endfor %}
             </div>
         {% endif %}
-        <form method="post" class="add_review_form">
+        <form method="post" class="registration_form">
             {% csrf_token %}
-            <div class="form-field">
-                {{ form.as_p }}
-                {% if form.errors %}
-                    <div class="field-errors add_review_star_error">
-                        {% for error in form.non_field_errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="add_review_form_item add_review_form_item_btn">Войти</button>
-                {% if request.session.user_data %}
-                    <a href="{% url 'restore_account_request' %}" class="add_review_form_item add_review_form_item_btn">Восстановить аккаунт</a>
-                {% endif %}
-            </div>
+            <input class="registration_form_item" type="email" name="username" placeholder="Email" required>
+            <input class="registration_form_item" type="password" name="password" placeholder="Пароль" required>
+            {% if form.errors %}
+                <div class="field-errors add_review_star_error">
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <input class="registration_form_item registration_form_item_btn" type="submit" value="Войти">
+            {% if request.session.user_data %}
+                <a href="{% url 'restore_account_request' %}" class="registration_form_item registration_form_item_btn">Восстановить аккаунт</a>
+            {% endif %}
         </form>
     </div>
 </section>

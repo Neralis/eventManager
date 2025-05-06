@@ -106,15 +106,25 @@ class EventCreateView(LoginRequiredMixin, CreateView):
             with transaction.atomic():
                 self.object = form.save(commit=False)
                 self.object.organizer = self.request.user
+                
+                # Проверяем, что выбрана хотя бы одна категория
+                if not form.cleaned_data.get('category'):
+                    form.add_error('category', 'Выберите хотя бы одну категорию')
+                    return self.form_invalid(form)
+                
                 self.object.save()
+                form.save_m2m()  # Сохраняем связи many-to-many (категории)
 
                 images = self.request.FILES.getlist('event_images')
                 for image in images:
-                    self.object.images.create(image=image)
+                    EventImages.objects.create(event=self.object, image=image)
         except Exception as e:
             form.add_error(None, str(e))
             return self.form_invalid(form)
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
 
     def get_success_url(self):
         return reverse_lazy('event_detail', kwargs={'event_id': self.object.pk})
