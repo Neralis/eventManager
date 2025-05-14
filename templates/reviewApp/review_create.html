@@ -21,7 +21,7 @@
                 {% csrf_token %}
                 <div class="form-field">
                     <label>Текст отзыва:</label>
-                    <textarea name="text" class="add_review_form_item description" rows="6" cols="50" placeholder="Введите ваш отзыв здесь..." style="resize: none;">{{ form.text.value }}</textarea>
+                    <textarea name="text" class="add_review_form_item description" rows="6" cols="50" placeholder="Введите ваш отзыв здесь..." style="resize: none;">{{ form.text.value|default_if_none:'' }}</textarea>
                     {% if form.text.errors %}
                         <div class="field-errors add_review_star_error">
                             {% for error in form.text.errors %}
