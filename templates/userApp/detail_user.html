@@ -60,6 +60,7 @@
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ event.id }}">
                             <li><a class="dropdown-item" href="{% url 'event_update' event.id %}">Редактировать</a></li>
                             <li><a class="dropdown-item" href="{% url 'participants_list' event_id=event.pk %}">Участники</a></li>
+                            <li><a class="dropdown-item" href="{% url 'review_list_on_event' event_id=event.pk %}">Отзывы</a></li>
                             <li><a class="dropdown-item" href="{% url 'event_delete' event.id %}">Удалить</a></li>
                         </ul>
                     </div>

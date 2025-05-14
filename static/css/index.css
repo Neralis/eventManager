@@ -1465,13 +1465,24 @@ input[type='radio'] {
 }
 
 .add_review_form_item.description {
-    height: 150px;
+    background-color: #fff;
+    border-radius: 16px;
+    border: 1.5px solid #cbbbe6;
+    box-shadow: 0 2px 8px rgba(139, 74, 212, 0.07);
+    color: #3a2a4d;
+    height: 120px;
+    min-height: 80px;
+    max-height: 180px;
+    width: 100%;
+    padding: 12px 18px;
+    font-size: 15px;
     resize: none;
-    padding: 10px 20px;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.add_review_form_item:focus {
-    border: none;
+.add_review_form_item.description:focus {
+    border-color: var(--main-color);
+    box-shadow: 0 0 0 2px var(--menu-color);
     outline: none;
 }
 
@@ -1658,4 +1669,27 @@ input[type='radio'] {
         height: 280px;
         overflow: hidden;
     }
+}
+
+.rating-select {
+    height: 40px;
+    width: 120px;
+    background: #fff;
+    border-radius: 16px;
+    border: 1.5px solid #cbbbe6;
+    box-shadow: 0 2px 8px rgba(139, 74, 212, 0.07);
+    padding: 0 18px;
+    font-size: 15px;
+    color: #3a2a4d;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+.rating-select:focus {
+    border-color: var(--main-color);
+    box-shadow: 0 0 0 2px var(--menu-color);
+    outline: none;
 }

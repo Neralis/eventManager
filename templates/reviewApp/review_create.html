@@ -16,34 +16,41 @@
             </div>
         {% endif %}
 
-        <form method="post" class="add_review_form">
-            {% csrf_token %}
-            <div class="form-field">
-                <label>Текст отзыва:</label>
-                {{ form.text }}
-                {% if form.text.errors %}
-                    <div class="field-errors add_review_star_error">
-                        {% for error in form.text.errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
+        <div class="review_list_item">
+            <form method="post" class="add_review_form">
+                {% csrf_token %}
+                <div class="form-field">
+                    <label>Текст отзыва:</label>
+                    <textarea name="text" class="add_review_form_item description" rows="6" cols="50" placeholder="Введите ваш отзыв здесь..." style="resize: none;">{{ form.text.value }}</textarea>
+                    {% if form.text.errors %}
+                        <div class="field-errors add_review_star_error">
+                            {% for error in form.text.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
 
-            <div class="form-field">
-                <label>Рейтинг (1-5):</label>
-                {{ form.rating }}
-                {% if form.rating.errors %}
-                    <div class="field-errors add_review_star_error">
-                        {% for error in form.rating.errors %}
-                            <p>{{ error }}</p>
+                <div class="form-field">
+                    <label>Рейтинг (1-5):</label>
+                    <select name="rating" class="add_review_form_item rating-select" required>
+                        <option value="" disabled selected>Выберите оценку</option>
+                        {% for i in "12345" %}
+                            <option value="{{ forloop.counter }}" {% if form.rating.value == forloop.counter %}selected{% endif %}>{{ forloop.counter }}</option>
                         {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
+                    </select>
+                    {% if form.rating.errors %}
+                        <div class="field-errors add_review_star_error">
+                            {% for error in form.rating.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
 
-            <button type="submit" class="add_review_form_item add_review_form_item_btn">Отправить отзыв</button>
-        </form>
+                <button type="submit" class="add_review_form_item add_review_form_item_btn">Отправить отзыв</button>
+            </form>
+        </div>
     </div>
 </section>
 {% endblock %}

@@ -47,7 +47,6 @@
                     {% if user.is_authenticated %}
                         <li class="header_func_menu_item"><a href="{% url 'profile' %}">Профиль</a></li>
                         <li class="header_func_menu_item"><a href="{% url 'profile' %}">Мои мероприятия</a></li>
-                        <li class="header_func_menu_item"><a href="#">Запланированные мероприятия</a></li>
                         <li class="header_func_menu_item"><a href="{% url 'event_list' %}">Главная</a></li>
                         <li class="header_func_menu_item"><a href="{% url 'logout' %}">Выйти</a></li>
                     {% else %}

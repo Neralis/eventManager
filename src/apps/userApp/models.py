@@ -15,7 +15,7 @@ class CustomUser(AbstractUser):
         verbose_name='Email'
     )
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['username']
 
     first_name = models.CharField(
         max_length=100,
